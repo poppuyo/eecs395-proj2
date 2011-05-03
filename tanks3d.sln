@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tanks3d", "tanks3d\tanks3d\tanks3d.csproj", "{7FF6E326-1665-4F54-879B-B5D6369306C6}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "tanks3dContent", "tanks3d\tanks3dContent\tanks3dContent.contentproj", "{0E5FA65B-A1B4-4236-AA78-E03C97AC33B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FF6E326-1665-4F54-879B-B5D6369306C6}.Debug|x86.ActiveCfg = Debug|x86
+		{7FF6E326-1665-4F54-879B-B5D6369306C6}.Debug|x86.Build.0 = Debug|x86
+		{7FF6E326-1665-4F54-879B-B5D6369306C6}.Release|x86.ActiveCfg = Release|x86
+		{7FF6E326-1665-4F54-879B-B5D6369306C6}.Release|x86.Build.0 = Release|x86
+		{0E5FA65B-A1B4-4236-AA78-E03C97AC33B6}.Debug|x86.ActiveCfg = Debug|x86
+		{0E5FA65B-A1B4-4236-AA78-E03C97AC33B6}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
