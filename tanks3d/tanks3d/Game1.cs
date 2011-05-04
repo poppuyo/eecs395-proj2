@@ -19,6 +19,13 @@ namespace tanks3d
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        TexturedQuad.Quad[] ground;
+        VertexDeclaration vertexDeclaration;
+        Matrix View, Projection;
+
+        Texture2D texture;
+        BasicEffect quadEffect;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -34,6 +41,19 @@ namespace tanks3d
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            ground = new TexturedQuad.Quad[1];
+            ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
+            //ground[1] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Forward, Vector3.Left, 64f, 64f);
+            /*
+            ground[2] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
+            ground[3] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
+            ground[4] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
+            ground[5] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
+            */
+
+            //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
+            View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
 
             base.Initialize();
         }
@@ -46,6 +66,22 @@ namespace tanks3d
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            texture = Content.Load<Texture2D>("64x64");
+            quadEffect = new BasicEffect(graphics.GraphicsDevice);
+            quadEffect.EnableDefaultLighting();
+
+            quadEffect.World = Matrix.Identity;
+            quadEffect.View = View;
+            quadEffect.Projection = Projection;
+            quadEffect.TextureEnabled = true;
+            quadEffect.Texture = texture;
+
+            vertexDeclaration = new VertexDeclaration(new VertexElement[]
+            {
+                    new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                    new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+                    new VertexElement(24, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0)
+            });
 
             // TODO: use this.Content to load your game content here
         }
@@ -84,6 +120,16 @@ namespace tanks3d
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+            foreach(EffectPass pass in quadEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[0].Vertices, 0, 4, ground[0].Indexes, 0, 2);
+                //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[1].Vertices, 0, 4, ground[1].Indexes, 0, 2);
+
+            }
+
 
             base.Draw(gameTime);
         }
