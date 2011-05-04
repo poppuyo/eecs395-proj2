@@ -26,6 +26,12 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
+        Camera aCamera;
+
+        float cameraX = -100f;
+        float cameraY = 100f;
+        float cameraZ = 100f;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,19 +47,15 @@ namespace tanks3d
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            //aCamera = new Camera(this);
             ground = new TexturedQuad.Quad[1];
             ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
-            //ground[1] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Forward, Vector3.Left, 64f, 64f);
-            /*
-            ground[2] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
-            ground[3] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
-            ground[4] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
-            ground[5] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 1f, 1f);
-            */
+
 
             //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
-            View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
+            //aCamera.Position = new Vector3(-100, 100, 100);
+            //aCamera.View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
+
 
             base.Initialize();
         }
@@ -107,6 +109,31 @@ namespace tanks3d
                 this.Exit();
 
             // TODO: Add your update logic here
+            KeyboardState keyboard = Keyboard.GetState();
+
+            if (keyboard.IsKeyDown(Keys.Up))
+                cameraY++;
+            if (keyboard.IsKeyDown(Keys.Down))
+                cameraY--;
+            if (keyboard.IsKeyDown(Keys.Right))
+                cameraX++;
+            if (keyboard.IsKeyDown(Keys.Left))
+                cameraX--;
+            if (keyboard.IsKeyDown(Keys.PageUp))
+                cameraZ++;
+            if (keyboard.IsKeyDown(Keys.PageDown))
+                cameraZ--;
+            if (keyboard.IsKeyDown(Keys.Escape))
+                this.Exit();
+
+            View = Matrix.CreateLookAt(new Vector3(cameraX, cameraY, cameraZ), Vector3.Zero, Vector3.Down);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
+
+            quadEffect.World = Matrix.Identity;
+            quadEffect.View = View;
+            quadEffect.Projection = Projection;
+            quadEffect.TextureEnabled = true;
+            quadEffect.Texture = texture;
 
             base.Update(gameTime);
         }
@@ -129,6 +156,8 @@ namespace tanks3d
                 //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[1].Vertices, 0, 4, ground[1].Indexes, 0, 2);
 
             }
+
+
 
 
             base.Draw(gameTime);

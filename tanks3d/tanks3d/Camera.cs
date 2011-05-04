@@ -35,6 +35,7 @@ namespace tanks3d
         public Matrix View
         {
             get { return view; }
+            set { view = value; }
         }
 
         public Vector3 Position
