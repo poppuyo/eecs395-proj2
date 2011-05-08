@@ -94,6 +94,10 @@ namespace tanks3d
                     new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
                     new VertexElement(24, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0)
             });
+
+            
+            Song mySong = Content.Load<Song>("Audio\\Bulls");
+            MediaPlayer.Play(mySong);
         }
 
         /// <summary>
