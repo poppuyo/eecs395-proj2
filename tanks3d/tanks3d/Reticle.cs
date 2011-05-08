@@ -28,7 +28,6 @@ namespace tanks3d
 
             Offset = new Vector2((float)sprite.Width / 2f,
                                  (float)sprite.Height / 2f);
-
         }
 
         public override void Update(GameTime gameTime)
@@ -39,8 +38,6 @@ namespace tanks3d
 
         public override void Draw(GameTime gameTime)
         {
-            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             spriteBatch.Begin();
             spriteBatch.Draw(sprite,
                              Position,
