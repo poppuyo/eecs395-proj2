@@ -28,6 +28,14 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
+        Camera aCamera;
+
+        float cameraX = -100f;
+        float cameraY = 100f;
+        float cameraZ = 100f;
+
+        Tank tank1;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -49,6 +57,14 @@ namespace tanks3d
             
             worldCamera = new Camera(this);
             mainHUD = new HUD(this);
+
+            tank1 = new Tank(this);
+            Components.Add(tank1);
+
+
+            //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
+            //aCamera.Position = new Vector3(-100, 100, 100);
+            //aCamera.View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
 
             Components.Add(worldCamera);
             Components.Add(mainHUD);
@@ -79,8 +95,6 @@ namespace tanks3d
                     new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
                     new VertexElement(24, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0)
             });
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -89,7 +103,7 @@ namespace tanks3d
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            Components.Remove(tank1);
         }
 
         /// <summary>
@@ -135,12 +149,7 @@ namespace tanks3d
 
                 GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[0].Vertices, 0, 4, ground[0].Indexes, 0, 2);
                 //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[1].Vertices, 0, 4, ground[1].Indexes, 0, 2);
-
             }
-
-
-
-
             base.Draw(gameTime);
         }
     }
