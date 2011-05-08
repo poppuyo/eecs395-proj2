@@ -29,18 +29,28 @@ namespace tanks3d
 
         public override void Update(GameTime gameTime)
         {
-           modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.1f);
-           base.Update(gameTime);
+            modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.1f);
+
+            // Get some input.
+            //UpdateInput();
+
+            // Add velocity to the current position.
+            //modelPosition += modelVelocity;
+
+            // Bleed off velocity over time.
+            //modelVelocity *= 0.95f;
+
+            base.Update(gameTime);
         }
 
         protected override void LoadContent()
         {
- 	        base.LoadContent();
+            base.LoadContent();
             tank = Game.Content.Load<Model>("Models\\p1_wedge");
             aspectRatio = GraphicsDevice.Viewport.AspectRatio;
         }
 
-        public override void  Draw(GameTime gameTime)
+        public override void Draw(GameTime gameTime)
         {
             Matrix[] transforms = new Matrix[tank.Bones.Count];
             tank.CopyAbsoluteBoneTransformsTo(transforms);
@@ -53,18 +63,51 @@ namespace tanks3d
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = transforms[mesh.ParentBone.Index] * 
+                    effect.World = transforms[mesh.ParentBone.Index] *
                         Matrix.CreateRotationY(modelRotation)
                         * Matrix.CreateTranslation(modelPosition);
-                    effect.View = Matrix.CreateLookAt(cameraPosition, 
+                    effect.View = Matrix.CreateLookAt(cameraPosition,
                         Vector3.Zero, Vector3.Up);
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(
-                        MathHelper.ToRadians(45.0f), aspectRatio, 
+                        MathHelper.ToRadians(45.0f), aspectRatio,
                         1.0f, 10000.0f);
                 }
                 // Draw the mesh, using the effects set above.
                 mesh.Draw();
             }
-       }
+        }
+
+        /*protected void UpdateInput()
+        {
+            // Rotate the model using the left thumbstick, and scale it down
+            modelRotation -= currentState.ThumbSticks.Left.X * 0.10f;
+
+            // Create some velocity if the right trigger is down.
+            Vector3 modelVelocityAdd = Vector3.Zero;
+
+            // Find out what direction we should be thrusting, 
+            // using rotation.
+            modelVelocityAdd.X = -(float)Math.Sin(modelRotation);
+            modelVelocityAdd.Z = -(float)Math.Cos(modelRotation);
+
+            // Now scale our direction by how hard the trigger is down.
+            modelVelocityAdd *= currentState.Triggers.Right;
+
+            // Finally, add this vector to our velocity.
+            modelVelocity += modelVelocityAdd;
+
+            GamePad.SetVibration(PlayerIndex.One,
+                currentState.Triggers.Right,
+                currentState.Triggers.Right);
+
+
+            // In case you get lost, press A to warp back to the center.
+            if (currentState.Buttons.A == ButtonState.Pressed)
+            {
+                modelPosition = Vector3.Zero;
+                modelVelocity = Vector3.Zero;
+                modelRotation = 0.0f;
+            }
+        }*/
     }
 }

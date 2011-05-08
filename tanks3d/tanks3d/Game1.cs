@@ -28,12 +28,6 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Camera aCamera;
-
-        float cameraX = -100f;
-        float cameraY = 100f;
-        float cameraZ = 100f;
-
         Tank tank1;
 
         public Game1()
