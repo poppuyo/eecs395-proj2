@@ -51,6 +51,8 @@ namespace tanks3d
             ground = new TexturedQuad.Quad[1];
             ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
+            Reticle reticle = new Reticle(this);
+            Components.Add(reticle);
 
             //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
             //aCamera.Position = new Vector3(-100, 100, 100);
