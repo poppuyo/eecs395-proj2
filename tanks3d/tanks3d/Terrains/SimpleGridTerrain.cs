@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace tanks3d.Terrains
 {
-    public class SimpleGridTerrain : DrawableGameComponent
+    public class SimpleGridTerrain : DrawableGameComponent, ITerrain
     {
         private Game1 game;
         public int Width;
@@ -62,6 +62,26 @@ namespace tanks3d.Terrains
                 //Draw vertices as Primitive
                 game.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, vertices.ToArray(), 0, vertices.Count / 2);
             }
+        }
+
+        public float GetHeightAt(int x, int z)
+        {
+            return Position.Y;
+        }
+
+        public float GetHeightAt(float x, float z)
+        {
+            return Position.Y;
+        }
+
+        public float GetHeightAt(Vector2 pos)
+        {
+            return Position.Y;
+        }
+
+        public float GetHeightAt(Vector3 pos)
+        {
+            return Position.Y;
         }
     }
 }
