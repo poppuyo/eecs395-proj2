@@ -1,126 +1,87 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+
 
 namespace tanks3d
 {
+    /// <summary>
+    /// This is a game component that implements IUpdateable.
+    /// </summary>
     public class Camera : DrawableGameComponent
     {
-        private static Camera activeCamera = null;
+        public Matrix View, Projection;
 
-        // View and projection
-        private Matrix projection = Matrix.Identity;
-        private Matrix view = Matrix.Identity;
+        public Vector3 Position;
 
-        //
-        private Vector3 position = new Vector3(0, 0, 1000);
-        private Vector3 angle = new Vector3();
-        private float speed = 250f;
-        private float turnSpeed = 90f;
-
-        public static Camera ActiveCamera
-        {
-            get { return activeCamera; }
-            set { activeCamera = value; }
-        }
-
-        public Matrix Projection
-        {
-            get { return projection; }
-        }
-
-        public Matrix View
-        {
-            get { return view; }
-            set { view = value; }
-        }
-
-        public Vector3 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
-
-        public Vector3 Angle
-        {
-            get { return angle; }
-            set { angle = value; }
-        }
 
         public Camera(Game game)
             : base(game)
         {
-            if (ActiveCamera == null)
-                ActiveCamera = this;
+            // TODO: Construct any child components here
+            Position.X = -100f;
+            Position.Y = 100f;
+            Position.Z = 100f;
         }
 
+        /// <summary>
+        /// Allows the game component to perform any initialization it needs to before starting
+        /// to run.  This is where it can query for any required services and load content.
+        /// </summary>
         public override void Initialize()
         {
-            int centerX = Game.Window.ClientBounds.Width / 2;
-            int centerY = Game.Window.ClientBounds.Width / 2;
+            // TODO: Add your initialization code here
 
-            Mouse.SetPosition(centerX, centerY);
+            View = Matrix.CreateLookAt(Position, Vector3.Zero, Vector3.Down);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
 
             base.Initialize();
         }
 
-        protected override void LoadContent()
-        {
-            float ratio = (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height;
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, ratio, 10, 10000);
-
-        }
-
+        /// <summary>
+        /// Allows the game component to update itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // TODO: Add your update code here
 
             KeyboardState keyboard = Keyboard.GetState();
-            MouseState mouse = Mouse.GetState();
-
-            int centerX = Game.Window.ClientBounds.Width / 2;
-            int centerY = Game.Window.ClientBounds.Width / 2;
-
-            Mouse.SetPosition(centerX, centerY);
-
-            angle.X += MathHelper.ToRadians((mouse.Y - centerY) * turnSpeed * 0.01f); // pitch
-            angle.Y += MathHelper.ToRadians((mouse.X - centerX) * turnSpeed * 0.01f); // yaw
-
-            Vector3 forward = Vector3.Normalize(new Vector3((float)Math.Sin(-angle.Y), (float)Math.Sin(angle.X), (float)Math.Cos(-angle.Y)));
-            Vector3 left = Vector3.Normalize(new Vector3((float)Math.Cos(angle.Y), 0f, (float)Math.Sin(angle.Y)));
 
             if (keyboard.IsKeyDown(Keys.Up))
-                position -= forward * speed * delta;
-
+                Position.Y++;
             if (keyboard.IsKeyDown(Keys.Down))
-                position += forward * speed * delta;
-
+                Position.Y--;
             if (keyboard.IsKeyDown(Keys.Right))
-                position -= left * speed * delta;
-
+                Position.X++;
             if (keyboard.IsKeyDown(Keys.Left))
-                position += left * speed * delta;
-
+                Position.X--;
             if (keyboard.IsKeyDown(Keys.PageUp))
-                position += Vector3.Down * speed * delta;
-
+                Position.Z++;
             if (keyboard.IsKeyDown(Keys.PageDown))
-                position += Vector3.Up * speed * delta;
+                Position.Z--;
 
-            if (keyboard.IsKeyDown(Keys.Escape))
-                Game.Exit();
-
-            view = Matrix.Identity;
-            view *= Matrix.CreateTranslation(-position);
-            view *= Matrix.CreateRotationZ(angle.Z);
-            view *= Matrix.CreateRotationY(angle.Y);
-            view *= Matrix.CreateRotationX(angle.X);
+            View = Matrix.CreateLookAt(Position, Vector3.Zero, Vector3.Down);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
 
             base.Update(gameTime);
         }
-    }
 
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        public override void Draw(GameTime gameTime)
+        {
+
+            base.Draw(gameTime);
+        }
+    }
 }
