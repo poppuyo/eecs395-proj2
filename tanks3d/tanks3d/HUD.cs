@@ -23,7 +23,7 @@ namespace tanks3d
         SpriteBatch spriteBatch;
 
         protected Game1 game;
-        protected Cameras.OldCamera camera;
+        protected Cameras.FPSCamera camera;
 
         public HUD(Game g)
             : base(g)
@@ -57,6 +57,7 @@ namespace tanks3d
 
             spriteBatch.Begin();
 
+            /*
             temp = String.Format("{0:000},{1:000},{2:000}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
             text = "Camera Position: (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 0), Color.Black);
@@ -68,6 +69,7 @@ namespace tanks3d
             temp = String.Format("{0:000},{1:000},{2:000}", MathHelper.ToDegrees(game.worldCamera.Angle.X), MathHelper.ToDegrees(game.worldCamera.Angle.Y), MathHelper.ToDegrees(game.worldCamera.Angle.Z));
             text = "Rotation (Angle): (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
+             */ 
 
             spriteBatch.End();
 
