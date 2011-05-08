@@ -43,7 +43,7 @@ namespace tanks3d.Cameras
 
             float viewAngle = MathHelper.PiOver4;
             float nearPlane = 0.5f;
-            float farPlane = 1000.0f;
+            float farPlane = 5000.0f;
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(viewAngle, viewPort.AspectRatio, nearPlane, farPlane);
 
             UpdateViewMatrix();
