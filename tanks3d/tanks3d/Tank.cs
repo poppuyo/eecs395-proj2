@@ -53,11 +53,11 @@ namespace tanks3d
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = transforms[mesh.ParentBone.Index] * 
-                        Matrix.CreateRotationY(modelRotation)
+                    effect.World = transforms[mesh.ParentBone.Index]
+                        * Matrix.CreateRotationY(modelRotation)
+                        * Matrix.CreateScale(0.1f)
                         * Matrix.CreateTranslation(modelPosition);
-                    effect.View = Matrix.CreateLookAt(cameraPosition, 
-                        Vector3.Zero, Vector3.Up);
+                    effect.View = game.worldCamera.ViewMatrix;
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(
                         MathHelper.ToRadians(45.0f), aspectRatio, 
                         1.0f, 10000.0f);

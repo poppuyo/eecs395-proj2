@@ -28,11 +28,12 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Cameras.FPSCamera aCamera;
-
+        //Cameras.FPSCamera aCamera;
+        /*
         float cameraX = -100f;
         float cameraY = 100f;
         float cameraZ = 100f;
+        */
 
         Tank tank1;
 
@@ -55,7 +56,8 @@ namespace tanks3d
             ground = new TexturedQuad.Quad[1];
             ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
-            worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport);
+            worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport,
+                new Vector3(-100f, 100f, 100f), 0.0f, 0.0f);
             mainHUD = new HUD(this);
 
             tank1 = new Tank(this);
@@ -112,18 +114,14 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState keyboard = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
+
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
-            // TODO: Add your update logic here
-
-            KeyboardState keyboard = Keyboard.GetState();
-
             if (keyboard.IsKeyDown(Keys.Escape))
                 this.Exit();
-
-            MouseState mouseState = Mouse.GetState();
 
             worldCamera.Update(mouseState, keyboard);
 
