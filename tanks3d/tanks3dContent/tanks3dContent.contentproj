@@ -88,20 +88,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Bullet_UV2.tga">
-      <Name>Bullet_UV2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\lowpolybullet.fbx">
-      <Name>lowpolybullet</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\SHOTGUN_CART_FBX.fbx">
       <Name>SHOTGUN_CART_FBX</Name>
       <Importer>FbxImporter</Importer>
