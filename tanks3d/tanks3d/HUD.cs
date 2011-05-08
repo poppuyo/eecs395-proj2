@@ -28,7 +28,7 @@ namespace tanks3d
         public HUD(Game g)
             : base(g)
         {
-            game = (Game1) g;
+            game = (Game1)g;
         }
 
         protected override void LoadContent()
@@ -64,6 +64,10 @@ namespace tanks3d
             temp = String.Format("{0:000},{1:000},{2:000}", game.worldCamera.LookAt.X, game.worldCamera.LookAt.Y, game.worldCamera.LookAt.Z);
             text = "LookAt Position: (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
+
+            temp = String.Format("{0:000},{1:000},{2:000}", MathHelper.ToDegrees(game.worldCamera.Angle.X), MathHelper.ToDegrees(game.worldCamera.Angle.Y), MathHelper.ToDegrees(game.worldCamera.Angle.Z));
+            text = "Rotation (Angle): (" + temp + ")\n";
+            spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
 
             spriteBatch.End();
 
