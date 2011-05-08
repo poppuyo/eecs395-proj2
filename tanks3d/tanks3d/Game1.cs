@@ -22,13 +22,13 @@ namespace tanks3d
         TexturedQuad.Quad[] ground;
         VertexDeclaration vertexDeclaration;
 
-        public Camera worldCamera;
+        public Cameras.OldCamera worldCamera;
         public HUD mainHUD;
 
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Camera aCamera;
+        Cameras.OldCamera aCamera;
 
         float cameraX = -100f;
         float cameraY = 100f;
@@ -55,7 +55,7 @@ namespace tanks3d
             ground = new TexturedQuad.Quad[1];
             ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
             
-            worldCamera = new Camera(this);
+            worldCamera = new Cameras.OldCamera(this);
             mainHUD = new HUD(this);
 
             tank1 = new Tank(this);

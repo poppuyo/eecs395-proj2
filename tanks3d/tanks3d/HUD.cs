@@ -23,7 +23,7 @@ namespace tanks3d
         SpriteBatch spriteBatch;
 
         protected Game1 game;
-        protected Camera camera;
+        protected Cameras.OldCamera camera;
 
         public HUD(Game g)
             : base(g)

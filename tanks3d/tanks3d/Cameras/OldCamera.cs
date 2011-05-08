@@ -10,17 +10,17 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 
-namespace tanks3d
+namespace tanks3d.Cameras
 {
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Camera : DrawableGameComponent
+    public class OldCamera : DrawableGameComponent
     {
         public Matrix View, Projection;
         public Vector3 Position, LookAt, Angle;
 
-        public Camera(Game game)
+        public OldCamera(Game game)
             : base(game)
         {
             // TODO: Construct any child components here
