@@ -17,8 +17,8 @@ namespace tanks3d
     /// </summary>
     public class Camera : DrawableGameComponent
     {
-        public Matrix View, Projection, Rotation;
-        public Vector3 Position, LookAt;
+        public Matrix View, Projection;
+        public Vector3 Position, LookAt, Angle;
 
         public Camera(Game game)
             : base(game)
@@ -28,6 +28,7 @@ namespace tanks3d
             Position.Y = 100f;
             Position.Z = 100f;
 
+            Angle = Vector3.Zero;
             LookAt = Vector3.Zero;
 
         }
@@ -113,14 +114,31 @@ namespace tanks3d
                 LookAt.Z--;
             }
 
+            if (keyboard.IsKeyDown(Keys.U))
+                Angle.X += MathHelper.ToRadians(1);
+            if (keyboard.IsKeyDown(Keys.J))
+                Angle.X -= MathHelper.ToRadians(1);
+            if (keyboard.IsKeyDown(Keys.I))
+                Angle.Y += MathHelper.ToRadians(1);
+            if (keyboard.IsKeyDown(Keys.K))
+                Angle.Y -= MathHelper.ToRadians(1);
+            if (keyboard.IsKeyDown(Keys.O))
+                Angle.Z += MathHelper.ToRadians(1);
+            if (keyboard.IsKeyDown(Keys.L))
+                Angle.Z -= MathHelper.ToRadians(1);
+
             if (keyboard.IsKeyDown(Keys.R))
             {
                 LookAt = Vector3.Zero;
+                Angle = Vector3.Zero;
                 Position = new Vector3(-100f, 100f, 100f);
             }
 
             View = Matrix.CreateLookAt(Position, LookAt, Vector3.Up);
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
+            View *= Matrix.CreateRotationX(Angle.X);
+            View *= Matrix.CreateRotationY(Angle.Y);
+            View *= Matrix.CreateRotationZ(Angle.Z);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 2000);
 
             base.Update(gameTime);
         }

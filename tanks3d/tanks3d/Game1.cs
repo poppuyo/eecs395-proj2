@@ -55,6 +55,8 @@ namespace tanks3d
             tank1 = new Tank(this);
             Components.Add(tank1);
 
+            Reticle reticle = new Reticle(this);
+            Components.Add(reticle);
 
             //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
             //aCamera.Position = new Vector3(-100, 100, 100);
