@@ -22,7 +22,7 @@ namespace tanks3d
         TexturedQuad.Quad[] ground;
         VertexDeclaration vertexDeclaration;
 
-        Terrains.SimpleGridTerrain terrain;
+        ITerrain terrain;
 
         public Cameras.FPSCamera worldCamera;
         public HUD mainHUD;
@@ -56,7 +56,8 @@ namespace tanks3d
                 new Vector3(-100f, 100f, 100f), 0.0f, 0.0f);
             mainHUD = new HUD(this);
 
-            terrain = new Terrains.SimpleGridTerrain(this);
+            //terrain = new Terrains.SimpleGridTerrain(this);
+            terrain = new Terrains.HeightmapTerrain(this);
             Components.Add(terrain);
 
             tank1 = new Tank(this);
