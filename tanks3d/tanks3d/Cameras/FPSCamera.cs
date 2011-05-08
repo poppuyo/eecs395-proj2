@@ -26,7 +26,7 @@ namespace tanks3d.Cameras
         float updownRot;
         const float rotationSpeed = 0.005f;
         Vector3 cameraPosition;
-        MouseState originalMouseState;
+        MouseState previousMouseState;
 
         public FPSCamera(Viewport viewPort)
             : this(viewPort, new Vector3(0, 1, 15), 0, 0)
@@ -48,20 +48,27 @@ namespace tanks3d.Cameras
 
             UpdateViewMatrix();
             Mouse.SetPosition(viewPort.Width / 2, viewPort.Height / 2);
-            originalMouseState = Mouse.GetState();
+            previousMouseState = Mouse.GetState();
         }
 
         public void Update(MouseState currentMouseState, KeyboardState keyState)
         {
-            if (currentMouseState != originalMouseState)
+            if (previousMouseState.LeftButton == ButtonState.Released
+                && currentMouseState.LeftButton == ButtonState.Pressed)
             {
-                float xDifference = currentMouseState.X - originalMouseState.X;
-                float yDifference = currentMouseState.Y - originalMouseState.Y;
-                leftrightRot -= rotationSpeed * xDifference;
-                updownRot -= rotationSpeed * yDifference;
-                Mouse.SetPosition(viewPort.Width / 2, viewPort.Height / 2);
+                previousMouseState = currentMouseState;
+            }
+
+            if (currentMouseState.LeftButton == ButtonState.Pressed && currentMouseState != previousMouseState)
+            {
+                float xDifference = currentMouseState.X - previousMouseState.X;
+                float yDifference = currentMouseState.Y - previousMouseState.Y;
+                leftrightRot += rotationSpeed * xDifference;
+                updownRot += rotationSpeed * yDifference;
                 UpdateViewMatrix();
             }
+
+            previousMouseState = currentMouseState;
 
             if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))      //Forward
                 AddToCameraPosition(new Vector3(0, 0, -1));
