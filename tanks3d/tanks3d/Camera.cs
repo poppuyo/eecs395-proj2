@@ -17,10 +17,8 @@ namespace tanks3d
     /// </summary>
     public class Camera : DrawableGameComponent
     {
-        public Matrix View, Projection;
-
-        public Vector3 Position;
-
+        public Matrix View, Projection, Rotation;
+        public Vector3 Position, LookAt;
 
         public Camera(Game game)
             : base(game)
@@ -29,6 +27,9 @@ namespace tanks3d
             Position.X = -100f;
             Position.Y = 100f;
             Position.Z = 100f;
+
+            LookAt = Vector3.Zero;
+
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace tanks3d
         {
             // TODO: Add your initialization code here
 
-            View = Matrix.CreateLookAt(Position, Vector3.Zero, Vector3.Down);
+            View = Matrix.CreateLookAt(Position, LookAt, Vector3.Up);
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
 
             base.Initialize();
@@ -55,20 +56,70 @@ namespace tanks3d
 
             KeyboardState keyboard = Keyboard.GetState();
 
-            if (keyboard.IsKeyDown(Keys.Up))
-                Position.Y++;
-            if (keyboard.IsKeyDown(Keys.Down))
-                Position.Y--;
-            if (keyboard.IsKeyDown(Keys.Right))
+            if (keyboard.IsKeyDown(Keys.Q))
+                LookAt.X++;
+            if (keyboard.IsKeyDown(Keys.A))
+                LookAt.X--;
+            if (keyboard.IsKeyDown(Keys.W))
+                LookAt.Y++;
+            if (keyboard.IsKeyDown(Keys.S))
+                LookAt.Y--;
+            if (keyboard.IsKeyDown(Keys.E))
+                LookAt.Z++;
+            if (keyboard.IsKeyDown(Keys.D))
+                LookAt.Z--;
+
+            if (keyboard.IsKeyDown(Keys.Insert))
                 Position.X++;
-            if (keyboard.IsKeyDown(Keys.Left))
+            if (keyboard.IsKeyDown(Keys.Delete))
                 Position.X--;
+            if (keyboard.IsKeyDown(Keys.Home))
+                Position.Y++;
+            if (keyboard.IsKeyDown(Keys.End))
+                Position.Y--;
             if (keyboard.IsKeyDown(Keys.PageUp))
                 Position.Z++;
             if (keyboard.IsKeyDown(Keys.PageDown))
                 Position.Z--;
 
-            View = Matrix.CreateLookAt(Position, Vector3.Zero, Vector3.Down);
+            if (keyboard.IsKeyDown(Keys.NumPad7))
+            {
+                Position.X++;
+                LookAt.X++;
+            }
+            if (keyboard.IsKeyDown(Keys.NumPad4))
+            {
+                Position.X--;
+                LookAt.X--;
+            }
+            if (keyboard.IsKeyDown(Keys.NumPad8))
+            {
+                Position.Y++;
+                LookAt.Y++;
+            }
+            if (keyboard.IsKeyDown(Keys.NumPad5))
+            {
+                Position.Y--;
+                LookAt.Y--;
+            }
+            if (keyboard.IsKeyDown(Keys.NumPad9))
+            {
+                Position.Z++;
+                LookAt.Z++;
+            }
+            if (keyboard.IsKeyDown(Keys.NumPad6))
+            {
+                Position.Z--;
+                LookAt.Z--;
+            }
+
+            if (keyboard.IsKeyDown(Keys.R))
+            {
+                LookAt = Vector3.Zero;
+                Position = new Vector3(-100f, 100f, 100f);
+            }
+
+            View = Matrix.CreateLookAt(Position, LookAt, Vector3.Up);
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1, 500);
 
             base.Update(gameTime);
