@@ -116,6 +116,8 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Quad.cs" />
     <Compile Include="Reticle.cs" />
+    <Compile Include="Terrains\SimpleGridTerrain.cs" />
+    <Compile Include="Utility\SkeletonDrawableGameComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

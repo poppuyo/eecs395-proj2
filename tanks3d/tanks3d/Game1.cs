@@ -22,18 +22,13 @@ namespace tanks3d
         TexturedQuad.Quad[] ground;
         VertexDeclaration vertexDeclaration;
 
+        Terrains.SimpleGridTerrain terrain;
+
         public Cameras.FPSCamera worldCamera;
         public HUD mainHUD;
 
         Texture2D texture;
         BasicEffect quadEffect;
-
-        //Cameras.FPSCamera aCamera;
-        /*
-        float cameraX = -100f;
-        float cameraY = 100f;
-        float cameraZ = 100f;
-        */
 
         Tank tank1;
 
@@ -59,6 +54,9 @@ namespace tanks3d
             worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport,
                 new Vector3(-100f, 100f, 100f), 0.0f, 0.0f);
             mainHUD = new HUD(this);
+
+            terrain = new Terrains.SimpleGridTerrain(this);
+            Components.Add(terrain);
 
             tank1 = new Tank(this);
             Components.Add(tank1);
