@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bullet.cs" />
     <Compile Include="Cameras\FPSCamera.cs" />
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Tank.cs" />

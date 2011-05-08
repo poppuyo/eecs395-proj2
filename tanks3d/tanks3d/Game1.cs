@@ -31,6 +31,7 @@ namespace tanks3d
         BasicEffect quadEffect;
 
         Tank tank1;
+        Bullet bullet1;
 
         public Game1()
         {
@@ -60,6 +61,9 @@ namespace tanks3d
 
             tank1 = new Tank(this);
             Components.Add(tank1);
+
+            bullet1 = new Bullet(this);
+            Components.Add(bullet1);
 
             Reticle reticle = new Reticle(this);
             Components.Add(reticle);
