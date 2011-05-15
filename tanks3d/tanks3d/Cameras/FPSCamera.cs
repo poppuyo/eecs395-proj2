@@ -18,9 +18,21 @@ namespace tanks3d.Cameras
 {
     public class FPSCamera
     {
+        enum CameraState
+        {
+            Standard,
+            BulletView
+        };
+
+        Vector3 cameraVelocity = Vector3.Zero;
+
+        CameraState currentState = CameraState.Standard;
+
         Matrix viewMatrix;
         Matrix projectionMatrix;
         Viewport viewPort;
+
+        int held = 0;
 
         float leftrightRot;
         float updownRot;
@@ -53,35 +65,73 @@ namespace tanks3d.Cameras
 
         public void Update(MouseState currentMouseState, KeyboardState keyState)
         {
-            if (previousMouseState.LeftButton == ButtonState.Released
-                && currentMouseState.LeftButton == ButtonState.Pressed)
+            switch (currentState)
             {
-                previousMouseState = currentMouseState;
+                case CameraState.Standard:
+                    if (previousMouseState.LeftButton == ButtonState.Released && currentMouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        previousMouseState = currentMouseState;
+                    }
+
+                    if (currentMouseState.LeftButton == ButtonState.Pressed && currentMouseState != previousMouseState)
+                    {
+                        float xDifference = currentMouseState.X - previousMouseState.X;
+                        float yDifference = currentMouseState.Y - previousMouseState.Y;
+                        leftrightRot += rotationSpeed * xDifference;
+                        updownRot += rotationSpeed * yDifference;
+                        UpdateViewMatrix();
+                    }
+
+                    previousMouseState = currentMouseState;
+
+                    if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))      //Forward
+                        AddToCameraPosition(new Vector3(0, 0, -1));
+                    if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S))    //Backward
+                        AddToCameraPosition(new Vector3(0, 0, 1));
+                    if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D))   //Right
+                        AddToCameraPosition(new Vector3(1, 0, 0));
+                    if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A))    //Left
+                        AddToCameraPosition(new Vector3(-1, 0, 0));
+                    if (keyState.IsKeyDown(Keys.Q))                                     //Up
+                        AddToCameraPosition(new Vector3(0, 1, 0));
+                    if (keyState.IsKeyDown(Keys.Z))                                     //Down
+                        AddToCameraPosition(new Vector3(0, -1, 0));
+                    if (keyState.IsKeyDown(Keys.Space))
+                    {
+                        held++;
+                        if (held > 50)
+                        {
+                            currentState = CameraState.BulletView;
+                            cameraVelocity = new Vector3(5, 50, 0);
+                            Console.WriteLine("HI!");
+                            held = 0;
+                        }
+                        Console.WriteLine("Held: " + held);
+                    }
+
+                        
+                    break;
+
+                case CameraState.BulletView:
+                    if (keyState.IsKeyDown(Keys.Space))
+                    {
+                        held++;
+                        if (held > 50)
+                        {
+                            currentState = CameraState.Standard;
+                            held = 0;
+                        }
+                    }
+                    AddToCameraPosition(cameraVelocity);
+                    cameraVelocity -= new Vector3(0, 2, 0);
+                    if (cameraPosition.Y <= 0)
+                        currentState = CameraState.Standard;
+                    break;
+                default:
+                    break;
             }
 
-            if (currentMouseState.LeftButton == ButtonState.Pressed && currentMouseState != previousMouseState)
-            {
-                float xDifference = currentMouseState.X - previousMouseState.X;
-                float yDifference = currentMouseState.Y - previousMouseState.Y;
-                leftrightRot += rotationSpeed * xDifference;
-                updownRot += rotationSpeed * yDifference;
-                UpdateViewMatrix();
-            }
 
-            previousMouseState = currentMouseState;
-
-            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))      //Forward
-                AddToCameraPosition(new Vector3(0, 0, -1));
-            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S))    //Backward
-                AddToCameraPosition(new Vector3(0, 0, 1));
-            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D))   //Right
-                AddToCameraPosition(new Vector3(1, 0, 0));
-            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A))    //Left
-                AddToCameraPosition(new Vector3(-1, 0, 0));
-            if (keyState.IsKeyDown(Keys.Q))                                     //Up
-                AddToCameraPosition(new Vector3(0, 1, 0));
-            if (keyState.IsKeyDown(Keys.Z))                                     //Down
-                AddToCameraPosition(new Vector3(0, -1, 0));
         }
 
         private void AddToCameraPosition(Vector3 vectorToAdd)
@@ -97,8 +147,24 @@ namespace tanks3d.Cameras
         {
             Matrix cameraRotation = Matrix.CreateRotationX(updownRot) * Matrix.CreateRotationY(leftrightRot);
 
-            Vector3 cameraOriginalTarget = new Vector3(0, 0, -1);
-            Vector3 cameraOriginalUpVector = new Vector3(0, 1, 0);
+            Vector3 cameraOriginalTarget = Vector3.Zero;
+            Vector3 cameraOriginalUpVector = Vector3.Zero;
+
+            switch (currentState)
+            {
+                case CameraState.Standard:
+                    cameraOriginalTarget = new Vector3(0, 0, -1);
+                    cameraOriginalUpVector = new Vector3(0, 1, 0);
+                    break;
+                case CameraState.BulletView:
+                    Vector3 unitVec = Vector3.Normalize(cameraVelocity);
+                    cameraOriginalTarget = cameraPosition + (unitVec * 10);
+                    cameraOriginalUpVector = new Vector3(0, 1, 0);
+                    //cameraOriginalUpVector = -Vector3.Cross(Vector3.Cross(unitVec, Vector3.Up), unitVec);
+                    break;
+                default:
+                    break;
+            }
 
             Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, cameraRotation);
             Vector3 cameraFinalTarget = cameraPosition + cameraRotatedTarget;
@@ -149,6 +215,12 @@ namespace tanks3d.Cameras
                 Vector3 cameraFinalTarget = cameraPosition + cameraRotatedTarget;
                 return cameraFinalTarget;
             }
+
+            set
+            {
+                Vector3 sideVec = Vector3.Cross(Vector3.Up, value);
+                UpVector = Vector3.Cross(value, sideVec);
+            }
         }
         public Vector3 Forward
         {
@@ -170,6 +242,9 @@ namespace tanks3d.Cameras
                 return cameraRotatedSide;
             }
         }
+
+        private Vector3 CameraUpVector;
+
         public Vector3 UpVector
         {
             get
@@ -178,6 +253,11 @@ namespace tanks3d.Cameras
                 Vector3 cameraOriginalUp = new Vector3(0, 1, 0);
                 Vector3 cameraRotatedUp = Vector3.Transform(cameraOriginalUp, cameraRotation);
                 return cameraRotatedUp;
+            }
+
+            set
+            {
+                CameraUpVector = value;
             }
         }
     }
