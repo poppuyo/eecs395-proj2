@@ -23,6 +23,7 @@ namespace tanks3d
         VertexDeclaration vertexDeclaration;
 
         Model terrain;
+        HeightMapInfo heightMapInfo;
         Sky sky;
 
         public Cameras.FPSCamera worldCamera;
@@ -86,6 +87,19 @@ namespace tanks3d
         protected override void LoadContent()
         {
             terrain = Content.Load<Model>("terrain");
+
+            // The terrain processor attached a HeightMapInfo to the terrain model's
+            // Tag. We'll save that to a member variable now, and use it to
+            // calculate the terrain's heights later.
+            heightMapInfo = terrain.Tag as HeightMapInfo;
+            if (heightMapInfo == null)
+            {
+                string message = "The terrain model did not have a HeightMapInfo " +
+                    "object attached. Are you sure you are using the " +
+                    "TerrainProcessor?";
+                throw new InvalidOperationException(message);
+            }
+
             sky = Content.Load<Sky>("sky");
 
             // Create a new SpriteBatch, which can be used to draw textures.
