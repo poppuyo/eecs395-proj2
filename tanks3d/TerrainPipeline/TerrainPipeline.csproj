@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HeightMapInfoContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkyContent.cs" />
     <Compile Include="SkyProcessor.cs" />

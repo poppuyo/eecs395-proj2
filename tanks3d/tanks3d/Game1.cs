@@ -203,10 +203,10 @@ namespace tanks3d
 
                     // Set the fog to match the distant mountains
                     // that are drawn into the sky texture.
-                    effect.FogEnabled = true;
+                    effect.FogEnabled = false;
                     effect.FogColor = new Vector3(0.15f);
-                    effect.FogStart = 100;
-                    effect.FogEnd = 320;
+                    effect.FogStart = 100*2;
+                    effect.FogEnd = 320*5;
                 }
 
                 mesh.Draw();
