@@ -30,6 +30,8 @@ namespace tanks3d
 
         public override void Draw(GameTime gameTime)
         {
+            // This must be called after spriteBatch.end() in order to not mess up 3D rendering.
+            game.DoSpriteBatchFix();
         }
     }
 }

@@ -74,6 +74,7 @@ namespace tanks3d
              */
 
             spriteBatch.End();
+            game.DoSpriteBatchFix();
 
             base.Draw(gameTime);
         }

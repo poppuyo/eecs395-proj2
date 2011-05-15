@@ -10,9 +10,13 @@ namespace tanks3d
 {
     class Reticle : DrawableGameComponent 
     {
-        public Reticle(Game g)
+
+        private Game1 game;
+
+        public Reticle(Game1 g)
             : base(g)
         {
+            game = g;
             Position = new Vector2(0, 0);
         }
         
@@ -49,12 +53,7 @@ namespace tanks3d
                              SpriteEffects.None,
                              0);
             spriteBatch.End();
-
-            // Restore rendering states.
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            game.DoSpriteBatchFix();
         }
-
     }
 }

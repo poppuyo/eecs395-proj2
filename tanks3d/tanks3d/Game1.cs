@@ -175,6 +175,13 @@ namespace tanks3d
             base.Draw(gameTime);
         }
 
+        public void DoSpriteBatchFix()
+        {
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+        }
+
         /// <summary>
         /// Helper for drawing the terrain model.
         /// </summary>
