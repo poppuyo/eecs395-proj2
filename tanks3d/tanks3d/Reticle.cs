@@ -49,6 +49,11 @@ namespace tanks3d
                              SpriteEffects.None,
                              0);
             spriteBatch.End();
+
+            // Restore rendering states.
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
         }
 
     }

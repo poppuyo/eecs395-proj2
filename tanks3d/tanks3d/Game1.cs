@@ -22,7 +22,8 @@ namespace tanks3d
         TexturedQuad.Quad[] ground;
         VertexDeclaration vertexDeclaration;
 
-        ITerrain terrain;
+        Model terrain;
+        Sky sky;
 
         public Cameras.FPSCamera worldCamera;
         public HUD mainHUD;
@@ -49,22 +50,22 @@ namespace tanks3d
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            ground = new TexturedQuad.Quad[1];
-            ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
+            //ground = new TexturedQuad.Quad[1];
+            //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
             worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport,
-                new Vector3(-100f, 100f, 100f), 0.0f, 0.0f);
-            mainHUD = new HUD(this);
+                new Vector3(64f, 0f, 64f), 0.0f, 0.0f);
+            //mainHUD = new HUD(this);
 
             //terrain = new Terrains.SimpleGridTerrain(this);
-            terrain = new Terrains.HeightmapTerrain(this);
-            Components.Add(terrain);
+            //terrain = new Terrains.HeightmapTerrain(this);
+            //Components.Add(terrain);
 
             tank1 = new Tank(this);
             Components.Add(tank1);
 
-            bullet1 = new Bullet(this);
-            Components.Add(bullet1);
+            //bullet1 = new Bullet(this);
+            //Components.Add(bullet1);
 
             Reticle reticle = new Reticle(this);
             Components.Add(reticle);
@@ -74,7 +75,7 @@ namespace tanks3d
             //aCamera.View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
 
             //Components.Add(worldCamera);
-            Components.Add(mainHUD);
+            //Components.Add(mainHUD);
             base.Initialize();
         }
 
@@ -84,6 +85,9 @@ namespace tanks3d
         /// </summary>
         protected override void LoadContent()
         {
+            terrain = Content.Load<Model>("terrain");
+            sky = Content.Load<Sky>("sky");
+
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Content.Load<Texture2D>("64x64");
@@ -146,8 +150,15 @@ namespace tanks3d
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            /*
+            spriteBatch.Begin();
+            spriteBatch.Draw(texture, new Rectangle(0, 0, 64, 64), Color.White);
+            spriteBatch.End();
+            */
+
             // TODO: Add your drawing code here
 
+            /*
             foreach(EffectPass pass in quadEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -155,7 +166,44 @@ namespace tanks3d
                 GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[0].Vertices, 0, 4, ground[0].Indexes, 0, 2);
                 //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[1].Vertices, 0, 4, ground[1].Indexes, 0, 2);
             }
+            */
+
+            DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
+            sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Helper for drawing the terrain model.
+        /// </summary>
+        void DrawTerrain(Matrix view, Matrix projection)
+        {
+            foreach (ModelMesh mesh in terrain.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.View = view;
+                    effect.Projection = projection;
+
+                    effect.EnableDefaultLighting();
+                    //effect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f); 
+
+                    // Set the specular lighting to match the sky color.
+                    effect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
+                    effect.SpecularPower = 8;
+
+                    // Set the fog to match the distant mountains
+                    // that are drawn into the sky texture.
+                    effect.FogEnabled = true;
+                    effect.FogColor = new Vector3(0.15f);
+                    effect.FogStart = 100;
+                    effect.FogEnd = 320;
+                }
+
+                mesh.Draw();
+            }
         }
     }
 }

@@ -129,7 +129,7 @@
       <Name>Bulls</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
-	</Compile>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\SHOTGUN_CART_FBX.fbx">
@@ -158,6 +158,24 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="sky.bmp">
+      <Name>sky</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>SkyProcessor</Processor>
+    </Compile>
+    <Compile Include="terrain.bmp">
+      <Name>terrain</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TerrainProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TerrainPipeline\TerrainPipeline.csproj">
+      <Project>{EF37345A-3BB3-498E-A2A3-F831DE78269B}</Project>
+      <Name>TerrainPipeline</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
