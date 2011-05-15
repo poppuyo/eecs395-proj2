@@ -65,7 +65,7 @@ namespace tanks3d
                     effect.EnableDefaultLighting();
                     effect.World = transforms[mesh.ParentBone.Index]
                         * Matrix.CreateRotationY(modelRotation)
-                        * Matrix.CreateScale(0.1f)
+                        * Matrix.CreateScale(0.01f)
                         * Matrix.CreateTranslation(modelPosition);
                     effect.View = game.worldCamera.ViewMatrix;
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(
