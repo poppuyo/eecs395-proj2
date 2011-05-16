@@ -42,6 +42,10 @@ namespace tanks3d
             graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
+
+            // Make the window resizable
+            this.Window.AllowUserResizing = true;
+            this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
         }
 
         /// <summary>
@@ -240,6 +244,15 @@ namespace tanks3d
 
                 mesh.Draw();
             }
+        }
+
+        /// <summary>
+        /// This gets called when the game window is resized.
+        /// </summary>
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            // Make changes to handle the new window size.   
+
         }
     }
 }
