@@ -19,6 +19,12 @@ namespace tanks3d
 
         public List<IPrimitive> primitives = new List<IPrimitive>();
 
+        public SpherePrimitive spherePrimitive;
+        public CubePrimitive cubePrimitive;
+        public CylinderPrimitive cylinderPrimitive;
+
+        BasicEffect noLightingEffect;       // Used for drawing lines
+
         public interface IPrimitive
         {
             void Draw();
@@ -41,41 +47,26 @@ namespace tanks3d
 
         private struct Cube : IPrimitive, IEquatable<IPrimitive>
         {
-            public GeometricPrimitive primitive;
+            public CubePrimitive theCubePrimitive;
             public Game1 game;
             public Matrix worldMatrix;
             public Vector3 position;
             public Color color;
             public float size;
-            public bool initialized;
 
-            public Cube(Vector3 pos, float size, Color color, Game1 g)
+            public Cube(CubePrimitive theCubePrimitive, Vector3 pos, float size, Color color, Game1 g)
             {
                 game = g;
                 position = pos;
                 this.size = size;
                 this.color = color;
-
-                initialized = false;
-                worldMatrix = Matrix.Identity;
-                primitive = null;
-            }
-
-            public void LoadContent()
-            {
-                primitive = new CubePrimitive(game.GraphicsDevice, size);
-                worldMatrix = Matrix.CreateTranslation(position);
-                initialized = true;
+                this.theCubePrimitive = theCubePrimitive;
+                worldMatrix = Matrix.CreateScale(size) * Matrix.CreateTranslation(position);
             }
 
             public void Draw()
             {
-                if (!initialized)
-                {
-                    LoadContent();
-                }
-
-                primitive.Draw(worldMatrix, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, color);
+                theCubePrimitive.Draw(worldMatrix, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, color);
             }
 
             public bool Equals(IPrimitive otherPrimitive)
@@ -93,40 +84,26 @@ namespace tanks3d
 
         private struct Sphere : IPrimitive, IEquatable<IPrimitive>
         {
-            public GeometricPrimitive primitive;
+            public SpherePrimitive theSpherePrimitive;
             public Game1 game;
             public Matrix worldMatrix;
             public Vector3 position;
             public Color color;
             public float size;
-            public bool initialized;
 
-            public Sphere(Vector3 pos, float size, Color color, Game1 g)
+            public Sphere(SpherePrimitive theSpherePrimitive, Vector3 pos, float size, Color color, Game1 g)
             {
                 game = g;
                 position = pos;
-                worldMatrix = Matrix.CreateTranslation(pos);
+                worldMatrix = Matrix.CreateScale(size) * Matrix.CreateTranslation(pos);
                 this.color = color;
                 this.size = size;
-
-                initialized = false;
-                primitive = null;
-            }
-
-            public void LoadContent()
-            {
-                primitive = new SpherePrimitive(game.GraphicsDevice, size, 24);
-                initialized = true;
+                this.theSpherePrimitive = theSpherePrimitive;
             }
 
             public void Draw()
             {
-                if (!initialized)
-                {
-                    LoadContent();
-                }
-
-                primitive.Draw(worldMatrix, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, color);
+                theSpherePrimitive.Draw(worldMatrix, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, color);
             }
 
             public bool Equals(IPrimitive otherPrimitive)
@@ -144,32 +121,23 @@ namespace tanks3d
 
         private struct Cylinder : IPrimitive, IEquatable<IPrimitive>
         {
-            public GeometricPrimitive primitive;
+            public CylinderPrimitive cylinderPrimitive;
             public Game1 game;
             public Matrix worldMatrix;
             public Vector3 position;
             public Color color;
             public float height;
             public float diameter;
-            public bool initialized;
 
-            public Cylinder(Vector3 CenterPosition, float height, float diameter, Color color, Game1 g)
+            public Cylinder(CylinderPrimitive cylinderPrimitive, Vector3 CenterPosition, float height, float diameter, Color color, Game1 g)
             {
+                this.cylinderPrimitive = cylinderPrimitive;
                 game = g;
                 position = CenterPosition;
-                worldMatrix = Matrix.CreateTranslation(CenterPosition);
+                worldMatrix = Matrix.CreateScale(new Vector3(diameter, height, diameter)) * Matrix.CreateTranslation(CenterPosition);
                 this.color = color;
                 this.height = height;
                 this.diameter = diameter;
-                
-                initialized = false;
-                primitive = null;
-            }
-
-            public void LoadContent()
-            {
-                primitive = new CylinderPrimitive(game.GraphicsDevice, height, diameter, 24);
-                initialized = true;
             }
 
             /*
@@ -193,16 +161,11 @@ namespace tanks3d
                 worldMatrix = Matrix.CreateRotationX(xrot) * Matrix.CreateRotationY(yrot) * Matrix.CreateRotationZ(zrot) * Matrix.CreateTranslation(position);
                 this.color = color;
             }
-             * */
+            */
 
             public void Draw()
             {
-                if (!initialized)
-                {
-                    LoadContent();
-                }
-
-                primitive.Draw(worldMatrix, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, color);
+                cylinderPrimitive.Draw(worldMatrix, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, color);
             }
 
             public bool Equals(IPrimitive otherPrimitive)
@@ -224,53 +187,38 @@ namespace tanks3d
         {
             public Color color;
             public Game1 game;
-            BasicEffect basicEffect;
             public VertexBuffer vertexBuffer;
             public Vector3 start;
             public Vector3 end;
-            public bool initialized;
+            public BasicEffect noLightingEffect;
 
-            public Line(Vector3 start, Vector3 end, Color color, Game1 g)
+            public Line(BasicEffect noLightingEffect, Vector3 start, Vector3 end, Color color, Game1 g)
             {
                 game = g;
                 this.start = start;
                 this.end = end;
-                this.color = color;                
-
-                initialized = false;
-                basicEffect = null;
-                vertexBuffer = null;
-            }
-
-            public void LoadContent()
-            {
-                basicEffect = new BasicEffect(game.GraphicsDevice);
+                this.color = color;
+                this.noLightingEffect = noLightingEffect;
+                
                 VertexPositionColor[] pointList = new VertexPositionColor[2];
                 pointList[0] = new VertexPositionColor(start, color);
                 pointList[1] = new VertexPositionColor(end, color);
                 vertexBuffer = new VertexBuffer(game.GraphicsDevice, typeof(VertexPositionColor),
                     2, BufferUsage.None);
                 vertexBuffer.SetData(pointList.ToArray());
-                initialized = true;
             }
 
             public void Draw()
             {
-                if (!initialized)
-                {
-                    LoadContent();
-                }
-
-                basicEffect.LightingEnabled = false;
-                basicEffect.World = Matrix.Identity;
-                basicEffect.View = game.worldCamera.ViewMatrix;
-                basicEffect.Projection = game.worldCamera.ProjectionMatrix;
-                basicEffect.DiffuseColor = color.ToVector3();
+                noLightingEffect.World = Matrix.Identity;
+                noLightingEffect.View = game.worldCamera.ViewMatrix;
+                noLightingEffect.Projection = game.worldCamera.ProjectionMatrix;
+                noLightingEffect.DiffuseColor = color.ToVector3();
                 
-                GraphicsDevice device = basicEffect.GraphicsDevice;
+                GraphicsDevice device = noLightingEffect.GraphicsDevice;
                 device.SetVertexBuffer(vertexBuffer);
 
-                foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
+                foreach (EffectPass effectPass in noLightingEffect.CurrentTechnique.Passes)
                 {
                     effectPass.Apply();
                     device.DrawPrimitives(PrimitiveType.LineList, 0, 1);
@@ -302,12 +250,19 @@ namespace tanks3d
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
             whiteTexture = new Texture2D(Game.GraphicsDevice, 1, 1);
             whiteTexture.SetData(new Color[] { Color.White });
-             * */
+            */
+
+            spherePrimitive = new SpherePrimitive(game.GraphicsDevice);
+            cubePrimitive = new CubePrimitive(game.GraphicsDevice);
+            cylinderPrimitive = new CylinderPrimitive(game.GraphicsDevice);
+            
+            noLightingEffect = new BasicEffect(game.GraphicsDevice);
+            noLightingEffect.LightingEnabled = false;
         }
 
         public void DrawCube(Vector3 pos, float size, Color color)
         {
-            Cube cube = new Cube(pos, size, color, game);
+            Cube cube = new Cube(cubePrimitive, pos, size, color, game);
 
             if (!primitives.Contains(cube, primitiveEqualityComparer))
             {
@@ -317,7 +272,7 @@ namespace tanks3d
 
         public void DrawSphere(Vector3 pos, float size, Color color)
         {
-            Sphere sphere = new Sphere(pos, size, color, game);
+            Sphere sphere = new Sphere(spherePrimitive, pos, size, color, game);
 
             if (!primitives.Contains(sphere, primitiveEqualityComparer))
             {
@@ -327,7 +282,7 @@ namespace tanks3d
 
         public void DrawCylinder(Vector3 pos, float height, float diameter, Color color)
         {
-            Cylinder cylinder = new Cylinder(pos, height, diameter, color, game);
+            Cylinder cylinder = new Cylinder(cylinderPrimitive, pos, height, diameter, color, game);
 
             if (!primitives.Contains(cylinder, primitiveEqualityComparer))
             {
@@ -344,7 +299,7 @@ namespace tanks3d
 
         public void DrawLine(Vector3 startPos, Vector3 endPos, Color color)
         {
-            Line line = new Line(startPos, endPos, color, game);
+            Line line = new Line(noLightingEffect, startPos, endPos, color, game);
 
             if (!primitives.Contains(line, primitiveEqualityComparer))
             {
@@ -356,9 +311,10 @@ namespace tanks3d
         {
             //spriteBatch.Begin();
 
-            foreach (IPrimitive primitive in primitives)
+            while (primitives.Count > 0)
             {
-                primitive.Draw();
+                primitives[0].Draw();
+                primitives.RemoveAt(0);
             }
 
             //spriteBatch.End();
