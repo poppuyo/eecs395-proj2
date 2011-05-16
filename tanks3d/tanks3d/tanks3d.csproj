@@ -119,7 +119,17 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Quad.cs" />
     <Compile Include="Reticle.cs" />
-    <Compile Include="Utility\SkeletonDrawableGameComponent.cs" />
+    <Compile Include="Utility\BezierPrimitive.cs" />
+    <Compile Include="Utility\CubePrimitive.cs" />
+    <Compile Include="Utility\CylinderPrimitive.cs" />
+    <Compile Include="Utility\DrawUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utility\GeometricPrimitive.cs" />
+    <Compile Include="Utility\SpherePrimitive.cs" />
+    <Compile Include="Utility\TeapotPrimitive.cs" />
+    <Compile Include="Utility\TorusPrimitive.cs" />
+    <Compile Include="Utility\VertexPositionNormal.cs" />
     <Compile Include="VertexTypes.cs" />
   </ItemGroup>
   <ItemGroup>

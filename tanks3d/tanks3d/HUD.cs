@@ -23,7 +23,6 @@ namespace tanks3d
         SpriteBatch spriteBatch;
 
         protected Game1 game;
-        protected Cameras.FPSCamera camera;
 
         public HUD(Game g)
             : base(g)
@@ -51,27 +50,20 @@ namespace tanks3d
 
         public override void Draw(GameTime gameTime)
         {
-
             spriteBatch.Begin();
 
-            /*
-             
             string text;
             string temp;
             string tab = "     ";
-             
-            temp = String.Format("{0:000},{1:000},{2:000}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
+
+            temp = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
             text = "Camera Position: (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 0), Color.Black);
 
-            temp = String.Format("{0:000},{1:000},{2:000}", game.worldCamera.LookAt.X, game.worldCamera.LookAt.Y, game.worldCamera.LookAt.Z);
-            text = "LookAt Position: (" + temp + ")\n";
+            Vector3 LookAtDirection = game.worldCamera.TargetPosition - game.worldCamera.Position;
+            temp = String.Format("{0:F2},{1:F2},{2:F2}", LookAtDirection.X, LookAtDirection.Y, LookAtDirection.Z);
+            text = "LookAt Direction: (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
-
-            temp = String.Format("{0:000},{1:000},{2:000}", MathHelper.ToDegrees(game.worldCamera.Angle.X), MathHelper.ToDegrees(game.worldCamera.Angle.Y), MathHelper.ToDegrees(game.worldCamera.Angle.Z));
-            text = "Rotation (Angle): (" + temp + ")\n";
-            spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
-             */
 
             spriteBatch.End();
             game.DoSpriteBatchFix();

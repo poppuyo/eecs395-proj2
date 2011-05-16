@@ -35,6 +35,8 @@ namespace tanks3d
         Tank tank1;
         Bullet bullet1;
 
+        public DrawUtils drawUtils;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -56,7 +58,12 @@ namespace tanks3d
 
             worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport,
                 new Vector3(64f, 0f, 64f), 0.0f, 0.0f);
-            //mainHUD = new HUD(this);
+            
+            mainHUD = new HUD(this);
+            Components.Add(mainHUD);
+
+            drawUtils = new DrawUtils(this);
+            Components.Add(drawUtils);
 
             //terrain = new Terrains.SimpleGridTerrain(this);
             //terrain = new Terrains.HeightmapTerrain(this);
@@ -75,8 +82,6 @@ namespace tanks3d
             //aCamera.Position = new Vector3(-100, 100, 100);
             //aCamera.View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
 
-            //Components.Add(worldCamera);
-            //Components.Add(mainHUD);
             base.Initialize();
         }
 
@@ -164,6 +169,8 @@ namespace tanks3d
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            DrawAxes();
+
             /*
             spriteBatch.Begin();
             spriteBatch.Draw(texture, new Rectangle(0, 0, 64, 64), Color.White);
@@ -187,6 +194,14 @@ namespace tanks3d
             sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
+        }
+
+        public void DrawAxes()
+        {
+            drawUtils.DrawSphere(new Vector3(0, 0, 0), 3.0f, Color.Turquoise);
+            drawUtils.DrawLine(new Vector3(0, 0, 0), new Vector3(5, 0, 0), Color.Red);
+            drawUtils.DrawLine(new Vector3(0, 0, 0), new Vector3(0, 5, 0), Color.Green);
+            drawUtils.DrawLine(new Vector3(0, 0, 0), new Vector3(0, 0, 5), Color.Blue);
         }
 
         public void DoSpriteBatchFix()
