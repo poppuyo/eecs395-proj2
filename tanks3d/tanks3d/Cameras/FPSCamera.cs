@@ -40,27 +40,41 @@ namespace tanks3d.Cameras
         Vector3 cameraPosition;
         MouseState previousMouseState;
 
-        public FPSCamera(Viewport viewPort)
-            : this(viewPort, new Vector3(0, 1, 15), 0, 0)
+        private Game1 game;
+
+        public FPSCamera(Game1 g, Viewport viewPort)
+            : this(g, viewPort, new Vector3(0, 1, 15), 0, 0)
         {
             //calls the constructor below with default startingPos and rotation values
         }
 
-        public FPSCamera(Viewport viewPort, Vector3 startingPos, float lrRot, float udRot)
+        public FPSCamera(Game1 g, Viewport viewPort, Vector3 startingPos, float lrRot, float udRot)
         {
+            this.game = g;
             this.leftrightRot = lrRot;
             this.updownRot = udRot;
             this.cameraPosition = startingPos;
-            this.viewPort = viewPort;
 
+            UpdateViewport(viewPort);
+            UpdateViewMatrix();
+
+            Mouse.SetPosition(viewPort.Width / 2, viewPort.Height / 2);
+            previousMouseState = Mouse.GetState();
+        }
+
+        public void UpdateViewport(Viewport newViewport)
+        {
+            this.viewPort = newViewport;
             float viewAngle = MathHelper.PiOver4;
             float nearPlane = 0.5f;
             float farPlane = 5000.0f;
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(viewAngle, viewPort.AspectRatio, nearPlane, farPlane);
 
-            UpdateViewMatrix();
-            Mouse.SetPosition(viewPort.Width / 2, viewPort.Height / 2);
-            previousMouseState = Mouse.GetState();
+
+            //float ratio = (float)viewPort.Width / (float)viewPort.Height;
+            //float ratio = (float)game.GraphicsDevice.DisplayMode.Height / (float)game.GraphicsDevice.DisplayMode.Width;
+            float ratio = 16.0f / 9.0f;
+
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(viewAngle, ratio, nearPlane, farPlane);
         }
 
         public void Update(MouseState currentMouseState, KeyboardState keyState)

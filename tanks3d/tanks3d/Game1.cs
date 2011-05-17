@@ -26,7 +26,7 @@ namespace tanks3d
         HeightMapInfo heightMapInfo;
         Sky sky;
 
-        public Cameras.FPSCamera worldCamera;
+        public Cameras.QuaternionCameraComponent worldCamera;
         public HUD mainHUD;
 
         Texture2D texture;
@@ -37,15 +37,30 @@ namespace tanks3d
 
         public DrawUtils drawUtils;
 
+        public WinFormContainer winFormContainer = null;
+        public IntPtr drawSurface;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-
             Content.RootDirectory = "Content";
 
             // Make the window resizable
             this.Window.AllowUserResizing = true;
             this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
+        }
+
+        public Game1(WinFormContainer winFormContainer)
+            : this()
+        {
+            // Set the drawing surface to be the picture box inside the WinForm.
+            this.winFormContainer = winFormContainer;
+            this.drawSurface = winFormContainer.getDrawSurface();
+            graphics.PreparingDeviceSettings +=
+                new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
+            System.Windows.Forms.Control.FromHandle((this.Window.Handle)).VisibleChanged +=
+                new EventHandler(Game1_VisibleChanged);
+            Mouse.WindowHandle = drawSurface;
         }
 
         /// <summary>
@@ -60,8 +75,14 @@ namespace tanks3d
             //ground = new TexturedQuad.Quad[1];
             //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
-            worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport,
-                new Vector3(64f, 0f, 64f), 0.0f, 0.0f);
+            worldCamera = new Cameras.QuaternionCameraComponent(this);
+            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 5000.0f);
+            worldCamera.Position = new Vector3(64f, 0f, 64f);
+            worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
+            worldCamera.ClickAndDragMouseRotation = true;
+            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
+            worldCamera.MovementSpeed = 100.0f;
+            Components.Add(worldCamera);
             
             mainHUD = new HUD(this);
             Components.Add(mainHUD);
@@ -157,7 +178,7 @@ namespace tanks3d
             if (keyboard.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            worldCamera.Update(mouseState, keyboard);
+            // worldCamera.Update(mouseState, keyboard);
 
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
@@ -251,8 +272,34 @@ namespace tanks3d
         /// </summary>
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            // Make changes to handle the new window size.   
+            // Make changes to handle the new window size.
 
+        }
+
+        /// <summary>
+        /// Event capturing the construction of a draw surface and makes sure this gets redirected to
+        /// a predesignated drawsurface marked by pointer drawSurface
+        /// </summary>
+        void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            if (winFormContainer != null)
+            {
+                e.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = drawSurface;
+            }
+        }
+
+        /// <summary>
+        /// Occurs when the original gamewindows' visibility changes and makes sure it stays invisible
+        /// </summary>
+        private void Game1_VisibleChanged(object sender, EventArgs e)
+        {
+            if (winFormContainer != null)
+            {
+                if (System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible == true)
+                {
+                    System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
+                }
+            }
         }
     }
 }
