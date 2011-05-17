@@ -134,6 +134,10 @@
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
     <Compile Include="HeightMapInfo.cs" />
+    <Compile Include="Physics\IPhysicsObject.cs" />
+    <Compile Include="Physics\PhysicsUtil.cs" />
+    <Compile Include="Physics\PhysicsEngine.cs" />
+    <Compile Include="Physics\TestPhysicsObject.cs" />
     <Compile Include="Sky.cs" />
     <Compile Include="Tank.cs" />
     <Compile Include="HUD.cs" />

@@ -29,45 +29,62 @@ namespace TerrainPipeline
         #region Properties
 
 
-        private float terrainScale = 30f;
-        [DisplayName("Terrain Scale")]
-        [DefaultValue(30f)]
-        [Description("Scale of the the terrain geometry width and length.")]
-        public float TerrainScale
+        /// <summary>
+        /// Controls the scale of the terrain. This will be the distance between
+        /// vertices in the finished terrain mesh.
+        /// </summary>
+        [DefaultValue(30.0f)]
+        [Description("The distance between vertices in the finished terrain mesh.")]
+        public float Scale
         {
-            get { return terrainScale; }
-            set { terrainScale = value; }
+            get { return scale; }
+            set { scale = value; }
         }
+        private float scale = 30.0f;
 
-        private float terrainBumpiness = 640f;
-        [DisplayName("Terrain Bumpiness")]
-        [DefaultValue(640f)]
-        [Description("Scale of the the terrain geometry height.")]
-        public float TerrainBumpiness
+
+        /// <summary>
+        /// Controls the height of the terrain. The heights of the vertices in the
+        /// finished mesh will vary between 0 and -Bumpiness.
+        /// </summary>
+        [DefaultValue(640.0f)]
+        [Description("Controls the height of the terrain.")]
+        public float Bumpiness
         {
-            get { return terrainBumpiness; }
-            set { terrainBumpiness = value; }
+            get { return bumpiness; }
+            set { bumpiness = value; }
         }
+        private float bumpiness = 640.0f;
 
-        private float texCoordScale = 0.1f;
-        [DisplayName("Texture Coordinate Scale")]
-        [DefaultValue(0.1f)]
-        [Description("Terrain texture tiling density.")]
+
+        /// <summary>
+        /// Controls the how often the texture applied to the terrain will be repeated.
+        /// </summary>
+        [DefaultValue(.1f)]
+        [Description("Controls how often the texture will be repeated " +
+                     "across the terrain.")]
         public float TexCoordScale
         {
             get { return texCoordScale; }
             set { texCoordScale = value; }
         }
+        private float texCoordScale = 0.1f;
 
-        private string terrainTextureFilename = "rocks.bmp";
-        [DisplayName("Terrain Texture")]
+
+        /// <summary>
+        /// Controls the texture that will be applied to the terrain. If no value is
+        /// supplied, a texture will not be applied.
+        /// </summary>
         [DefaultValue("rocks.bmp")]
-        [Description("The name of the terrain texture.")]
-        public string TerrainTextureFilename
+        [Description("Controls the texture that will be applied to the terrain. If " +
+                     "no value is supplied, a texture will not be applied.")]
+        [DisplayName("Terrain Texture")]
+        public string TerrainTexture
         {
-            get { return terrainTextureFilename; }
-            set { terrainTextureFilename = value; }
+            get { return terrainTexture; }
+            set { terrainTexture = value; }
         }
+        private string terrainTexture = "rocks.bmp";
 
 
         #endregion
@@ -78,12 +95,14 @@ namespace TerrainPipeline
         public override ModelContent Process(Texture2DContent input,
                                              ContentProcessorContext context)
         {
+            PixelBitmapContent<float> heightfield;
+
             MeshBuilder builder = MeshBuilder.StartMesh("terrain");
 
             // Convert the input texture to float format, for ease of processing.
             input.ConvertBitmapType(typeof(PixelBitmapContent<float>));
 
-            PixelBitmapContent<float> heightfield;
+
             heightfield = (PixelBitmapContent<float>)input.Mipmaps[0];
 
             // Create the terrain vertices.
@@ -95,10 +114,10 @@ namespace TerrainPipeline
 
                     // position the vertices so that the heightfield is centered
                     // around x=0,z=0
-                    position.X = terrainScale * (x - ((heightfield.Width - 1) / 2.0f));
-                    position.Z = terrainScale * (y - ((heightfield.Height - 1) / 2.0f));
+                    position.X = scale * (x - ((heightfield.Width - 1) / 2.0f));
+                    position.Z = scale * (y - ((heightfield.Height - 1) / 2.0f));
 
-                    position.Y = (heightfield.GetPixel(x, y) - 1) * terrainBumpiness;
+                    position.Y = (heightfield.GetPixel(x, y) - 1) * bumpiness;
 
                     builder.CreatePosition(position);
                 }
@@ -108,10 +127,13 @@ namespace TerrainPipeline
             BasicMaterialContent material = new BasicMaterialContent();
             material.SpecularColor = new Vector3(.4f, .4f, .4f);
 
-            string directory = Path.GetDirectoryName(input.Identity.SourceFilename);
-            string texture = Path.Combine(directory, terrainTextureFilename);
+            if (!string.IsNullOrEmpty(TerrainTexture))
+            {
+                string directory = Path.GetDirectoryName(input.Identity.SourceFilename);
+                string texture = Path.Combine(directory, TerrainTexture);
 
-            material.Texture = new ExternalReference<TextureContent>(texture);
+                material.Texture = new ExternalReference<TextureContent>(texture);
+            }
 
             builder.SetMaterial(material);
 
@@ -137,13 +159,14 @@ namespace TerrainPipeline
             // Chain to the ModelProcessor so it can convert the mesh we just generated.
             MeshContent terrainMesh = builder.FinishMesh();
 
+
             ModelContent model = context.Convert<MeshContent, ModelContent>(terrainMesh,
                                                               "ModelProcessor");
 
             // generate information about the height map, and attach it to the finished
             // model's tag.
-            model.Tag = new HeightMapInfoContent(heightfield, terrainScale,
-                terrainBumpiness);
+            model.Tag = new HeightMapInfoContent(terrainMesh, scale,
+                heightfield.Width, heightfield.Height);
 
             return model;
         }
