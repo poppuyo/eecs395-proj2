@@ -82,7 +82,7 @@ namespace tanks3d
 
             worldCamera = new Cameras.QuaternionCameraComponent(this);
             worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 5000.0f);
-            worldCamera.Position = new Vector3(64f, 0f, 64f);
+            worldCamera.Position = new Vector3(-88, -300, 195);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
             worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;

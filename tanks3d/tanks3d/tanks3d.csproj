@@ -147,6 +147,7 @@
     <Compile Include="Quad.cs" />
     <Compile Include="Reticle.cs" />
     <Compile Include="Utility\BezierPrimitive.cs" />
+    <Compile Include="Utility\BoundingBoxRenderer.cs" />
     <Compile Include="Utility\CubePrimitive.cs" />
     <Compile Include="Utility\CylinderPrimitive.cs" />
     <Compile Include="Utility\DrawUtils.cs">

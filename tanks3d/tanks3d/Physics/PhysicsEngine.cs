@@ -6,10 +6,18 @@ using Microsoft.Xna.Framework;
 
 namespace tanks3d.Physics
 {
+    /// <summary>
+    /// This class is in charge of handling gravity, collisions, etc. for all the objects in the game.
+    /// In order for an object to be influenced by physics, it must implement the IPhysicsObject interface
+    /// and be added to the physicsObjects list in this class. This class should take care of the rest.
+    /// </summary>
     public class PhysicsEngine : GameComponent
     {
         private Game1 game;
 
+        /// <summary>
+        /// Lists of all the objects being controlled by the physics engine.
+        /// </summary>
         private List<IPhysicsObject> physicsObjects;
 
         public PhysicsEngine(Game1 g)
@@ -25,6 +33,10 @@ namespace tanks3d.Physics
             base.Initialize();
         }
 
+        /// <summary>
+        /// Add an object to the list of objects the physics engine is controlling.
+        /// </summary>
+        /// <param name="obj"></param>
         public void AddPhysicsObject(IPhysicsObject obj)
         {
             physicsObjects.Add(obj);
@@ -36,16 +48,16 @@ namespace tanks3d.Physics
 
             foreach (IPhysicsObject physicsObject in physicsObjects)
             {
+                Gravity(physicsObject, elapsedSeconds);
+
                 // Move all objects according to their current velocities
                 Vector3 oldPosition = physicsObject.GetPosition();
                 Vector3 newPosition = oldPosition + physicsObject.GetVelocity() * elapsedSeconds;
                 physicsObject.UpdatePosition(newPosition);
 
-                Gravity(physicsObject, elapsedSeconds);
-
                 DoCollisionDetectionWithTerrain(physicsObject);
 
-                System.Console.WriteLine(physicsObject.GetPosition());
+                //System.Console.WriteLine(physicsObject.GetPosition());
             }
 
             base.Update(gameTime);
@@ -56,15 +68,29 @@ namespace tanks3d.Physics
             Vector3 position = physicsObject.GetPosition();
 
             if (game.heightMapInfo.IsOnHeightmap(position))
-            {
-                float terrainElevation;
-                Vector3 terrainNormal;
-                game.heightMapInfo.GetHeightAndNormal(position, out terrainElevation, out terrainNormal);
+            {                
                 float objectBottom = physicsObject.GetBoundingBox().Min.Y;
 
-                if (objectBottom <= terrainElevation)
+                //Utility.BoundingBoxRenderer.Render(game, physicsObject.GetBoundingBox(), game.GraphicsDevice, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, Color.White);
+
+                Vector3 v = physicsObject.GetVelocity();
+
+                // In the bounding box, the bottom corners have indices 2,3,6,7. We're
+                // interested in checking just the collisions of the bottom corners of
+                // the object with the terrain.
+
+                Vector3[] corners = physicsObject.GetBoundingBox().GetCorners();
+                int[] bottomCorners = { 2, 3, 6, 7 };
+                foreach (int i in bottomCorners)
                 {
-                    HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
+                    float terrainElevation;
+                    Vector3 terrainNormal;
+                    game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
+                    if ((corners[i] + v).Y <= terrainElevation)
+                    {
+                        HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
+                        return;
+                    }
                 }
             }
         }
