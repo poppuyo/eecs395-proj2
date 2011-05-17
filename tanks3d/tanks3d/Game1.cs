@@ -37,27 +37,30 @@ namespace tanks3d
 
         public DrawUtils drawUtils;
 
-        public WinFormContainer winFormContainer;
+        public WinFormContainer winFormContainer = null;
         public IntPtr drawSurface;
 
-        public Game1(WinFormContainer winFormContainer)
+        public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            this.winFormContainer = winFormContainer;
+            // Make the window resizable
+            this.Window.AllowUserResizing = true;
+            this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
+        }
 
+        public Game1(WinFormContainer winFormContainer)
+            : this()
+        {
             // Set the drawing surface to be the picture box inside the WinForm.
+            this.winFormContainer = winFormContainer;
             this.drawSurface = winFormContainer.getDrawSurface();
             graphics.PreparingDeviceSettings +=
                 new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
             System.Windows.Forms.Control.FromHandle((this.Window.Handle)).VisibleChanged +=
                 new EventHandler(Game1_VisibleChanged);
             Mouse.WindowHandle = drawSurface;
-
-            // Make the window resizable
-            this.Window.AllowUserResizing = true;
-            this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
         }
 
         /// <summary>
@@ -273,7 +276,10 @@ namespace tanks3d
         /// </summary>
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            e.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = drawSurface;
+            if (winFormContainer != null)
+            {
+                e.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = drawSurface;
+            }
         }
 
         /// <summary>
@@ -281,9 +287,12 @@ namespace tanks3d
         /// </summary>
         private void Game1_VisibleChanged(object sender, EventArgs e)
         {
-            if (System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible == true)
+            if (winFormContainer != null)
             {
-                System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
+                if (System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible == true)
+                {
+                    System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
+                }
             }
         }
     }
