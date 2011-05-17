@@ -36,6 +36,10 @@
             this.CameraPositionY_TextBox = new System.Windows.Forms.TextBox();
             this.CameraPositionX_TextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.CameraLookAtZ_TextBox = new System.Windows.Forms.TextBox();
+            this.CameraLookAtY_TextBox = new System.Windows.Forms.TextBox();
+            this.CameraLookAtX_TextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).BeginInit();
             this.CameraGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -60,6 +64,10 @@
             // CameraGroupBox
             // 
             this.CameraGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.CameraGroupBox.Controls.Add(this.CameraLookAtZ_TextBox);
+            this.CameraGroupBox.Controls.Add(this.CameraLookAtY_TextBox);
+            this.CameraGroupBox.Controls.Add(this.CameraLookAtX_TextBox);
+            this.CameraGroupBox.Controls.Add(this.label2);
             this.CameraGroupBox.Controls.Add(this.CameraPositionZ_TextBox);
             this.CameraGroupBox.Controls.Add(this.CameraPositionY_TextBox);
             this.CameraGroupBox.Controls.Add(this.CameraPositionX_TextBox);
@@ -103,9 +111,45 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(6, 27);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 13);
+            this.label1.Size = new System.Drawing.Size(51, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Position:";
+            this.label1.Text = "Location:";
+            // 
+            // CameraLookAtZ_TextBox
+            // 
+            this.CameraLookAtZ_TextBox.Location = new System.Drawing.Point(155, 49);
+            this.CameraLookAtZ_TextBox.Name = "CameraLookAtZ_TextBox";
+            this.CameraLookAtZ_TextBox.Size = new System.Drawing.Size(42, 20);
+            this.CameraLookAtZ_TextBox.TabIndex = 7;
+            this.CameraLookAtZ_TextBox.TextChanged += new System.EventHandler(this.CameraLookAtZ_TextBox_TextChanged);
+            this.CameraLookAtZ_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleNumericTextBox);
+            // 
+            // CameraLookAtY_TextBox
+            // 
+            this.CameraLookAtY_TextBox.Location = new System.Drawing.Point(107, 49);
+            this.CameraLookAtY_TextBox.Name = "CameraLookAtY_TextBox";
+            this.CameraLookAtY_TextBox.Size = new System.Drawing.Size(42, 20);
+            this.CameraLookAtY_TextBox.TabIndex = 6;
+            this.CameraLookAtY_TextBox.TextChanged += new System.EventHandler(this.CameraLookAtY_TextBox_TextChanged);
+            this.CameraLookAtY_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleNumericTextBox);
+            // 
+            // CameraLookAtX_TextBox
+            // 
+            this.CameraLookAtX_TextBox.Location = new System.Drawing.Point(59, 49);
+            this.CameraLookAtX_TextBox.Name = "CameraLookAtX_TextBox";
+            this.CameraLookAtX_TextBox.Size = new System.Drawing.Size(42, 20);
+            this.CameraLookAtX_TextBox.TabIndex = 5;
+            this.CameraLookAtX_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleNumericTextBox);
+            this.CameraLookAtX_TextBox.Leave += new System.EventHandler(this.CameraLookAtX_TextBox_Leave);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 52);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Target:";
             // 
             // WinFormContainer
             // 
@@ -133,5 +177,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox CameraPositionZ_TextBox;
         private System.Windows.Forms.TextBox CameraPositionY_TextBox;
+        private System.Windows.Forms.TextBox CameraLookAtZ_TextBox;
+        private System.Windows.Forms.TextBox CameraLookAtY_TextBox;
+        private System.Windows.Forms.TextBox CameraLookAtX_TextBox;
+        private System.Windows.Forms.Label label2;
     }
 }

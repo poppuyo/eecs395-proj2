@@ -53,6 +53,7 @@ namespace tanks3d
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             UpdateCameraPositionInfo();
+            UpdateCameraTargetInfo();
         }
 
         private void UpdateCameraPositionInfo()
@@ -70,6 +71,24 @@ namespace tanks3d
             if (!CameraPositionZ_TextBox.Focused)
             {
                 CameraPositionZ_TextBox.Text = String.Format("{0:F2}", game.worldCamera.Position.Z);
+            }
+        }
+
+        private void UpdateCameraTargetInfo()
+        {
+            if (!CameraLookAtX_TextBox.Focused)
+            {
+                CameraLookAtX_TextBox.Text = String.Format("{0:F2}", game.worldCamera.TargetPosition.X);
+            }
+
+            if (!CameraLookAtY_TextBox.Focused)
+            {
+                CameraLookAtY_TextBox.Text = String.Format("{0:F2}", game.worldCamera.TargetPosition.Y);
+            }
+
+            if (!CameraLookAtZ_TextBox.Focused)
+            {
+                CameraLookAtZ_TextBox.Text = String.Format("{0:F2}", game.worldCamera.TargetPosition.Z);
             }
         }
 
@@ -133,6 +152,48 @@ namespace tanks3d
             {
                 float newZ = (float)Convert.ToDouble(CameraPositionZ_TextBox.Text);
                 game.worldCamera.Position = new Vector3(game.worldCamera.Position.X, game.worldCamera.Position.Y, newZ);
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+        }
+
+        private void CameraLookAtX_TextBox_Leave(object sender, EventArgs e)
+        {
+            try
+            {
+                float newLookAtX = (float)Convert.ToDouble(CameraLookAtX_TextBox.Text);
+                Vector3 newTargetPosition = new Vector3(newLookAtX, game.worldCamera.TargetPosition.Y, game.worldCamera.TargetPosition.Z);
+                // ...
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+        }
+
+        private void CameraLookAtY_TextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                float newLookAtY = (float)Convert.ToDouble(CameraLookAtY_TextBox.Text);
+                Vector3 newTargetPosition = new Vector3(game.worldCamera.TargetPosition.X, newLookAtY, game.worldCamera.TargetPosition.Z);
+                // ...
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+        }
+
+        private void CameraLookAtZ_TextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                float newLookAtZ = (float)Convert.ToDouble(CameraLookAtZ_TextBox.Text);
+                Vector3 newTargetPosition = new Vector3(game.worldCamera.TargetPosition.X, game.worldCamera.TargetPosition.Y, newLookAtZ);
+                // ...
             }
             catch (FormatException)
             {
