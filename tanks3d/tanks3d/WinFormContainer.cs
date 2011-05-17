@@ -37,7 +37,7 @@ namespace tanks3d
                 newParams.BackBufferWidth = pctSurface.Width;
                 newParams.BackBufferHeight = pctSurface.Height;
                 game.GraphicsDevice.Reset(newParams);
-                game.worldCamera.UpdateViewport(game.GraphicsDevice.Viewport);
+                //game.worldCamera.UpdateViewport(game.GraphicsDevice.Viewport);
             }
         }
 
@@ -53,6 +53,7 @@ namespace tanks3d
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             UpdateCameraPositionInfo();
+            UpdateCameraTargetInfo();
         }
 
         private void UpdateCameraPositionInfo()
@@ -73,12 +74,37 @@ namespace tanks3d
             }
         }
 
+        private void UpdateCameraTargetInfo()
+        {
+            if (!CameraViewDirX_TextBox.Focused)
+            {
+                CameraViewDirX_TextBox.Text = String.Format("{0:F2}", game.worldCamera.ViewDirection.X);
+            }
+
+            if (!CameraViewDirY_TextBox.Focused)
+            {
+                CameraViewDirY_TextBox.Text = String.Format("{0:F2}", game.worldCamera.ViewDirection.Y);
+            }
+
+            if (!CameraViewDirZ_TextBox.Focused)
+            {
+                CameraViewDirZ_TextBox.Text = String.Format("{0:F2}", game.worldCamera.ViewDirection.Z);
+            }
+        }
+
         private void HandleNumericTextBox(object sender, KeyPressEventArgs e)
         {
-            // If Enter is pressed, set the focus away from the control so that it triggers the
-            // Leave event and causes the game to update based on the new value in the control.
+            // Handle enter key
             if (e.KeyChar == (char)Keys.Return)
             {
+                // For target position controls, simulate clicking the "Set target" button
+                if ((sender as TextBox).Name.Contains("CameraTarget"))
+                {
+                    SetTargetButton_Click(null, null);
+                }
+
+                // If Enter is pressed, set the focus away from the control so that it triggers the
+                // Leave event and causes the game to update based on the new value in the control.
                 pctSurface.Focus();
                 e.Handled = true;
                 return;   
@@ -136,6 +162,24 @@ namespace tanks3d
             }
             catch (FormatException)
             {
+                return;
+            }
+        }
+
+        private void SetTargetButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                float newTargetX = (float)Convert.ToDouble(CameraTargetX_TextBox.Text);
+                float newTargetY = (float)Convert.ToDouble(CameraTargetY_TextBox.Text);
+                float newTargetZ = (float)Convert.ToDouble(CameraTargetZ_TextBox.Text);
+                game.worldCamera.LookAt(game.worldCamera.Position, new Vector3(newTargetX, newTargetY, newTargetZ), Vector3.Up);
+                CameraMessageLabel.Visible = false;
+            }
+            catch (FormatException)
+            {
+                CameraMessageLabel.Text = "Invalid target position.";
+                CameraMessageLabel.Visible = true;
                 return;
             }
         }

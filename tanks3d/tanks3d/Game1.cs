@@ -26,7 +26,7 @@ namespace tanks3d
         HeightMapInfo heightMapInfo;
         Sky sky;
 
-        public Cameras.FPSCamera worldCamera;
+        public Cameras.QuaternionCameraComponent worldCamera;
         public HUD mainHUD;
 
         Texture2D texture;
@@ -75,8 +75,14 @@ namespace tanks3d
             //ground = new TexturedQuad.Quad[1];
             //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
-            worldCamera = new Cameras.FPSCamera(this, graphics.GraphicsDevice.Viewport,
-                new Vector3(64f, 0f, 64f), 0.0f, 0.0f);
+            worldCamera = new Cameras.QuaternionCameraComponent(this);
+            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 5000.0f);
+            worldCamera.Position = new Vector3(64f, 0f, 64f);
+            worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
+            worldCamera.ClickAndDragMouseRotation = true;
+            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
+            worldCamera.MovementSpeed = 100.0f;
+            Components.Add(worldCamera);
             
             mainHUD = new HUD(this);
             Components.Add(mainHUD);
@@ -172,7 +178,7 @@ namespace tanks3d
             if (keyboard.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            worldCamera.Update(mouseState, keyboard);
+            // worldCamera.Update(mouseState, keyboard);
 
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
