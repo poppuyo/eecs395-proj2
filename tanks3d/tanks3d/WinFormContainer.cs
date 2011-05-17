@@ -37,7 +37,7 @@ namespace tanks3d
                 newParams.BackBufferWidth = pctSurface.Width;
                 newParams.BackBufferHeight = pctSurface.Height;
                 game.GraphicsDevice.Reset(newParams);
-                game.worldCamera.UpdateViewport(game.GraphicsDevice.Viewport);
+                //game.worldCamera.UpdateViewport(game.GraphicsDevice.Viewport);
             }
         }
 
@@ -76,28 +76,35 @@ namespace tanks3d
 
         private void UpdateCameraTargetInfo()
         {
-            if (!CameraLookAtX_TextBox.Focused)
+            if (!CameraViewDirX_TextBox.Focused)
             {
-                CameraLookAtX_TextBox.Text = String.Format("{0:F2}", game.worldCamera.TargetPosition.X);
+                CameraViewDirX_TextBox.Text = String.Format("{0:F2}", game.worldCamera.ViewDirection.X);
             }
 
-            if (!CameraLookAtY_TextBox.Focused)
+            if (!CameraViewDirY_TextBox.Focused)
             {
-                CameraLookAtY_TextBox.Text = String.Format("{0:F2}", game.worldCamera.TargetPosition.Y);
+                CameraViewDirY_TextBox.Text = String.Format("{0:F2}", game.worldCamera.ViewDirection.Y);
             }
 
-            if (!CameraLookAtZ_TextBox.Focused)
+            if (!CameraViewDirZ_TextBox.Focused)
             {
-                CameraLookAtZ_TextBox.Text = String.Format("{0:F2}", game.worldCamera.TargetPosition.Z);
+                CameraViewDirZ_TextBox.Text = String.Format("{0:F2}", game.worldCamera.ViewDirection.Z);
             }
         }
 
         private void HandleNumericTextBox(object sender, KeyPressEventArgs e)
         {
-            // If Enter is pressed, set the focus away from the control so that it triggers the
-            // Leave event and causes the game to update based on the new value in the control.
+            // Handle enter key
             if (e.KeyChar == (char)Keys.Return)
             {
+                // For target position controls, simulate clicking the "Set target" button
+                if ((sender as TextBox).Name.Contains("CameraTarget"))
+                {
+                    SetTargetButton_Click(null, null);
+                }
+
+                // If Enter is pressed, set the focus away from the control so that it triggers the
+                // Leave event and causes the game to update based on the new value in the control.
                 pctSurface.Focus();
                 e.Handled = true;
                 return;   
@@ -159,44 +166,20 @@ namespace tanks3d
             }
         }
 
-        private void CameraLookAtX_TextBox_Leave(object sender, EventArgs e)
+        private void SetTargetButton_Click(object sender, EventArgs e)
         {
             try
             {
-                float newLookAtX = (float)Convert.ToDouble(CameraLookAtX_TextBox.Text);
-                Vector3 newTargetPosition = new Vector3(newLookAtX, game.worldCamera.TargetPosition.Y, game.worldCamera.TargetPosition.Z);
-                // ...
+                float newTargetX = (float)Convert.ToDouble(CameraTargetX_TextBox.Text);
+                float newTargetY = (float)Convert.ToDouble(CameraTargetY_TextBox.Text);
+                float newTargetZ = (float)Convert.ToDouble(CameraTargetZ_TextBox.Text);
+                game.worldCamera.LookAt(game.worldCamera.Position, new Vector3(newTargetX, newTargetY, newTargetZ), Vector3.Up);
+                CameraMessageLabel.Visible = false;
             }
             catch (FormatException)
             {
-                return;
-            }
-        }
-
-        private void CameraLookAtY_TextBox_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                float newLookAtY = (float)Convert.ToDouble(CameraLookAtY_TextBox.Text);
-                Vector3 newTargetPosition = new Vector3(game.worldCamera.TargetPosition.X, newLookAtY, game.worldCamera.TargetPosition.Z);
-                // ...
-            }
-            catch (FormatException)
-            {
-                return;
-            }
-        }
-
-        private void CameraLookAtZ_TextBox_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                float newLookAtZ = (float)Convert.ToDouble(CameraLookAtZ_TextBox.Text);
-                Vector3 newTargetPosition = new Vector3(game.worldCamera.TargetPosition.X, game.worldCamera.TargetPosition.Y, newLookAtZ);
-                // ...
-            }
-            catch (FormatException)
-            {
+                CameraMessageLabel.Text = "Invalid target position.";
+                CameraMessageLabel.Visible = true;
                 return;
             }
         }
