@@ -10,10 +10,11 @@ namespace tanks3d
         /// </summary>
         static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
-            {
-                game.Run();
-            }
+            WinFormContainer form = new WinFormContainer();
+            form.Show();
+            Game1 game = new Game1(form);
+            form.game = game;
+            game.Run();
         }
     }
 #endif

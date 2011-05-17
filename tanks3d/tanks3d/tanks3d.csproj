@@ -93,6 +93,9 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
@@ -131,6 +134,12 @@
     <Compile Include="Utility\TorusPrimitive.cs" />
     <Compile Include="Utility\VertexPositionNormal.cs" />
     <Compile Include="VertexTypes.cs" />
+    <Compile Include="WinFormContainer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinFormContainer.Designer.cs">
+      <DependentUpon>WinFormContainer.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -168,6 +177,11 @@
       <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WinFormContainer.resx">
+      <DependentUpon>WinFormContainer.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

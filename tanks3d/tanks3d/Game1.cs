@@ -37,11 +37,23 @@ namespace tanks3d
 
         public DrawUtils drawUtils;
 
-        public Game1()
+        public WinFormContainer winFormContainer;
+        public IntPtr drawSurface;
+
+        public Game1(WinFormContainer winFormContainer)
         {
             graphics = new GraphicsDeviceManager(this);
-
             Content.RootDirectory = "Content";
+
+            this.winFormContainer = winFormContainer;
+
+            // Set the drawing surface to be the picture box inside the WinForm.
+            this.drawSurface = winFormContainer.getDrawSurface();
+            graphics.PreparingDeviceSettings +=
+                new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
+            System.Windows.Forms.Control.FromHandle((this.Window.Handle)).VisibleChanged +=
+                new EventHandler(Game1_VisibleChanged);
+            Mouse.WindowHandle = drawSurface;
 
             // Make the window resizable
             this.Window.AllowUserResizing = true;
@@ -60,7 +72,7 @@ namespace tanks3d
             //ground = new TexturedQuad.Quad[1];
             //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
-            worldCamera = new Cameras.FPSCamera(graphics.GraphicsDevice.Viewport,
+            worldCamera = new Cameras.FPSCamera(this, graphics.GraphicsDevice.Viewport,
                 new Vector3(64f, 0f, 64f), 0.0f, 0.0f);
             
             mainHUD = new HUD(this);
@@ -251,8 +263,28 @@ namespace tanks3d
         /// </summary>
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            // Make changes to handle the new window size.   
+            // Make changes to handle the new window size.
 
+        }
+
+        /// <summary>
+        /// Event capturing the construction of a draw surface and makes sure this gets redirected to
+        /// a predesignated drawsurface marked by pointer drawSurface
+        /// </summary>
+        void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            e.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = drawSurface;
+        }
+
+        /// <summary>
+        /// Occurs when the original gamewindows' visibility changes and makes sure it stays invisible
+        /// </summary>
+        private void Game1_VisibleChanged(object sender, EventArgs e)
+        {
+            if (System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible == true)
+            {
+                System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
+            }
         }
     }
 }
