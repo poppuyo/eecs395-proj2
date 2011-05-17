@@ -60,7 +60,7 @@ namespace tanks3d
             text = "Camera Position: (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 0), Color.Black);
 
-            Vector3 LookAtDirection = game.worldCamera.TargetPosition - game.worldCamera.Position;
+            Vector3 LookAtDirection = game.worldCamera.ViewDirection;
             temp = String.Format("{0:F2},{1:F2},{2:F2}", LookAtDirection.X, LookAtDirection.Y, LookAtDirection.Z);
             text = "LookAt Direction: (" + temp + ")\n";
             spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
