@@ -28,8 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pctSurface = new System.Windows.Forms.PictureBox();
+            this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.CameraGroupBox = new System.Windows.Forms.GroupBox();
+            this.CameraPositionZ_TextBox = new System.Windows.Forms.TextBox();
+            this.CameraPositionY_TextBox = new System.Windows.Forms.TextBox();
+            this.CameraPositionX_TextBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).BeginInit();
+            this.CameraGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // pctSurface
@@ -39,21 +47,79 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.pctSurface.Location = new System.Drawing.Point(12, 12);
             this.pctSurface.Name = "pctSurface";
-            this.pctSurface.Size = new System.Drawing.Size(760, 538);
+            this.pctSurface.Size = new System.Drawing.Size(760, 416);
             this.pctSurface.TabIndex = 0;
             this.pctSurface.TabStop = false;
             this.pctSurface.SizeChanged += new System.EventHandler(this.pctSurface_SizeChanged);
+            // 
+            // UpdateTimer
+            // 
+            this.UpdateTimer.Enabled = true;
+            this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
+            // 
+            // CameraGroupBox
+            // 
+            this.CameraGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.CameraGroupBox.Controls.Add(this.CameraPositionZ_TextBox);
+            this.CameraGroupBox.Controls.Add(this.CameraPositionY_TextBox);
+            this.CameraGroupBox.Controls.Add(this.CameraPositionX_TextBox);
+            this.CameraGroupBox.Controls.Add(this.label1);
+            this.CameraGroupBox.Location = new System.Drawing.Point(12, 434);
+            this.CameraGroupBox.Name = "CameraGroupBox";
+            this.CameraGroupBox.Size = new System.Drawing.Size(207, 116);
+            this.CameraGroupBox.TabIndex = 1;
+            this.CameraGroupBox.TabStop = false;
+            this.CameraGroupBox.Text = "Camera";
+            // 
+            // CameraPositionZ_TextBox
+            // 
+            this.CameraPositionZ_TextBox.Location = new System.Drawing.Point(155, 24);
+            this.CameraPositionZ_TextBox.Name = "CameraPositionZ_TextBox";
+            this.CameraPositionZ_TextBox.Size = new System.Drawing.Size(42, 20);
+            this.CameraPositionZ_TextBox.TabIndex = 3;
+            this.CameraPositionZ_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleNumericTextBox);
+            this.CameraPositionZ_TextBox.Leave += new System.EventHandler(this.CameraPositionZ_TextBox_Leave);
+            // 
+            // CameraPositionY_TextBox
+            // 
+            this.CameraPositionY_TextBox.Location = new System.Drawing.Point(107, 24);
+            this.CameraPositionY_TextBox.Name = "CameraPositionY_TextBox";
+            this.CameraPositionY_TextBox.Size = new System.Drawing.Size(42, 20);
+            this.CameraPositionY_TextBox.TabIndex = 2;
+            this.CameraPositionY_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleNumericTextBox);
+            this.CameraPositionY_TextBox.Leave += new System.EventHandler(this.CameraPositionY_TextBox_Leave);
+            // 
+            // CameraPositionX_TextBox
+            // 
+            this.CameraPositionX_TextBox.Location = new System.Drawing.Point(59, 24);
+            this.CameraPositionX_TextBox.Name = "CameraPositionX_TextBox";
+            this.CameraPositionX_TextBox.Size = new System.Drawing.Size(42, 20);
+            this.CameraPositionX_TextBox.TabIndex = 1;
+            this.CameraPositionX_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleNumericTextBox);
+            this.CameraPositionX_TextBox.Leave += new System.EventHandler(this.CameraPositionX_TextBox_Leave);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 27);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(47, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Position:";
             // 
             // WinFormContainer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 562);
+            this.Controls.Add(this.CameraGroupBox);
             this.Controls.Add(this.pctSurface);
             this.Name = "WinFormContainer";
             this.Text = "WinFormContainer";
             this.Shown += new System.EventHandler(this.WinFormContainer_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).EndInit();
+            this.CameraGroupBox.ResumeLayout(false);
+            this.CameraGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -61,5 +127,11 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pctSurface;
+        private System.Windows.Forms.Timer UpdateTimer;
+        private System.Windows.Forms.GroupBox CameraGroupBox;
+        private System.Windows.Forms.TextBox CameraPositionX_TextBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox CameraPositionZ_TextBox;
+        private System.Windows.Forms.TextBox CameraPositionY_TextBox;
     }
 }

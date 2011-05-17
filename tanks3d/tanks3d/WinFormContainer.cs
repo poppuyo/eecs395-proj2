@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace tanks3d
 {
@@ -44,6 +45,99 @@ namespace tanks3d
         {
             // Force the reticle (crosshair thingy) to be aligned with the mouse.
             pctSurface_SizeChanged(null, null);
+
+            // Set the focus to the game (away from any controls).
+            pctSurface.Focus();
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateCameraPositionInfo();
+        }
+
+        private void UpdateCameraPositionInfo()
+        {
+            if (!CameraPositionX_TextBox.Focused)
+            {
+                CameraPositionX_TextBox.Text = String.Format("{0:F2}", game.worldCamera.Position.X);
+            }
+
+            if (!CameraPositionY_TextBox.Focused)
+            {
+                CameraPositionY_TextBox.Text = String.Format("{0:F2}", game.worldCamera.Position.Y);
+            }
+
+            if (!CameraPositionZ_TextBox.Focused)
+            {
+                CameraPositionZ_TextBox.Text = String.Format("{0:F2}", game.worldCamera.Position.Z);
+            }
+        }
+
+        private void HandleNumericTextBox(object sender, KeyPressEventArgs e)
+        {
+            // If Enter is pressed, set the focus away from the control so that it triggers the
+            // Leave event and causes the game to update based on the new value in the control.
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                pctSurface.Focus();
+                e.Handled = true;
+                return;   
+            }
+            
+            // Handle illegal keys
+            if (!char.IsControl(e.KeyChar)
+                 && !char.IsDigit(e.KeyChar)
+                 && e.KeyChar != '.'
+                 && e.KeyChar != '-')
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if (e.KeyChar == '.'
+                && (sender as TextBox).Text.IndexOf('.') > -1)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void CameraPositionX_TextBox_Leave(object sender, EventArgs e)
+        {
+            try
+            {
+                float newX = (float)Convert.ToDouble(CameraPositionX_TextBox.Text);
+                game.worldCamera.Position = new Vector3(newX, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+        }
+
+        private void CameraPositionY_TextBox_Leave(object sender, EventArgs e)
+        {
+            try
+            {
+                float newY = (float)Convert.ToDouble(CameraPositionY_TextBox.Text);
+                game.worldCamera.Position = new Vector3(game.worldCamera.Position.X, newY, game.worldCamera.Position.Z);
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+        }
+
+        private void CameraPositionZ_TextBox_Leave(object sender, EventArgs e)
+        {
+            try
+            {
+                float newZ = (float)Convert.ToDouble(CameraPositionZ_TextBox.Text);
+                game.worldCamera.Position = new Vector3(game.worldCamera.Position.X, game.worldCamera.Position.Y, newZ);
+            }
+            catch (FormatException)
+            {
+                return;
+            }
         }
     }
 }
