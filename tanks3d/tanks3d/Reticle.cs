@@ -36,6 +36,7 @@ namespace tanks3d
 
         public override void Update(GameTime gameTime)
         {
+            //Mouse.WindowHandle = game.drawSurface;
             MouseState mouse = Mouse.GetState();
             Position = new Vector2(mouse.X, mouse.Y);
         }
