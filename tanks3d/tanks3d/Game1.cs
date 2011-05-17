@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using tanks3d.Physics;
 
 namespace tanks3d
 {
@@ -23,10 +24,14 @@ namespace tanks3d
         VertexDeclaration vertexDeclaration;
 
         Model terrain;
-        HeightMapInfo heightMapInfo;
+        public HeightMapInfo heightMapInfo;
         Sky sky;
 
         public Cameras.QuaternionCameraComponent worldCamera;
+
+        public PhysicsEngine physicsEngine;
+        public TestPhysicsObject testPhysicsObject;
+
         public HUD mainHUD;
 
         Texture2D texture;
@@ -83,6 +88,9 @@ namespace tanks3d
             worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
+
+            physicsEngine = new PhysicsEngine(this);
+            Components.Add(physicsEngine);
             
             mainHUD = new HUD(this);
             Components.Add(mainHUD);
@@ -102,6 +110,10 @@ namespace tanks3d
 
             Reticle reticle = new Reticle(this);
             Components.Add(reticle);
+
+            testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
+            Components.Add(testPhysicsObject);
+            physicsEngine.AddPhysicsObject(testPhysicsObject);
 
             //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
             //aCamera.Position = new Vector3(-100, 100, 100);
