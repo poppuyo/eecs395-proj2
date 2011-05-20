@@ -45,6 +45,8 @@ namespace tanks3d
         public WinFormContainer winFormContainer = null;
         public IntPtr drawSurface;
 
+        public KeyboardState previousKeyboardState;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -189,12 +191,29 @@ namespace tanks3d
                 this.Exit();
             if (keyboard.IsKeyDown(Keys.Escape))
                 this.Exit();
+            if (previousKeyboardState.IsKeyDown(Keys.Space))
+            {
+                if (keyboard.IsKeyUp(Keys.Space))
+                {
+                    if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
+                    {
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowB;
+                    }
+                    else
+                    {
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
+                    }
+                }
+            }
 
             // worldCamera.Update(mouseState, keyboard);
 
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
             //worldCamera.Update(gameTime);
+
+            previousKeyboardState = keyboard;
+
             base.Update(gameTime);
         }
 

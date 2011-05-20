@@ -217,7 +217,8 @@ namespace tanks3d.Cameras
             FirstPerson,
             Spectator,
             Flight,
-            Orbit
+            Orbit,
+            FollowB
         };
 
         public const float DEFAULT_FOVX = 90.0f;
@@ -1072,6 +1073,8 @@ namespace tanks3d.Cameras
         private MouseState previousMouseState;
         private KeyboardState currentKeyboardState;
         private Dictionary<Actions, Keys> actionKeys;
+
+        private Game1 g;
         
     #region Public Methods
 
@@ -1082,8 +1085,9 @@ namespace tanks3d.Cameras
         /// z axis. An initial perspective projection matrix is created
         /// as well as setting up initial key bindings to the actions.
         /// </summary>
-        public QuaternionCameraComponent(Game game) : base(game)
+        public QuaternionCameraComponent(Game1 game) : base(game)
         {
+            g = game;
             camera = new QuaternionCamera();
             camera.CurrentBehavior = QuaternionCamera.Behavior.Spectator;
 
@@ -1248,6 +1252,7 @@ namespace tanks3d.Cameras
             base.Update(gameTime);
             UpdateInput();
             UpdateCamera(gameTime);
+            
         }
 
         /// <summary>
@@ -1859,7 +1864,6 @@ namespace tanks3d.Cameras
                 RotateSmoothly(dx, dy, 0.0f);
                 UpdatePosition(ref direction, elapsedTimeSec);
                 break;
-
             case QuaternionCamera.Behavior.Flight:
                 dy = -smoothedMouseMovement.Y;
                 dz = smoothedMouseMovement.X;
@@ -1888,6 +1892,13 @@ namespace tanks3d.Cameras
                 if ((dz = GetMouseWheelDirection() * mouseWheelSpeed) != 0.0f)
                     camera.Zoom(dz, camera.OrbitMinZoom, camera.OrbitMaxZoom);
                     
+                break;
+
+            case QuaternionCamera.Behavior.FollowB:
+                Vector3 pos = g.testPhysicsObject.GetPosition();
+                Vector3 vel = g.testPhysicsObject.GetVelocity();
+
+                camera.LookAt(pos - (Vector3.Normalize(vel) * 100) + (Vector3.Up*50), pos, Vector3.Up);
                 break;
 
             default:
