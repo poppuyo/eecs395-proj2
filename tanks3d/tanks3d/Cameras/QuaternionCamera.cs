@@ -321,6 +321,11 @@ namespace tanks3d.Cameras
             this.eye = eye;
             this.target = target;
 
+            if (target.X == eye.X && target.Z == eye.Z)
+            {
+                target += new Vector3(0.1f, 0f, 0f);
+            }
+
             zAxis = eye - target;
             zAxis.Normalize();
 
