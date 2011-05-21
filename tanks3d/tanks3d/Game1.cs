@@ -167,7 +167,7 @@ namespace tanks3d
 
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
-            MediaPlayer.Play(mySong);
+            //MediaPlayer.Play(mySong);
         }
 
         /// <summary>
@@ -186,6 +186,8 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            HandleInput();
+
             tank1.Update(gameTime);
 
             KeyboardState keyboard = Keyboard.GetState();
@@ -338,6 +340,23 @@ namespace tanks3d
                     System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
                 }
             }
+        }
+
+        private void HandleInput()
+        {
+            KeyboardState currentKeyboardState = Keyboard.GetState();
+            GamePadState currentGamePadState = GamePad.GetState(PlayerIndex.One);
+
+            // Check for exit.
+            if (currentKeyboardState.IsKeyDown(Keys.Escape) ||
+                currentGamePadState.Buttons.Back == ButtonState.Pressed)
+            {
+                Exit();
+            }
+
+            tank1.HandleInput(currentGamePadState, currentKeyboardState, heightMapInfo);
+
+
         }
     }
 }

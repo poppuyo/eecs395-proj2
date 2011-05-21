@@ -258,8 +258,7 @@ namespace tank3d
             // calculate the tank's world matrix, which will be a combination of our
             // orientation and a translation matrix that will put us at at the correct
             // position.
-            Matrix worldMatrix = orientation * Matrix.CreateTranslation(Position);
-            worldMatrix *= Matrix.CreateScale(0.01f);
+            Matrix worldMatrix = Matrix.CreateScale(0.3f) * orientation * Matrix.CreateTranslation(Position);
 
             foreach (ModelMesh mesh in model.Meshes)
             {
