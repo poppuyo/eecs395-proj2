@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using tanks3d.Physics;
+using tank3d;
 
 namespace tanks3d
 {
@@ -104,8 +105,8 @@ namespace tanks3d
             //terrain = new Terrains.HeightmapTerrain(this);
             //Components.Add(terrain);
 
-            tank1 = new Tank(this);
-            Components.Add(tank1);
+            tank1 = new Tank();
+            //Components.Add(tank1);
 
             //bullet1 = new Bullet(this);
             //Components.Add(bullet1);
@@ -146,6 +147,8 @@ namespace tanks3d
 
             sky = Content.Load<Sky>("sky");
 
+            tank1.LoadContent(Content);
+
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Content.Load<Texture2D>("64x64");
@@ -173,7 +176,7 @@ namespace tanks3d
         /// </summary>
         protected override void UnloadContent()
         {
-            Components.Remove(tank1);
+            //Components.Remove(tank1);
         }
 
         /// <summary>
@@ -183,6 +186,8 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            tank1.Update(gameTime);
+
             KeyboardState keyboard = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
 
@@ -248,6 +253,8 @@ namespace tanks3d
             DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
+            tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
         }

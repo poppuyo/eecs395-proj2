@@ -70,11 +70,6 @@
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_ColorKeyColor>255, 255, 255, 255</ProcessorParameters_ColorKeyColor>
     </Compile>
-    <Compile Include="Models\tank.fbx">
-      <Name>tank</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\p1_wedge.fbx">
@@ -176,6 +171,13 @@
       <Project>{EF37345A-3BB3-498E-A2A3-F831DE78269B}</Project>
       <Name>TerrainPipeline</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\tank.fbx">
+      <Name>tank</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
