@@ -1889,7 +1889,11 @@ namespace tanks3d.Cameras
                     Vector3 pos = g.testPhysicsObject.GetPosition();
                     Vector3 vel = g.testPhysicsObject.GetVelocity();
 
-                    camera.LookAt(pos - (Vector3.Normalize(vel) * 100) + (Vector3.Up * 50), pos, Vector3.Up);
+                    Vector3 smoothedBack = pos - Vector3.Normalize(vel) * 75;
+                    smoothedBack.Y += Vector3.Normalize(vel).Y * 100;
+                    smoothedBack.Y += Vector3.Up.Y * 100;
+                    //pos - (Vector3.Normalize(vel) * 100) + (Vector3.Up * 50)
+                    camera.LookAt(smoothedBack, pos, Vector3.Up);
                     break;
 
                 default:
