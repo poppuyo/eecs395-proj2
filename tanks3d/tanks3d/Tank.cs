@@ -1,4 +1,13 @@
-﻿#region Using Statements
+﻿#region File Description
+//-----------------------------------------------------------------------------
+// Tank.cs
+//
+// Microsoft XNA Community Game Platform
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//-----------------------------------------------------------------------------
+#endregion
+
+#region Using Statements
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,14 +24,14 @@ namespace tank3d
 
 
         // This constant controls how quickly the tank can move forward and backward
-        const float TankVelocity = 2;
+        const float TankVelocity = 1.5f;
 
         // The radius of the tank's wheels. This is used when we calculate how fast they
         // should be rotating as the tank moves.
-        const float TankWheelRadius = 18;
+        const float TankWheelRadius = 30;
 
         // controls how quickly the tank can turn from side to side.
-        const float TankTurnSpeed = .025f;
+        const float TankTurnSpeed = .012f;
 
 
         #endregion
@@ -33,7 +42,7 @@ namespace tank3d
         /// <summary>
         /// The position of the tank. The camera will use this value to position itself.
         /// </summary>
-        private Vector3 Position
+        public Vector3 Position
         {
             get { return position; }
         }
@@ -49,6 +58,7 @@ namespace tank3d
         }
         private float facingDirection;
 
+        // Handles 
         private Vector3 OriginalMousePos { get; set; }
         private Vector3 TurretDirection { get; set; }
 
@@ -122,8 +132,6 @@ namespace tank3d
 
             canonBone = model.Bones["canon_geo"];
             canonTransform = canonBone.Transform;
-
-
         }
 
         #endregion
@@ -137,20 +145,32 @@ namespace tank3d
         /// necessary state.
         /// </summary>
         public void HandleInput(GamePadState currentGamePadState,
-            KeyboardState currentKeyboardState, HeightMapInfo heightMapInfo)
+                                KeyboardState currentKeyboardState, 
+                                MouseState currentMouseState,
+                                HeightMapInfo heightMapInfo,
+                                GameTime gameTime)
         {
+            // Saves original mouse position at game start
+            if (gameTime.TotalGameTime.Seconds < 1)
+            {
+                OriginalMousePos = new Vector3(currentMouseState.X, currentMouseState.Y, 0);
+            }
+
+            //Recalculates turretDirection based on current mouse position
+            TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
+
             // First, we want to check to see if the tank should turn. turnAmount will 
             // be an accumulation of all the different possible inputs.
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
             if (currentKeyboardState.IsKeyDown(Keys.A) ||
-                currentKeyboardState.IsKeyDown(Keys.Left) ||
+                //currentKeyboardState.IsKeyDown(Keys.Left) ||
                 currentGamePadState.DPad.Left == ButtonState.Pressed)
             {
                 turnAmount += 1;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.D) ||
-                currentKeyboardState.IsKeyDown(Keys.Right) ||
+                //currentKeyboardState.IsKeyDown(Keys.Right) ||
                 currentGamePadState.DPad.Right == ButtonState.Pressed)
             {
                 turnAmount -= 1;
@@ -169,16 +189,16 @@ namespace tank3d
             movement.Z = -currentGamePadState.ThumbSticks.Left.Y;
 
             if (currentKeyboardState.IsKeyDown(Keys.W) ||
-                currentKeyboardState.IsKeyDown(Keys.Up) ||
+                //currentKeyboardState.IsKeyDown(Keys.Up) ||
                 currentGamePadState.DPad.Up == ButtonState.Pressed)
             {
-                movement.Z = -1;
+                movement.Z = 1;
             }
             if (currentKeyboardState.IsKeyDown(Keys.S) ||
-                currentKeyboardState.IsKeyDown(Keys.Down) ||
+                //currentKeyboardState.IsKeyDown(Keys.Down) ||
                 currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
-                movement.Z = 1;
+                movement.Z = -1;
             }
 
             // next, we'll create a rotation matrix from the direction the tank is 
@@ -197,8 +217,8 @@ namespace tank3d
                 // height and normal at this position.
                 Vector3 normal;
                 heightMapInfo.GetHeightAndNormal(newPosition,
-                    out newPosition.Y, out normal);
-
+                                                 out newPosition.Y,
+                                                 out normal);
 
                 // As discussed in the doc, we'll use the normal of the heightmap
                 // and our desired forward direction to recalculate our orientation
@@ -226,17 +246,6 @@ namespace tank3d
             }
         }
 
-        public void Update(GameTime gameTime)
-        {
-            MouseState mouse = Mouse.GetState();
-            if (gameTime.TotalGameTime.Seconds < 1)
-            {
-                OriginalMousePos = new Vector3(mouse.X, mouse.Y, 0);
-            }
-
-            TurretDirection = new Vector3(mouse.X, mouse.Y, 0) - OriginalMousePos;
-        }
-
         public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
         {
             // Apply matrices to the relevant bones, as discussed in the Simple 
@@ -251,7 +260,7 @@ namespace tank3d
                                    turretTransform;
 
             canonBone.Transform = Matrix.CreateRotationX((float)-(TurretDirection.Y * .01)) *
-                                  Matrix.CreateScale(3) *
+                                  Matrix.CreateScale(2.0f) *
                                   canonTransform;
 
             // now that we've updated the wheels' transforms, we can create an array
@@ -262,7 +271,7 @@ namespace tank3d
             // calculate the tank's world matrix, which will be a combination of our
             // orientation and a translation matrix that will put us at at the correct
             // position.
-            Matrix worldMatrix = Matrix.CreateScale(0.3f) * orientation * Matrix.CreateTranslation(Position);
+            Matrix worldMatrix = Matrix.CreateScale(0.1f) * orientation * Matrix.CreateTranslation(Position);
 
             foreach (ModelMesh mesh in model.Meshes)
             {

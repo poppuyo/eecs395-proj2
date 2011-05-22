@@ -187,37 +187,12 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            HandleInput();
 
-            tank1.Update(gameTime);
+            HandleInput(gameTime);
 
-            KeyboardState keyboard = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
-
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-            if (keyboard.IsKeyDown(Keys.Escape))
-                this.Exit();
-            if (previousKeyboardState.IsKeyDown(Keys.Space))
-            {
-                if (keyboard.IsKeyUp(Keys.Space))
-                {
-                    if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
-                    {
-                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowB;
-                    }
-                    else
-                    {
-                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
-                    }
-                }
-            }
 
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
-
-            previousKeyboardState = keyboard;
 
             base.Update(gameTime);
         }
@@ -340,17 +315,32 @@ namespace tanks3d
             }
         }
 
-        private void HandleInput()
+        private void HandleInput(GameTime gameTime)
         {
             KeyboardState currentKeyboardState = Keyboard.GetState();
             GamePadState currentGamePadState = GamePad.GetState(PlayerIndex.One);
+            MouseState currentMouseState = Mouse.GetState();
 
-            // Check for exit.
+            // Allows the game to exit
             if (currentKeyboardState.IsKeyDown(Keys.Escape) ||
-                currentGamePadState.Buttons.Back == ButtonState.Pressed)
+                    currentGamePadState.Buttons.Back == ButtonState.Pressed)
+                this.Exit();
+
+            if (previousKeyboardState.IsKeyDown(Keys.Space))
             {
-                Exit();
+                if (currentKeyboardState.IsKeyUp(Keys.Space))
+                {
+                    if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
+                    {
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowB;
+                    }
+                    else
+                    {
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
+                    }
+                }
             }
+            previousKeyboardState = currentKeyboardState;
 
             if (currentKeyboardState.IsKeyDown(Keys.G))
                 timeOut = 45;
@@ -361,8 +351,11 @@ namespace tanks3d
                 timeOut--;
             }
 
-            tank1.HandleInput(currentGamePadState, currentKeyboardState, heightMapInfo);
-
+            tank1.HandleInput(currentGamePadState, 
+                              currentKeyboardState, 
+                              currentMouseState, 
+                              heightMapInfo,
+                              gameTime);
 
         }
 
