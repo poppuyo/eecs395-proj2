@@ -58,6 +58,7 @@ namespace tank3d
         }
         private float facingDirection;
 
+        // Handles 
         private Vector3 OriginalMousePos { get; set; }
         private Vector3 TurretDirection { get; set; }
 
@@ -143,8 +144,19 @@ namespace tank3d
         /// </summary>
         public void HandleInput(GamePadState currentGamePadState,
                                 KeyboardState currentKeyboardState, 
-                                HeightMapInfo heightMapInfo)
+                                MouseState currentMouseState,
+                                HeightMapInfo heightMapInfo,
+                                GameTime gameTime)
         {
+            // Saves original mouse position at game start
+            if (gameTime.TotalGameTime.Seconds < 1)
+            {
+                OriginalMousePos = new Vector3(currentMouseState.X, currentMouseState.Y, 0);
+            }
+
+            //Recalculates turretDirection based on current mouse position
+            TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
+
             // First, we want to check to see if the tank should turn. turnAmount will 
             // be an accumulation of all the different possible inputs.
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
@@ -178,13 +190,13 @@ namespace tank3d
                 //currentKeyboardState.IsKeyDown(Keys.Up) ||
                 currentGamePadState.DPad.Up == ButtonState.Pressed)
             {
-                movement.Z = -1;
+                movement.Z = 1;
             }
             if (currentKeyboardState.IsKeyDown(Keys.S) ||
                 //currentKeyboardState.IsKeyDown(Keys.Down) ||
                 currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
-                movement.Z = 1;
+                movement.Z = -1;
             }
 
             // next, we'll create a rotation matrix from the direction the tank is 
@@ -230,16 +242,6 @@ namespace tank3d
                 // new position that we calculated.
                 position = newPosition;
             }
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            MouseState mouse = Mouse.GetState();
-            if (gameTime.TotalGameTime.Seconds < 1)
-            {
-                OriginalMousePos = new Vector3(mouse.X, mouse.Y, 0);
-            }
-            TurretDirection = new Vector3(mouse.X, mouse.Y, 0) - OriginalMousePos;
         }
 
         public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
