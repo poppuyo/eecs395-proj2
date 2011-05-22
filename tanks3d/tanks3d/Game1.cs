@@ -38,7 +38,7 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Tank tank1;
+        public Tank tank1;
         Bullet bullet1;
 
         public DrawUtils drawUtils;
@@ -204,7 +204,7 @@ namespace tanks3d
                 {
                     if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
                     {
-                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowB;
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
                     }
                     else
                     {

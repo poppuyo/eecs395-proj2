@@ -9,7 +9,7 @@ using tanks3d;
 
 namespace tank3d
 {
-    class Tank
+    public class Tank
     {
         #region Constants
 
