@@ -170,6 +170,9 @@
     <Compile Include="VertexTypes.cs" />
     <Compile Include="Weapons\BulletManager.cs" />
     <Compile Include="Weapons\TestBullet.cs" />
+    <Compile Include="Weapons\Weapon.cs" />
+    <Compile Include="Weapons\Weapon1.cs" />
+    <Compile Include="Weapons\WeaponManager.cs" />
     <Compile Include="WinFormContainer.cs">
       <SubType>Form</SubType>
     </Compile>

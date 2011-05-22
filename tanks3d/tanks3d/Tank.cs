@@ -13,8 +13,8 @@ namespace tanks3d
         float aspectRatio;
 
         // Set the position of the model in world space, and set the rotation.
-        Vector3 modelPosition = Vector3.Zero;
-        Vector3 modelVelocity = Vector3.Zero;
+        public Vector3 modelPosition = Vector3.Zero;
+        public Vector3 modelVelocity = Vector3.Zero;
         float modelRotation = 0.0f;
 
         // Set the position of the camera in world space, for our view matrix.

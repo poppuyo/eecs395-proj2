@@ -36,6 +36,7 @@ namespace tanks3d
         public PhysicsEngine physicsEngine;
         public TestPhysicsObject testPhysicsObject;
 
+        public WeaponManager weaponManager;
         public BulletManager bulletManager;
 
         public HUD mainHUD;
@@ -43,7 +44,7 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Tank tank1;
+        public Tank tank1;
         Bullet bullet1;
 
         public Random random = new Random();
@@ -112,6 +113,8 @@ namespace tanks3d
 
             tank1 = new Tank(this);
             Components.Add(tank1);
+
+            weaponManager = new WeaponManager(this);
 
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);

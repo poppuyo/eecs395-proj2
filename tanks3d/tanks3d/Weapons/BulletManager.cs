@@ -11,9 +11,11 @@ namespace tanks3d.Weapons
     {
         private Game1 game;
 
+        /// <summary>
+        /// List of all the bullets that are currently present and active in the game, either
+        /// firing or exploding.
+        /// </summary>
         List<TestBullet> bullets = new List<TestBullet>();
-        
-        TimeSpan timeToNextProjectile = TimeSpan.Zero;
 
         ParticleSystem explosionParticles;
         ParticleSystem explosionSmokeParticles;
@@ -42,33 +44,25 @@ namespace tanks3d.Weapons
             game.Components.Add(projectileTrailParticles);
         }
 
+        /*
         public override void Update(GameTime gameTime)
         {
-            UpdateExplosions(gameTime);
-
             base.Update(gameTime);
         }
+        */
 
-        /// <summary>
-        /// Helper for updating the explosions effect.
-        /// </summary>
-        void UpdateExplosions(GameTime gameTime)
+        public TestBullet SpawnBullet(Vector3 origin, Vector3 initialVelocity)
         {
-            timeToNextProjectile -= gameTime.ElapsedGameTime;
-
-            if (timeToNextProjectile <= TimeSpan.Zero)
-            {
-                // Create a new projectile once per second. The real work of moving
-                // and creating particles is handled inside the Projectile class.
-                TestBullet bullet = new TestBullet(game,
+            TestBullet bullet = new TestBullet(game,
                                            explosionParticles,
                                            explosionSmokeParticles,
-                                           projectileTrailParticles);
-                bullets.Add(bullet);
-                game.Components.Add(bullet);
+                                           projectileTrailParticles,
+                                           origin,
+                                           initialVelocity);
+            bullets.Add(bullet);
+            game.Components.Add(bullet);
 
-                timeToNextProjectile += TimeSpan.FromSeconds(1);
-            }
+            return bullet;
         }
 
         public void RemoveBullet(TestBullet bullet)

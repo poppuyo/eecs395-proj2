@@ -34,21 +34,18 @@ namespace tanks3d.Weapons
 
         #endregion
 
-        public TestBullet(Game1 g, ParticleSystem explosionParticles,
-                          ParticleSystem explosionSmokeParticles,
-                          ParticleSystem projectileTrailParticles)
+        public TestBullet(Game1 g, ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles,
+            ParticleSystem projectileTrailParticles, Vector3 origin, Vector3 initialVelocity)
             : base(g)
         {
             game = g;
-            position = new Vector3(0, 0, 0);
             bulletState = BulletState.Unexploded;
+
+            this.position = origin;
+            this.velocity = initialVelocity;
 
             this.explosionParticles = explosionParticles;
             this.explosionSmokeParticles = explosionSmokeParticles;
-
-            velocity.X = (float)(game.random.NextDouble() - 0.5) * sidewaysVelocityRange;
-            velocity.Y = (float)(game.random.NextDouble() + 0.5) * verticalVelocityRange;
-            velocity.Z = (float)(game.random.NextDouble() - 0.5) * sidewaysVelocityRange;
 
             // Use the particle emitter helper to output our trail particles.
             trailEmitter = new ParticleEmitter(projectileTrailParticles,
