@@ -205,10 +205,39 @@ namespace tanks3d
 
         private void WinFormContainer_Load(object sender, EventArgs e)
         {
+            // Set up weapon types
             InitWeaponTypesComboBox();
             if (WeaponTypesComboBox.Items.Count >= 1)
             {
                 WeaponTypesComboBox.SelectedIndex = 0;
+            }
+
+            // Create a default turret
+            TurretPosition = new Vector3(0, -15, 0);
+            TurretAim = new Vector3(0, 1, -1);
+            WeaponPower = 100.0f;
+            UpdateTurretInfo();
+        }
+
+        private void UpdateTurretInfo()
+        {
+            if (TurretPosition.HasValue)
+            {
+                TurretPositionX_TextBox.Text = TurretPosition.Value.X.ToString();
+                TurretPositionY_TextBox.Text = TurretPosition.Value.Y.ToString();
+                TurretPositionZ_TextBox.Text = TurretPosition.Value.Z.ToString();
+            }
+
+            if (TurretAim.HasValue)
+            {
+                TurretAimX_TextBox.Text = TurretAim.Value.X.ToString();
+                TurretAimY_TextBox.Text = TurretAim.Value.Y.ToString();
+                TurretAimZ_TextBox.Text = TurretAim.Value.Z.ToString();
+            }
+
+            if (WeaponPower.HasValue)
+            {
+                WeaponPowerTextBox.Text = WeaponPower.Value.ToString();
             }
         }
 
