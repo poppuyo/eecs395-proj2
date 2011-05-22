@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using tanks3d.Physics;
 using tanks3d.Weapons;
 using tanks3d.ParticleSystems;
+using tank3d;
 
 namespace tanks3d
 {
@@ -46,8 +47,6 @@ namespace tanks3d
 
         public Tank tank1;
         Bullet bullet1;
-
-        public Random random = new Random();
 
         public DrawUtils drawUtils;
 
@@ -417,7 +416,7 @@ namespace tanks3d
 
         }
 
-        private static readonly Random random = new Random();
+        public static readonly Random random = new Random();
 
         private void Shake()
         {
