@@ -8,7 +8,7 @@ using tanks3d.ParticleSystems;
 
 namespace tanks3d.Weapons
 {
-    public class TestBullet : DrawableGameComponent
+    public class Bullet : DrawableGameComponent
     {
         private Game1 game;
 
@@ -34,7 +34,7 @@ namespace tanks3d.Weapons
 
         #endregion
 
-        public TestBullet(Game1 g, ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles,
+        public Bullet(Game1 g, ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles,
             ParticleSystem projectileTrailParticles, Vector3 origin, Vector3 initialVelocity)
             : base(g)
         {

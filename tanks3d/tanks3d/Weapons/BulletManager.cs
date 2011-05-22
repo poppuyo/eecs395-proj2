@@ -15,7 +15,7 @@ namespace tanks3d.Weapons
         /// List of all the bullets that are currently present and active in the game, either
         /// firing or exploding.
         /// </summary>
-        List<TestBullet> bullets = new List<TestBullet>();
+        List<Bullet> bullets = new List<Bullet>();
 
         ParticleSystem explosionParticles;
         ParticleSystem explosionSmokeParticles;
@@ -51,9 +51,9 @@ namespace tanks3d.Weapons
         }
         */
 
-        public TestBullet SpawnBullet(Vector3 origin, Vector3 initialVelocity)
+        public Bullet SpawnBullet(Vector3 origin, Vector3 initialVelocity)
         {
-            TestBullet bullet = new TestBullet(game,
+            Bullet bullet = new Bullet(game,
                                            explosionParticles,
                                            explosionSmokeParticles,
                                            projectileTrailParticles,
@@ -65,7 +65,7 @@ namespace tanks3d.Weapons
             return bullet;
         }
 
-        public void RemoveBullet(TestBullet bullet)
+        public void RemoveBullet(Bullet bullet)
         {
             bullets.Remove(bullet);
         }
