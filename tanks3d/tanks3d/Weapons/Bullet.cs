@@ -126,11 +126,13 @@ namespace tanks3d.Weapons
 
 					bulletState = BulletState.Exploding;
 
+                    Vector3 explosionVelocity = new Vector3(velocity.X, 0.0f, velocity.Z);
+
 			        for (int i = 0; i < numExplosionParticles; i++)
-				        explosionParticles.AddParticle(position, velocity);
+                        explosionParticles.AddParticle(position, explosionVelocity);
 
 			        for (int i = 0; i < numExplosionSmokeParticles; i++)
-				        explosionSmokeParticles.AddParticle(position, velocity);
+                        explosionSmokeParticles.AddParticle(position, explosionVelocity);
 
                     break;
                 case BulletState.Exploding:
