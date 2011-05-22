@@ -62,12 +62,47 @@ namespace tank3d
         private Vector3 OriginalMousePos { get; set; }
         private Vector3 TurretDirection { get; set; }
 
+        public Vector3 GetTurretDirection()
+        {
+            Matrix m0 = orientation;
+            Matrix m1 = Matrix.CreateRotationY((float)-(TurretDirection.X * .01));
+            Matrix m2 = Matrix.CreateRotationX((float)-(TurretDirection.Y * .01));
+
+            return Vector3.Transform(Vector3.UnitZ, m2 * m1 * orientation);
+        }
+
+        /// <summary>
+        /// Location of the muzzle of the turret. This should be the spawn
+        /// point of the projectiles.
+        /// </summary>
+        public Vector3 TurretEndPosition
+        {
+            get
+            {
+                Matrix worldMatrix = Matrix.CreateScale(0.1f) * orientation * Matrix.CreateTranslation(Position);
+                Matrix barrel = Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, TurretLength));
+                Matrix turret = Matrix.CreateRotationY((float)-(TurretDirection.X * .01)) * turretTransform;
+                Matrix canon = Matrix.CreateRotationX((float)-(TurretDirection.Y * .01)) * Matrix.CreateScale(2.0f) * canonTransform;
+
+                Matrix combined = barrel * canon * turret  * worldMatrix;
+
+                return Vector3.Transform(Vector3.Zero, combined);
+            }
+        }
+
         public int angle = 0 ;
+
+        /// <summary>
+        /// Length of the turret's barrel.
+        /// </summary>
+        public const float TurretLength = 185.0f;
 
         #endregion
 
 
         #region Fields
+
+        private Game1 game;
 
         // The tank's model - a fearsome sight.
         Model model;
@@ -105,6 +140,11 @@ namespace tank3d
 
 
         #region Initialization
+
+        public Tank(Game1 game)
+        {
+            this.game = game;
+        }
 
         /// <summary>
         /// Called when the Game is loading its content. Pass in a ContentManager so the

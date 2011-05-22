@@ -85,15 +85,19 @@ namespace tanks3d.Physics
                 {
                     float terrainElevation;
                     Vector3 terrainNormal;
-                    game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
-                    if ((corners[i] + v).Y <= terrainElevation)
+
+                    if (game.heightMapInfo.IsOnHeightmap(corners[i]))
                     {
-                        HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
+                        game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
+                        if ((corners[i] + v).Y <= terrainElevation)
+                        {
+                            HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
 
-                        // Notify the physics object that a collision with the terrain had occurred.
-                        physicsObject.HandleCollisionWithTerrain();
+                            // Notify the physics object that a collision with the terrain had occurred.
+                            physicsObject.HandleCollisionWithTerrain();
 
-                        return;
+                            return;
+                        }
                     }
                 }
             }

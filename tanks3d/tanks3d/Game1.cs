@@ -126,7 +126,7 @@ namespace tanks3d
             //terrain = new Terrains.HeightmapTerrain(this);
             //Components.Add(terrain);
 
-            tank1 = new Tank();
+            tank1 = new Tank(this);
 
             weaponManager = new WeaponManager(this);
 
@@ -397,6 +397,16 @@ namespace tanks3d
                     }
                 }
             }
+
+            if (previousKeyboardState.IsKeyDown(Keys.F))
+            {
+                if (currentKeyboardState.IsKeyUp(Keys.F))
+                {
+                    weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                }
+            }
+
+
             previousKeyboardState = currentKeyboardState;
 
             if (currentKeyboardState.IsKeyDown(Keys.G))
