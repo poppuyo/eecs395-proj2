@@ -24,7 +24,7 @@ namespace tank3d
 
 
         // This constant controls how quickly the tank can move forward and backward
-        const float TankVelocity = 2;
+        const float TankVelocity = 1.5f;
 
         // The radius of the tank's wheels. This is used when we calculate how fast they
         // should be rotating as the tank moves.
@@ -256,7 +256,7 @@ namespace tank3d
                                    turretTransform;
 
             canonBone.Transform = Matrix.CreateRotationX((float)-(TurretDirection.Y * .01)) *
-                                  Matrix.CreateScale(1.5f) *
+                                  Matrix.CreateScale(2.0f) *
                                   canonTransform;
 
             // now that we've updated the wheels' transforms, we can create an array
