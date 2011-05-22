@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using tanks3d.Weapons;
 
 namespace tanks3d
 {
@@ -181,6 +182,185 @@ namespace tanks3d
                 CameraMessageLabel.Text = "Invalid target position.";
                 CameraMessageLabel.Visible = true;
                 return;
+            }
+        }
+
+        private WeaponTypes selectedWeaponType;
+
+        private void WeaponTypesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selected = WeaponTypesComboBox.SelectedItem.ToString();
+
+            if (Enum.IsDefined(typeof(WeaponTypes), selected))
+            {
+                selectedWeaponType = (WeaponTypes)Enum.Parse(typeof(WeaponTypes), selected);
+                weaponMessageLabel.Visible = false;
+            }
+            else
+            {
+                weaponMessageLabel.Text = "Invalid weapon type selected.";
+                weaponMessageLabel.Visible = true;
+            }
+        }
+
+        private void WinFormContainer_Load(object sender, EventArgs e)
+        {
+            InitWeaponTypesComboBox();
+            if (WeaponTypesComboBox.Items.Count >= 1)
+            {
+                WeaponTypesComboBox.SelectedIndex = 0;
+            }
+        }
+
+        private void InitWeaponTypesComboBox()
+        {
+            foreach (string weaponName in Enum.GetNames(typeof(WeaponTypes)))
+            {
+                WeaponTypesComboBox.Items.Add(weaponName);
+            }
+        }
+
+        private Vector3? TurretPosition;
+        private Vector3? TurretAim;
+        private float? WeaponPower;
+
+        private void SetTurretPosition_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                float turretX = (float)Convert.ToDouble(TurretPositionX_TextBox.Text);
+                float turretY = (float)Convert.ToDouble(TurretPositionY_TextBox.Text);
+                float turretZ = (float)Convert.ToDouble(TurretPositionZ_TextBox.Text);
+                TurretPosition = new Vector3(turretX, turretY, turretZ);
+                weaponMessageLabel.Visible = false;
+            }
+            catch (FormatException)
+            {
+                TurretPosition = null;
+                weaponMessageLabel.Text = "Invalid turret position.";
+                weaponMessageLabel.Visible = true;
+                return;
+            }
+        }
+
+        private void DrawTurret()
+        {
+            if (TurretPosition.HasValue)
+            {
+                game.drawUtils.DrawSphere(TurretPosition.Value, 5.0f, Microsoft.Xna.Framework.Color.Green);
+                
+                if (TurretAim.HasValue)
+                {
+                    Vector3 start = TurretPosition.Value;
+                    Vector3 end = TurretPosition.Value + (5.0f * TurretAim.Value) + TurretAim.Value;
+
+                    game.drawUtils.DrawLine(start, end, Microsoft.Xna.Framework.Color.Green);
+
+                    // Draw a smaller sphere at the end
+                    game.drawUtils.DrawSphere(end, 1.0f, Microsoft.Xna.Framework.Color.Green);
+                }
+            }
+        }
+
+        private void DrawTurretTimer_Tick(object sender, EventArgs e)
+        {
+            DrawTurret();
+        }
+
+        private void SetTurretAim_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                float turretAimX = (float)Convert.ToDouble(TurretAimX_TextBox.Text);
+                float turretAimY = (float)Convert.ToDouble(TurretAimY_TextBox.Text);
+                float turretAimZ = (float)Convert.ToDouble(TurretAimZ_TextBox.Text);
+
+                if (TurretAim == Vector3.Zero)
+                {
+                    TurretAim = null;
+                    weaponMessageLabel.Text = "Invalid turret aim.";
+                    weaponMessageLabel.Visible = true;
+                    return;
+                }
+                else
+                {
+                    // Normalize the direction
+                    Vector3 TurretAimNormalized = new Vector3(turretAimX, turretAimY, turretAimZ);
+                    TurretAimNormalized.Normalize();
+                    TurretAim = TurretAimNormalized;
+
+                    // But don't update the form because that might result in long ugly numbers
+                    // with too many decimal points.
+                    //TurretAimX_TextBox.Text = TurretAim.Value.X.ToString();
+                    //TurretAimY_TextBox.Text = TurretAim.Value.Y.ToString();
+                    //TurretAimZ_TextBox.Text = TurretAim.Value.Z.ToString();
+
+                    weaponMessageLabel.Visible = false;
+                }
+            }
+            catch (FormatException)
+            {
+                TurretAim = null;
+                weaponMessageLabel.Text = "Invalid turret aim.";
+                weaponMessageLabel.Visible = true;
+                return;
+            }
+        }
+
+        private void FireButton_Click(object sender, EventArgs e)
+        {
+            if (!TurretPosition.HasValue)
+            {
+                weaponMessageLabel.Text = "Turret position needs a value";
+                weaponMessageLabel.Visible = true;
+                return;
+            }
+
+            if (!TurretAim.HasValue)
+            {
+                weaponMessageLabel.Text = "Turret aim needs a value";
+                weaponMessageLabel.Visible = true;
+                return;
+            }
+
+            try
+            {
+                float power = (float)Convert.ToDouble(WeaponPowerTextBox.Text);
+                WeaponPower = power;
+                weaponMessageLabel.Visible = false;
+            }
+            catch (FormatException)
+            {
+                WeaponPower = null;
+                weaponMessageLabel.Text = "Invalid power";
+                weaponMessageLabel.Visible = true;
+                return;
+            }
+
+            weaponMessageLabel.Visible = false;
+
+            // This line would cause the tank to fire, but it ignores turret position and aim
+            // that is set in the form:
+            //game.weaponManager.Weapons[selectedWeaponType].Fire();
+
+            game.bulletManager.SpawnBullet(TurretPosition.Value, TurretAim.Value * WeaponPower.Value);
+        }
+
+        private void LocateTurretPositionLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (!TurretPosition.HasValue)
+            {
+                weaponMessageLabel.Text = "Turret position is not set";
+                weaponMessageLabel.Visible = true;
+            }
+            else
+            {
+                Vector3 newCameraPosition = TurretPosition.Value;
+                newCameraPosition += 5.0f * new Vector3(5.0f, 5.0f, 5.0f);
+
+                game.worldCamera.LookAt(newCameraPosition, TurretPosition.Value, Vector3.Up);
+
+                weaponMessageLabel.Visible = false;
             }
         }
     }
