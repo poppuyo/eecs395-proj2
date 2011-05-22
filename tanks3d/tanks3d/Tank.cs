@@ -18,7 +18,7 @@ using tanks3d;
 
 namespace tank3d
 {
-    class Tank
+    public class Tank
     {
         #region Constants
 
@@ -42,7 +42,7 @@ namespace tank3d
         /// <summary>
         /// The position of the tank. The camera will use this value to position itself.
         /// </summary>
-        private Vector3 Position
+        public Vector3 Position
         {
             get { return position; }
         }

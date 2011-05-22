@@ -218,7 +218,9 @@ namespace tanks3d.Cameras
             Spectator,
             Flight,
             Orbit,
-            FollowB
+            FollowB,
+            FollowT,
+            LookAtT
         };
 
         public const float DEFAULT_FOVX = 90.0f;
@@ -320,6 +322,11 @@ namespace tanks3d.Cameras
         {
             this.eye = eye;
             this.target = target;
+
+            if (target.X == eye.X && target.Z == eye.Z)
+            {
+                target += new Vector3(0.1f, 0f, 0f);
+            }
 
             zAxis = eye - target;
             zAxis.Normalize();
@@ -1057,6 +1064,7 @@ namespace tanks3d.Cameras
         private int savedMousePosX;
         private int savedMousePosY;
         private int mouseIndex;
+        private int zFactor = 1500;
         private float rotationSpeed;
         private float orbitRollSpeed;
         private float flightYawSpeed;
@@ -1644,6 +1652,15 @@ namespace tanks3d.Cameras
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
 
+            if (currentMouseState.ScrollWheelValue > previousMouseState.ScrollWheelValue)
+            {
+                zFactor+=100;
+            }
+            if (currentMouseState.ScrollWheelValue < previousMouseState.ScrollWheelValue)
+            {
+                zFactor-=100;
+            }
+
             if (clickAndDragMouseRotation)
             {
                 int deltaX = 0;
@@ -1894,6 +1911,17 @@ namespace tanks3d.Cameras
                     smoothedBack.Y += Vector3.Up.Y * 100;
                     //pos - (Vector3.Normalize(vel) * 100) + (Vector3.Up * 50)
                     camera.LookAt(smoothedBack, pos, Vector3.Up);
+                    break;
+
+                case QuaternionCamera.Behavior.FollowT:
+                    Vector3 tpos = g.tank1.Position;
+
+                    camera.LookAt(tpos + Vector3.Up*zFactor + new Vector3(500f,0,500f), tpos, Vector3.Up);
+                    //this.CurrentBehavior = QuaternionCamera.Behavior.Orbit;
+
+                    break;
+
+                case QuaternionCamera.Behavior.LookAtT:
                     break;
 
                 default:
