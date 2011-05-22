@@ -22,6 +22,8 @@ namespace tanks3d
         SpriteFont hudFont;
         SpriteBatch spriteBatch;
 
+        Texture2D healthBar, heart, powerBar, power;
+
         protected Game1 game;
 
         public HUD(Game g)
@@ -33,6 +35,11 @@ namespace tanks3d
         protected override void LoadContent()
         {
             hudFont = Game.Content.Load<SpriteFont>("hudFont");
+            healthBar = Game.Content.Load<Texture2D>("health bar");
+            heart = Game.Content.Load<Texture2D>("heart");
+            powerBar = Game.Content.Load<Texture2D>("power bar");
+            power = Game.Content.Load<Texture2D>("power");
+
             spriteBatch = new SpriteBatch(game.GraphicsDevice);
             base.LoadContent();
         }
@@ -58,12 +65,17 @@ namespace tanks3d
 
             temp = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
             text = "Camera Position: (" + temp + ")\n";
-            spriteBatch.DrawString(hudFont, text, new Vector2(0, 0), Color.Black);
+            spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
 
             Vector3 LookAtDirection = game.worldCamera.ViewDirection;
             temp = String.Format("{0:F2},{1:F2},{2:F2}", LookAtDirection.X, LookAtDirection.Y, LookAtDirection.Z);
             text = "LookAt Direction: (" + temp + ")\n";
-            spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
+            spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
+
+            spriteBatch.Draw(heart, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 5), Color.White);
+            spriteBatch.Draw(healthBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 10, game.tank1.health * 2, 12), Color.White);
+            spriteBatch.Draw(power, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 30), Color.White);
+            spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 35, game.tank1.power * 2, 12), Color.White);
 
             spriteBatch.End();
             game.DoSpriteBatchFix();

@@ -98,13 +98,13 @@ namespace tanks3d.Cameras
 
                     previousMouseState = currentMouseState;
 
-                    if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))      //Forward
+                    if (keyState.IsKeyDown(Keys.Up))      //Forward
                         AddToCameraPosition(new Vector3(0, 0, -1));
-                    if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S))    //Backward
+                    if (keyState.IsKeyDown(Keys.Down))    //Backward
                         AddToCameraPosition(new Vector3(0, 0, 1));
-                    if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D))   //Right
+                    if (keyState.IsKeyDown(Keys.Right))   //Right
                         AddToCameraPosition(new Vector3(1, 0, 0));
-                    if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A))    //Left
+                    if (keyState.IsKeyDown(Keys.Left))    //Left
                         AddToCameraPosition(new Vector3(-1, 0, 0));
                     if (keyState.IsKeyDown(Keys.Q))                                     //Up
                         AddToCameraPosition(new Vector3(0, 1, 0));
@@ -123,7 +123,7 @@ namespace tanks3d.Cameras
                         Console.WriteLine("Held: " + held);
                     }
 
-                        
+
                     break;
 
                 case CameraState.BulletView:

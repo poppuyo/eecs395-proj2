@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using tanks3d.Physics;
 using tanks3d.Weapons;
 using tanks3d.ParticleSystems;
+using tank3d;
 
 namespace tanks3d
 {
@@ -47,12 +48,26 @@ namespace tanks3d
         public Tank tank1;
         Bullet bullet1;
 
-        public Random random = new Random();
-
         public DrawUtils drawUtils;
 
         public WinFormContainer winFormContainer = null;
         public IntPtr drawSurface;
+
+        public KeyboardState previousKeyboardState;
+
+        private int timeOut = 0;
+
+        public enum GameState
+        {
+            Start,
+            Move,
+            Aim,
+            Fired,
+            Aftermath,
+            Transition
+        }
+
+        public GameState currentState;
 
         public Game1()
         {
@@ -90,7 +105,7 @@ namespace tanks3d
             //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
             worldCamera = new Cameras.QuaternionCameraComponent(this);
-            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 5000.0f);
+            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
             worldCamera.Position = new Vector3(-88, -300, 195);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
@@ -111,8 +126,7 @@ namespace tanks3d
             //terrain = new Terrains.HeightmapTerrain(this);
             //Components.Add(terrain);
 
-            tank1 = new Tank(this);
-            Components.Add(tank1);
+            tank1 = new Tank();
 
             weaponManager = new WeaponManager(this);
 
@@ -199,6 +213,8 @@ namespace tanks3d
 
             sky = Content.Load<Sky>("sky");
 
+            tank1.LoadContent(Content);
+
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Content.Load<Texture2D>("64x64");
@@ -217,7 +233,7 @@ namespace tanks3d
 
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
-            MediaPlayer.Play(mySong);
+            //MediaPlayer.Play(mySong);
         }
 
         /// <summary>
@@ -226,7 +242,7 @@ namespace tanks3d
         /// </summary>
         protected override void UnloadContent()
         {
-            Components.Remove(tank1);
+            //Components.Remove(tank1);
         }
 
         /// <summary>
@@ -236,20 +252,13 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            KeyboardState keyboard = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
 
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-            if (keyboard.IsKeyDown(Keys.Escape))
-                this.Exit();
+            HandleInput(gameTime);
 
-            // worldCamera.Update(mouseState, keyboard);
 
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
-            //worldCamera.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -284,6 +293,8 @@ namespace tanks3d
             DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
+            tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
         }
@@ -359,6 +370,62 @@ namespace tanks3d
                     System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
                 }
             }
+        }
+
+        private void HandleInput(GameTime gameTime)
+        {
+            KeyboardState currentKeyboardState = Keyboard.GetState();
+            GamePadState currentGamePadState = GamePad.GetState(PlayerIndex.One);
+            MouseState currentMouseState = Mouse.GetState();
+
+            // Allows the game to exit
+            if (currentKeyboardState.IsKeyDown(Keys.Escape) ||
+                    currentGamePadState.Buttons.Back == ButtonState.Pressed)
+                this.Exit();
+
+            if (previousKeyboardState.IsKeyDown(Keys.Space))
+            {
+                if (currentKeyboardState.IsKeyUp(Keys.Space))
+                {
+                    if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
+                    {
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                    }
+                    else
+                    {
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
+                    }
+                }
+            }
+            previousKeyboardState = currentKeyboardState;
+
+            if (currentKeyboardState.IsKeyDown(Keys.G))
+                timeOut = 45;
+
+            if (timeOut != 0)
+            {
+                Shake();
+                timeOut--;
+            }
+
+            tank1.HandleInput(currentGamePadState, 
+                              currentKeyboardState, 
+                              currentMouseState, 
+                              heightMapInfo,
+                              gameTime);
+
+        }
+
+        public static readonly Random random = new Random();
+
+        private void Shake()
+        {
+            worldCamera.Rotate(RandomFloat(), RandomFloat(), RandomFloat());
+        }
+
+        private float RandomFloat()
+        {
+            return (float)random.NextDouble() * 2f - 1f;
         }
     }
 }

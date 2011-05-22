@@ -12,7 +12,7 @@ namespace tanks3d.Weapons
 
         public override void Fire()
         {
-            game.bulletManager.SpawnBullet(game.tank1.modelPosition, new Vector3(64.0f, 64.0f, 0.0f));
+            game.bulletManager.SpawnBullet(game.tank1.Position, new Vector3(64.0f, 64.0f, 0.0f));
         }
     }
 }
