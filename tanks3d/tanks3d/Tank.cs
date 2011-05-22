@@ -33,7 +33,7 @@ namespace tank3d
         /// <summary>
         /// The position of the tank. The camera will use this value to position itself.
         /// </summary>
-        public Vector3 Position
+        private Vector3 Position
         {
             get { return position; }
         }
@@ -43,14 +43,16 @@ namespace tank3d
         /// The direction that the tank is facing, in radians. This value will be used
         /// to position and and aim the camera.
         /// </summary>
-        public float FacingDirection
+        private float FacingDirection
         {
             get { return facingDirection; }
         }
         private float facingDirection;
 
-        public Vector3 OriginalMousePos { get; set; }
-        public Vector3 TurretDirection { get; set; }
+        private Vector3 OriginalMousePos { get; set; }
+        private Vector3 TurretDirection { get; set; }
+
+        public int angle = 0 ;
 
         #endregion
 
@@ -125,7 +127,7 @@ namespace tank3d
         #endregion
 
 
-        #region Update and Draw
+        #region Handle input and draw
 
         /// <summary>
         /// This function is called when the game is Updating in response to user input.

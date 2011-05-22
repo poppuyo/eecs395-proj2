@@ -48,6 +48,8 @@ namespace tanks3d
 
         public KeyboardState previousKeyboardState;
 
+        private int timeOut = 0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -213,11 +215,8 @@ namespace tanks3d
                 }
             }
 
-            // worldCamera.Update(mouseState, keyboard);
-
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
-            //worldCamera.Update(gameTime);
 
             previousKeyboardState = keyboard;
 
@@ -354,9 +353,30 @@ namespace tanks3d
                 Exit();
             }
 
+            if (currentKeyboardState.IsKeyDown(Keys.G))
+                timeOut = 45;
+
+            if (timeOut != 0)
+            {
+                Shake();
+                timeOut--;
+            }
+
             tank1.HandleInput(currentGamePadState, currentKeyboardState, heightMapInfo);
 
 
+        }
+
+        private static readonly Random random = new Random();
+
+        private void Shake()
+        {
+            worldCamera.Rotate(RandomFloat(), RandomFloat(), RandomFloat());
+        }
+
+        private float RandomFloat()
+        {
+            return (float)random.NextDouble() * 2f - 1f;
         }
     }
 }
