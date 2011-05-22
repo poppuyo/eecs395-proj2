@@ -134,6 +134,15 @@
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
     <Compile Include="HeightMapInfo.cs" />
+    <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ExplosionSmokeParticleSystem.cs" />
+    <Compile Include="ParticleSystems\FireParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ParticleEmitter.cs" />
+    <Compile Include="ParticleSystems\ParticleSettings.cs" />
+    <Compile Include="ParticleSystems\ParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ParticleVertex.cs" />
+    <Compile Include="ParticleSystems\ProjectileTrailParticleSystem.cs" />
+    <Compile Include="ParticleSystems\SmokePlumeParticleSystem.cs" />
     <Compile Include="Physics\IPhysicsObject.cs" />
     <Compile Include="Physics\PhysicsUtil.cs" />
     <Compile Include="Physics\PhysicsEngine.cs" />
@@ -159,6 +168,8 @@
     <Compile Include="Utility\TorusPrimitive.cs" />
     <Compile Include="Utility\VertexPositionNormal.cs" />
     <Compile Include="VertexTypes.cs" />
+    <Compile Include="Weapons\BulletManager.cs" />
+    <Compile Include="Weapons\TestBullet.cs" />
     <Compile Include="WinFormContainer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,6 +219,7 @@
       <DependentUpon>WinFormContainer.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

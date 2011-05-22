@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using tanks3d.Physics;
+using tanks3d.Weapons;
+using tanks3d.ParticleSystems;
 
 namespace tanks3d
 {
@@ -24,6 +26,8 @@ namespace tanks3d
         VertexDeclaration vertexDeclaration;
 
         Model terrain;
+        //public Texture2D terrainTexture;
+        BasicEffect terrainEffect;
         public HeightMapInfo heightMapInfo;
         Sky sky;
 
@@ -32,6 +36,8 @@ namespace tanks3d
         public PhysicsEngine physicsEngine;
         public TestPhysicsObject testPhysicsObject;
 
+        public BulletManager bulletManager;
+
         public HUD mainHUD;
 
         Texture2D texture;
@@ -39,6 +45,8 @@ namespace tanks3d
 
         Tank tank1;
         Bullet bullet1;
+
+        public Random random = new Random();
 
         public DrawUtils drawUtils;
 
@@ -105,6 +113,9 @@ namespace tanks3d
             tank1 = new Tank(this);
             Components.Add(tank1);
 
+            bulletManager = new BulletManager(this);
+            Components.Add(bulletManager);
+
             //bullet1 = new Bullet(this);
             //Components.Add(bullet1);
 
@@ -122,6 +133,25 @@ namespace tanks3d
             base.Initialize();
         }
 
+        protected void LoadTerrainEffect()
+        {
+            terrainEffect = new BasicEffect(GraphicsDevice);
+
+            terrainEffect.EnableDefaultLighting();
+            //effect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f); 
+
+            // Set the specular lighting to match the sky color.
+            terrainEffect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
+            terrainEffect.SpecularPower = 8;
+
+            // Set the fog to match the distant mountains
+            // that are drawn into the sky texture.
+            terrainEffect.FogEnabled = false;
+            terrainEffect.FogColor = new Vector3(0.15f);
+            terrainEffect.FogStart = 100 * 2;
+            terrainEffect.FogEnd = 320 * 5;
+        }
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -129,6 +159,28 @@ namespace tanks3d
         protected override void LoadContent()
         {
             terrain = Content.Load<Model>("terrain");
+            //terrainTexture = Content.Load<Texture2D>("64x64");
+
+            LoadTerrainEffect();
+
+            foreach (ModelMesh mesh in terrain.Meshes)
+            {
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                {
+                    // Set the terrain texture
+                    // TODO: This part will have to go in the draw loop if we want the terrain to have
+                    // multiple textures. See: http://forums.create.msdn.com/forums/p/70607/432670.aspx
+                    // In fact, right now this next line of code is kind of stupid because it will result
+                    // the global terrainEffect to have the texture associated with the last mesh part
+                    // in the terrain mesh (because it keeps getting overwritten in the loop). Setting the
+                    // texture for the current mesh part is something that should be done when you
+                    // draw the terrain, as described in above forum post.
+                    terrainEffect.Texture = ((BasicEffect)meshPart.Effect).Texture;
+                    terrainEffect.TextureEnabled = true;
+
+                    meshPart.Effect = terrainEffect.Clone();
+                }
+            }
 
             // The terrain processor attached a HeightMapInfo to the terrain model's
             // Tag. We'll save that to a member variable now, and use it to
@@ -253,26 +305,18 @@ namespace tanks3d
         /// </summary>
         void DrawTerrain(Matrix view, Matrix projection)
         {
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+
             foreach (ModelMesh mesh in terrain.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
-
-                    effect.EnableDefaultLighting();
-                    //effect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f); 
-
-                    // Set the specular lighting to match the sky color.
-                    effect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
-                    effect.SpecularPower = 8;
-
-                    // Set the fog to match the distant mountains
-                    // that are drawn into the sky texture.
-                    effect.FogEnabled = false;
-                    effect.FogColor = new Vector3(0.15f);
-                    effect.FogStart = 100*2;
-                    effect.FogEnd = 320*5;
+                    //effect.Texture = terrainTexture;
+                    //effect.TextureEnabled = true;
                 }
 
                 mesh.Draw();
