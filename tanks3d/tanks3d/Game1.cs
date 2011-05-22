@@ -50,6 +50,18 @@ namespace tanks3d
 
         private int timeOut = 0;
 
+        public enum GameState
+        {
+            Start,
+            Move,
+            Aim,
+            Fired,
+            Aftermath,
+            Transition
+        }
+
+        public GameState currentState;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -86,7 +98,7 @@ namespace tanks3d
             //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
 
             worldCamera = new Cameras.QuaternionCameraComponent(this);
-            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 5000.0f);
+            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
             worldCamera.Position = new Vector3(64f, 0f, 64f);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
@@ -332,7 +344,7 @@ namespace tanks3d
                 {
                     if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
                     {
-                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowB;
+                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
                     }
                     else
                     {
