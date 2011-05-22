@@ -7,6 +7,6 @@ namespace tanks3d.Physics
 {
     public static class PhysicsUtil
     {
-        public static float GravityConstant = 9.8f;
+        public static float GravityConstant = 50.0f;
     }
 }

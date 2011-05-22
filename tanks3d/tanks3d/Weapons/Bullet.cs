@@ -5,10 +5,17 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using tanks3d.ParticleSystems;
+using tanks3d.Physics;
 
 namespace tanks3d.Weapons
 {
-    public class Bullet : DrawableGameComponent
+    public enum BulletState
+    {
+        Unexploded,
+        Exploding
+    }
+
+    public class Bullet : DrawableGameComponent, IPhysicsObject
     {
         private Game1 game;
 
@@ -30,7 +37,6 @@ namespace tanks3d.Weapons
         const float projectileLifespan = 1.5f;
         const float sidewaysVelocityRange = 60;
         const float verticalVelocityRange = 40;
-        const float gravity = 15;
 
         #endregion
 
@@ -43,6 +49,8 @@ namespace tanks3d.Weapons
 
             this.position = origin;
             this.velocity = initialVelocity;
+
+            game.physicsEngine.AddPhysicsObject(this);
 
             this.explosionParticles = explosionParticles;
             this.explosionSmokeParticles = explosionSmokeParticles;
@@ -60,9 +68,6 @@ namespace tanks3d.Weapons
             {
                 case BulletState.Unexploded:
                     
-                    // Simple projectile physics.
-                    position += velocity * elapsedTime;
-                    velocity.Y -= elapsedTime * gravity;
                     age += elapsedTime;
 
                     // Update the particle emitter, which will create our particle trail.
@@ -106,11 +111,30 @@ namespace tanks3d.Weapons
 
             base.Draw(gameTime);
         }
-    }
 
-    public enum BulletState
-    {
-        Unexploded,
-        Exploding
+        public Vector3 GetPosition()
+        {
+            return position;
+        }
+
+        public void UpdatePosition(Vector3 newPosition)
+        {
+            position = newPosition;
+        }
+
+        public Vector3 GetVelocity()
+        {
+            return velocity;
+        }
+
+        public void UpdateVelocity(Vector3 newVelocity)
+        {
+            velocity = newVelocity;
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return new BoundingBox(position - new Vector3(-5, -5, -5), position + new Vector3(5, 5, 5));
+        }
     }
 }
