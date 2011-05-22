@@ -29,6 +29,14 @@ namespace tanks3d.ParticleSystems
         // Settings class controls the appearance and animation of this particle system.
         ParticleSettings settings = new ParticleSettings();
 
+        public ParticleSettings Settings
+        {
+            get
+            {
+                return settings;
+            }
+        }
+
 
         // For loading the effect and particle texture.
         ContentManager content;

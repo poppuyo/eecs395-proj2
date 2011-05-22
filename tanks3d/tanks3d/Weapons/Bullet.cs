@@ -11,8 +11,15 @@ namespace tanks3d.Weapons
 {
     public enum BulletState
     {
+        /// <summary>
+        /// Flying in the air, possible emitting smoke particles, but not yet exploded.
+        /// </summary>
         Unexploded,
-        Exploding
+
+        /// <summary>
+        /// In the process of exploding (likely generating fire particles).
+        /// </summary>
+        Exploding,
     }
 
     public class Bullet : DrawableGameComponent, IPhysicsObject
@@ -22,6 +29,29 @@ namespace tanks3d.Weapons
         public Vector3 position;
         public Vector3 velocity;
         float age;
+
+        private float explosionAge;
+        private float explosionLifetime;  // How long the explosion state lasts.
+
+        /// <summary>
+        /// Age since the bullet has exploded. This field is only valid when the bullet
+        /// state is BulletState.Exploding.
+        /// </summary>
+        public float ExplosionAge
+        {
+            get
+            {
+                if (bulletState == BulletState.Exploding)
+                {
+                    return explosionAge;
+                }
+                else
+                {
+                    throw new InvalidOperationException("The ExplosionAge field is only valid when the bullet state is BulletState.Exploding.");
+                }
+            }
+        }
+        
 
         public BulletState bulletState;
 
@@ -54,6 +84,9 @@ namespace tanks3d.Weapons
 
             this.explosionParticles = explosionParticles;
             this.explosionSmokeParticles = explosionSmokeParticles;
+
+            this.explosionAge = float.NaN;
+            this.explosionLifetime = (float)explosionParticles.Settings.Duration.TotalSeconds + explosionParticles.Settings.DurationRandomness;
 
             // Use the particle emitter helper to output our trail particles.
             trailEmitter = new ParticleEmitter(projectileTrailParticles,
@@ -91,6 +124,12 @@ namespace tanks3d.Weapons
 
                     break;
                 case BulletState.Exploding:
+                    explosionAge += elapsedTime;
+                    if (explosionAge >= explosionLifetime)
+                    {
+                        game.bulletManager.RemoveBullet(this);
+                    }
+
                     break;
                 default:
                     break;
@@ -120,18 +159,24 @@ namespace tanks3d.Weapons
         /// </summary>
         public void HandleCollisionWithTerrain()
         {
+            StartExplosion();
+        }
+
+        public void StartExplosion()
+        {
             switch (bulletState)
             {
                 case BulletState.Unexploded:
 
-					bulletState = BulletState.Exploding;
+                    bulletState = BulletState.Exploding;
+                    explosionAge = 0.0f;
 
                     Vector3 explosionVelocity = new Vector3(velocity.X, 0.0f, velocity.Z);
 
-			        for (int i = 0; i < numExplosionParticles; i++)
+                    for (int i = 0; i < numExplosionParticles; i++)
                         explosionParticles.AddParticle(position, explosionVelocity);
 
-			        for (int i = 0; i < numExplosionSmokeParticles; i++)
+                    for (int i = 0; i < numExplosionSmokeParticles; i++)
                         explosionSmokeParticles.AddParticle(position, explosionVelocity);
 
                     break;
