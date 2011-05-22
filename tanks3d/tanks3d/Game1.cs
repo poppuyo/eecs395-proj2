@@ -38,7 +38,7 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Tank tank1;
+        public Tank tank1;
         Bullet bullet1;
 
         public DrawUtils drawUtils;
@@ -108,7 +108,6 @@ namespace tanks3d
             //Components.Add(terrain);
 
             tank1 = new Tank();
-            //Components.Add(tank1);
 
             //bullet1 = new Bullet(this);
             //Components.Add(bullet1);

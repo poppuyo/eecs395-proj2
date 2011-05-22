@@ -9,7 +9,7 @@ using tanks3d;
 
 namespace tank3d
 {
-    class Tank
+    public class Tank
     {
         #region Constants
 
@@ -88,6 +88,8 @@ namespace tank3d
         Matrix rightFrontWheelTransform;
         Matrix turretTransform;
         Matrix canonTransform;
+
+        public int health = 100, power = 50;
 
         #endregion
 
