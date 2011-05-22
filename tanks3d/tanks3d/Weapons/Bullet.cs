@@ -76,6 +76,7 @@ namespace tanks3d.Weapons
                     // If enough time has passed, explode! Note how we pass our velocity
                     // in to the AddParticle method: this lets the explosion be influenced
                     // by the speed and direction of the projectile which created it.
+                    /*
                     if (age > projectileLifespan)
                     {
                         bulletState = BulletState.Exploding;
@@ -86,6 +87,8 @@ namespace tanks3d.Weapons
                         for (int i = 0; i < numExplosionSmokeParticles; i++)
                             explosionSmokeParticles.AddParticle(position, velocity);
                     }
+                    */
+
                     break;
                 case BulletState.Exploding:
                     break;
@@ -110,6 +113,20 @@ namespace tanks3d.Weapons
             }
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// If the bullet hit the terrain, explode.
+        /// </summary>
+        public void HandleCollisionWithTerrain()
+        {
+            bulletState = BulletState.Exploding;
+
+            for (int i = 0; i < numExplosionParticles; i++)
+                explosionParticles.AddParticle(position, velocity);
+
+            for (int i = 0; i < numExplosionSmokeParticles; i++)
+                explosionSmokeParticles.AddParticle(position, velocity);
         }
 
         public Vector3 GetPosition()

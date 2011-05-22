@@ -56,5 +56,10 @@ namespace tanks3d.Physics
 
             base.Draw(gameTime);
         }
+
+        public void HandleCollisionWithTerrain()
+        {
+            return;
+        }
     }
 }

@@ -89,6 +89,10 @@ namespace tanks3d.Physics
                     if ((corners[i] + v).Y <= terrainElevation)
                     {
                         HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
+
+                        // Notify the physics object that a collision with the terrain had occurred.
+                        physicsObject.HandleCollisionWithTerrain();
+
                         return;
                     }
                 }

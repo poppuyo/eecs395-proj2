@@ -20,5 +20,10 @@ namespace tanks3d.Physics
         void UpdateVelocity(Vector3 newVelocity);
 
         BoundingBox GetBoundingBox();
+
+        /// <summary>
+        /// The physics engine will call this method when the object collides with the terrain.
+        /// </summary>
+        void HandleCollisionWithTerrain();
     }
 }
