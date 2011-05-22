@@ -169,7 +169,7 @@
     <Compile Include="Utility\VertexPositionNormal.cs" />
     <Compile Include="VertexTypes.cs" />
     <Compile Include="Weapons\BulletManager.cs" />
-    <Compile Include="Weapons\TestBullet.cs" />
+    <Compile Include="Weapons\Bullet.cs" />
     <Compile Include="Weapons\Weapon.cs" />
     <Compile Include="Weapons\Weapon1.cs" />
     <Compile Include="Weapons\WeaponManager.cs" />
