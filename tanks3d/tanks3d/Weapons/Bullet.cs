@@ -120,13 +120,24 @@ namespace tanks3d.Weapons
         /// </summary>
         public void HandleCollisionWithTerrain()
         {
-            bulletState = BulletState.Exploding;
+            switch (bulletState)
+            {
+                case BulletState.Unexploded:
 
-            for (int i = 0; i < numExplosionParticles; i++)
-                explosionParticles.AddParticle(position, velocity);
+					bulletState = BulletState.Exploding;
 
-            for (int i = 0; i < numExplosionSmokeParticles; i++)
-                explosionSmokeParticles.AddParticle(position, velocity);
+			        for (int i = 0; i < numExplosionParticles; i++)
+				        explosionParticles.AddParticle(position, velocity);
+
+			        for (int i = 0; i < numExplosionSmokeParticles; i++)
+				        explosionSmokeParticles.AddParticle(position, velocity);
+
+                    break;
+                case BulletState.Exploding:
+                    break;
+                default:
+                    break;
+            }
         }
 
         public Vector3 GetPosition()
