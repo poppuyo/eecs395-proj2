@@ -33,6 +33,12 @@ namespace tank3d
         // controls how quickly the tank can turn from side to side.
         const float TankTurnSpeed = .012f;
 
+        public const float TurretLength = 185.0f;
+
+        const float TurretLeftBound = -145f;
+        const float TurretRightBound = 145f;
+        const float TurretUpBound = 115f;
+        const float TurretDownBound = -15f;
 
         #endregion
 
@@ -92,10 +98,11 @@ namespace tank3d
 
         public int angle = 0 ;
 
+        private Game1.GameState currentGameState = Game1.GameState.Move;
+
         /// <summary>
         /// Length of the turret's barrel.
         /// </summary>
-        public const float TurretLength = 185.0f;
 
         #endregion
 
@@ -176,7 +183,6 @@ namespace tank3d
 
         #endregion
 
-
         #region Handle input and draw
 
         /// <summary>
@@ -190,15 +196,20 @@ namespace tank3d
                                 HeightMapInfo heightMapInfo,
                                 GameTime gameTime)
         {
-            // Saves original mouse position at game start
-            if (gameTime.TotalGameTime.Seconds < 1)
+            //Recalculates turretDirection based on current mouse position
+            if (currentGameState == Game1.GameState.Aim)
             {
-                OriginalMousePos = new Vector3(currentMouseState.X, currentMouseState.Y, 0);
+                TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
+                TurretDirection = new Vector3(TurretDirection.X, -TurretDirection.Y, TurretDirection.Z);
+
+                if (TurretDirection.X > TurretRightBound) TurretDirection = new Vector3(TurretRightBound, TurretDirection.Y, TurretDirection.Z);
+                else if (TurretDirection.X < TurretLeftBound) TurretDirection = new Vector3(TurretLeftBound, TurretDirection.Y, TurretDirection.Z);
+
+                if (TurretDirection.Y > TurretUpBound) TurretDirection = new Vector3(TurretDirection.X, TurretUpBound, TurretDirection.Z);
+                else if (TurretDirection.Y < TurretDownBound) TurretDirection = new Vector3(TurretDirection.X, TurretDownBound, TurretDirection.Z);
             }
 
-            //Recalculates turretDirection based on current mouse position
-            TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
-
+            Console.Write(TurretDirection + "\n");
             // First, we want to check to see if the tank should turn. turnAmount will 
             // be an accumulation of all the different possible inputs.
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
@@ -335,5 +346,18 @@ namespace tank3d
         }
 
         #endregion
+
+        public void ChangeToAim()
+        {
+            currentGameState = Game1.GameState.Aim;
+            MouseState mouseState = Mouse.GetState();
+            OriginalMousePos = new Vector3(mouseState.X, mouseState.Y, 0);
+        }
+
+        public void ChangeToMove()
+        {
+            currentGameState = Game1.GameState.Move;
+        }
+
     }
 }

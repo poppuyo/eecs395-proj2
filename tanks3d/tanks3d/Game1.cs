@@ -46,7 +46,6 @@ namespace tanks3d
         BasicEffect quadEffect;
 
         public Tank tank1;
-        Bullet bullet1;
 
         public DrawUtils drawUtils;
 
@@ -132,9 +131,6 @@ namespace tanks3d
 
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
-
-            //bullet1 = new Bullet(this);
-            //Components.Add(bullet1);
 
             Reticle reticle = new Reticle(this);
             Components.Add(reticle);
@@ -252,9 +248,7 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-
             HandleInput(gameTime);
-
 
             quadEffect.TextureEnabled = true;
             quadEffect.Texture = texture;
@@ -383,6 +377,7 @@ namespace tanks3d
                     currentGamePadState.Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            // Changes Camera View
             if (previousKeyboardState.IsKeyDown(Keys.Space))
             {
                 if (currentKeyboardState.IsKeyUp(Keys.Space))
@@ -398,6 +393,7 @@ namespace tanks3d
                 }
             }
 
+            // Fires bullets
             if (previousKeyboardState.IsKeyDown(Keys.F))
             {
                 if (currentKeyboardState.IsKeyUp(Keys.F))
@@ -406,9 +402,7 @@ namespace tanks3d
                 }
             }
 
-
-            previousKeyboardState = currentKeyboardState;
-
+            // Shakes screen
             if (currentKeyboardState.IsKeyDown(Keys.G))
                 timeOut = 45;
 
@@ -418,11 +412,31 @@ namespace tanks3d
                 timeOut--;
             }
 
+            // Changes Gamestate from Move to Aim
+            if (previousKeyboardState.IsKeyDown(Keys.T))
+            {
+                if (currentKeyboardState.IsKeyUp(Keys.T))
+                {
+                    if (currentState == GameState.Move)
+                    {
+                        currentState = GameState.Aim;
+                        tank1.ChangeToAim();
+                    }
+                    else
+                    {
+                        currentState = GameState.Move;
+                        tank1.ChangeToMove();
+                    }
+                }
+            }
+
             tank1.HandleInput(currentGamePadState, 
                               currentKeyboardState, 
                               currentMouseState, 
                               heightMapInfo,
                               gameTime);
+
+            previousKeyboardState = currentKeyboardState;
 
         }
 
