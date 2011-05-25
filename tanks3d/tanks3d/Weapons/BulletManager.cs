@@ -71,10 +71,6 @@ namespace tanks3d.Weapons
 
         public void RemoveBullet(Bullet bullet)
         {
-            if (bullet == ActiveBullet)
-            {
-                game.worldCamera.CurrentBehavior = game.previousBehavior;
-            }
             bullets.Remove(bullet);
         }
     }

@@ -124,6 +124,11 @@ namespace tanks3d.Weapons
 
                     break;
                 case BulletState.Exploding:
+                    if (this == game.bulletManager.ActiveBullet)
+                    {
+                        //game.worldCamera.CurrentBehavior = game.previousBehavior;
+                        game.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                    }
                     explosionAge += elapsedTime;
                     if (explosionAge >= explosionLifetime)
                     {
