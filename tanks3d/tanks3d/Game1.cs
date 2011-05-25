@@ -27,7 +27,7 @@ namespace tanks3d
         VertexDeclaration vertexDeclaration;
 
         Model terrain;
-        //public Texture2D terrainTexture;
+        public Texture2D terrainTexture;
         BasicEffect terrainEffect;
         public HeightMapInfo heightMapInfo;
         Sky sky;
@@ -44,6 +44,7 @@ namespace tanks3d
 
         Texture2D texture;
         BasicEffect quadEffect;
+        Effect terrainDecalEffect;
 
         public Tank tank1;
 
@@ -146,13 +147,13 @@ namespace tanks3d
             base.Initialize();
         }
 
-        protected void LoadTerrainEffect()
+        protected void LoadTerrainEffects()
         {
+            // Load the regular terrain effect
+
             terrainEffect = new BasicEffect(GraphicsDevice);
-
             terrainEffect.EnableDefaultLighting();
-            //effect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f); 
-
+            
             // Set the specular lighting to match the sky color.
             terrainEffect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
             terrainEffect.SpecularPower = 8;
@@ -163,6 +164,9 @@ namespace tanks3d
             terrainEffect.FogColor = new Vector3(0.15f);
             terrainEffect.FogStart = 100 * 2;
             terrainEffect.FogEnd = 320 * 5;
+
+            // Load the terrain effect for rendering decals
+            terrainDecalEffect = Content.Load<Effect>("decals");
         }
 
         /// <summary>
@@ -172,9 +176,9 @@ namespace tanks3d
         protected override void LoadContent()
         {
             terrain = Content.Load<Model>("terrain");
-            //terrainTexture = Content.Load<Texture2D>("64x64");
+            terrainTexture = Content.Load<Texture2D>("rocks");
 
-            LoadTerrainEffect();
+            LoadTerrainEffects();
 
             foreach (ModelMesh mesh in terrain.Meshes)
             {
@@ -317,14 +321,21 @@ namespace tanks3d
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
 
+            terrainDecalEffect.CurrentTechnique = terrainDecalEffect.Techniques["Textured"];
+
+            terrainDecalEffect.Parameters["View"].SetValue(worldCamera.ViewMatrix);
+            terrainDecalEffect.Parameters["Projection"].SetValue(worldCamera.ProjectionMatrix);
+            terrainDecalEffect.Parameters["World"].SetValue(Matrix.Identity);
+            terrainDecalEffect.Parameters["LightDirection"].SetValue(new Vector3(-0.45f, -0.25f, -1.0f));
+            terrainDecalEffect.Parameters["Ambient"].SetValue(0.1f);
+            terrainDecalEffect.Parameters["EnableLighting"].SetValue(true);
+            terrainDecalEffect.Parameters["Texture"].SetValue(terrainTexture);
+
             foreach (ModelMesh mesh in terrain.Meshes)
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                foreach (ModelMeshPart part in mesh.MeshParts)
                 {
-                    effect.View = view;
-                    effect.Projection = projection;
-                    //effect.Texture = terrainTexture;
-                    //effect.TextureEnabled = true;
+                    part.Effect = terrainDecalEffect;
                 }
 
                 mesh.Draw();
