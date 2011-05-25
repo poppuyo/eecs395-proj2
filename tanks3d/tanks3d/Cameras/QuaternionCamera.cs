@@ -220,7 +220,8 @@ namespace tanks3d.Cameras
             Orbit,
             FollowB,
             FollowT,
-            LookAtT
+            LookAtT,
+            FollowActiveBullet
         };
 
         public const float DEFAULT_FOVX = 90.0f;
@@ -1911,6 +1912,14 @@ namespace tanks3d.Cameras
                     smoothedBack.Y += Vector3.Up.Y * 100;
                     //pos - (Vector3.Normalize(vel) * 100) + (Vector3.Up * 50)
                     camera.LookAt(smoothedBack, pos, Vector3.Up);
+                    break;
+
+                case QuaternionCamera.Behavior.FollowActiveBullet:
+                    Vector3 bpos = g.bulletManager.ActiveBullet.position;
+                    Vector3 bvel = g.bulletManager.ActiveBullet.velocity;
+
+                    Vector3 smoothFollow = bpos - Vector3.Normalize(bvel) * 75;
+                    camera.LookAt(smoothFollow, bpos, Vector3.Up);
                     break;
 
                 case QuaternionCamera.Behavior.FollowT:

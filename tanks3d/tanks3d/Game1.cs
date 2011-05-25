@@ -33,6 +33,7 @@ namespace tanks3d
         Sky sky;
 
         public Cameras.QuaternionCameraComponent worldCamera;
+        public Cameras.QuaternionCamera.Behavior previousBehavior;
 
         public PhysicsEngine physicsEngine;
         public TestPhysicsObject testPhysicsObject;
@@ -399,6 +400,15 @@ namespace tanks3d
                 if (currentKeyboardState.IsKeyUp(Keys.F))
                 {
                     weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                }
+            }
+            if(previousKeyboardState.IsKeyDown(Keys.C))
+            {
+                if (currentKeyboardState.IsKeyUp(Keys.C))
+                {
+                    weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                    previousBehavior = this.worldCamera.CurrentBehavior;
+                    this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
                 }
             }
 

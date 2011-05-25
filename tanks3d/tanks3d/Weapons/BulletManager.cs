@@ -21,6 +21,8 @@ namespace tanks3d.Weapons
         ParticleSystem explosionSmokeParticles;
         ParticleSystem projectileTrailParticles;
 
+        public Bullet ActiveBullet;
+
         public BulletManager(Game1 g)
             : base(g)
         {
@@ -62,11 +64,17 @@ namespace tanks3d.Weapons
             bullets.Add(bullet);
             game.Components.Add(bullet);
 
+            ActiveBullet = bullet;
+
             return bullet;
         }
 
         public void RemoveBullet(Bullet bullet)
         {
+            if (bullet == ActiveBullet)
+            {
+                game.worldCamera.CurrentBehavior = game.previousBehavior;
+            }
             bullets.Remove(bullet);
         }
     }
