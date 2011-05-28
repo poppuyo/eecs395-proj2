@@ -86,6 +86,7 @@ namespace tanks3d
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            currentState1 = GameState1.Menu;
 
             // Make the window resizable
             this.Window.AllowUserResizing = true;
@@ -139,6 +140,8 @@ namespace tanks3d
                 players[i] = new Player(this);
                 tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
             }
+
+            tanks[1].power = 10;
 
             //tank1 = new Tank(this, new Vector3(0, 0, 0));
             //tank2 = new Tank(this, new Vector3(100, 0, 0));
@@ -256,10 +259,23 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            HandleInput(gameTime);
+            switch (currentState1)
+            {
+                case GameState1.Menu:
+                    HandleInput(gameTime);
+                    break;
 
-            quadEffect.TextureEnabled = true;
-            quadEffect.Texture = texture;
+                case GameState1.Play:
+                    HandleInput(gameTime);
+
+                    quadEffect.TextureEnabled = true;
+                    quadEffect.Texture = texture;
+                    break;
+
+                case GameState1.Pause:
+                    HandleInput(gameTime);
+                    break;
+            }
 
             base.Update(gameTime);
         }
@@ -270,18 +286,21 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            switch (currentState1)
+            {
+                case GameState1.Play:
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            DrawAxes();
+                    DrawAxes();
 
-            DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+                    DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
-            sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+                    sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
-            for (int i = 0; i < numPlayers; i++)
-                tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-            //tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-            //tank2.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+                    for (int i = 0; i < numPlayers; i++)
+                        tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+                    break;
+            }
 
             base.Draw(gameTime);
         }
@@ -370,78 +389,99 @@ namespace tanks3d
                     currentGamePadState.Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // Changes Camera View
-            if (previousKeyboardState.IsKeyDown(Keys.Space))
+            switch (currentState1)
             {
-                if (currentKeyboardState.IsKeyUp(Keys.Space))
-                {
-                    if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
+                case GameState1.Menu:
+                    if (currentKeyboardState.IsKeyDown(Keys.B))
+                        currentState1 = GameState1.Play;
+                    break;
+
+                case GameState1.Play:
+                    if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
-                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                        if(currentKeyboardState.IsKeyUp(Keys.P))
+                            currentState1 = GameState1.Pause;
                     }
-                    else
+                    // Changes Camera View
+                    if (previousKeyboardState.IsKeyDown(Keys.Space))
                     {
-                        worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
+                        if (currentKeyboardState.IsKeyUp(Keys.Space))
+                        {
+                            if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
+                            {
+                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                            }
+                            else
+                            {
+                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
+                            }
+                        }
                     }
-                }
-            }
 
-            // Fires bullets
-            if (previousKeyboardState.IsKeyDown(Keys.F))
-            {
-                if (currentKeyboardState.IsKeyUp(Keys.F))
-                {
-                    weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
-                    switchCurrentTank();
-                    //Shake();
-                }
-            }
-            if(previousKeyboardState.IsKeyDown(Keys.C))
-            {
-                if (currentKeyboardState.IsKeyUp(Keys.C))
-                {
-                    weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
-                    previousBehavior = this.worldCamera.CurrentBehavior;
-                    this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
-                }
-            }
-
-            // Shakes screen
-            if (currentKeyboardState.IsKeyDown(Keys.G))
-                timeOut = 45;
-
-            if (timeOut != 0)
-            {
-                Shake();
-                timeOut--;
-            }
-
-            // Changes Gamestate from Move to Aim
-            if (previousKeyboardState.IsKeyDown(Keys.T))
-            {
-                if (currentKeyboardState.IsKeyUp(Keys.T))
-                {
-                    if (currentState == GameState.Move)
+                    // Fires bullets
+                    if (previousKeyboardState.IsKeyDown(Keys.F))
                     {
-                        currentState = GameState.Aim;
-                        currentTank.ChangeToAim();
+                        if (currentKeyboardState.IsKeyUp(Keys.F))
+                        {
+                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                            switchCurrentTank();
+                            //Shake();
+                        }
                     }
-                    else
+                    if (previousKeyboardState.IsKeyDown(Keys.C))
                     {
-                        currentState = GameState.Move;
-                        currentTank.ChangeToMove();
+                        if (currentKeyboardState.IsKeyUp(Keys.C))
+                        {
+                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                            previousBehavior = this.worldCamera.CurrentBehavior;
+                            this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
+                        }
                     }
-                }
+
+                    // Shakes screen
+                    if (currentKeyboardState.IsKeyDown(Keys.G))
+                        timeOut = 45;
+
+                    if (timeOut != 0)
+                    {
+                        Shake();
+                        timeOut--;
+                    }
+
+                    // Changes Gamestate from Move to Aim
+                    if (previousKeyboardState.IsKeyDown(Keys.T))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.T))
+                        {
+                            if (currentState == GameState.Move)
+                            {
+                                currentState = GameState.Aim;
+                                currentTank.ChangeToAim();
+                            }
+                            else
+                            {
+                                currentState = GameState.Move;
+                                currentTank.ChangeToMove();
+                            }
+                        }
+                    }
+
+                    currentTank.HandleInput(currentGamePadState,
+                                      currentKeyboardState,
+                                      currentMouseState,
+                                      heightMapInfo,
+                                      gameTime);
+                    break;
+
+                case GameState1.Pause:
+                    if (previousKeyboardState.IsKeyDown(Keys.P))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.P))
+                            currentState1 = GameState1.Play;
+                    }
+                    break;
             }
-
-            currentTank.HandleInput(currentGamePadState, 
-                              currentKeyboardState, 
-                              currentMouseState, 
-                              heightMapInfo,
-                              gameTime);
-
             previousKeyboardState = currentKeyboardState;
-
         }
 
         public static readonly Random random = new Random();

@@ -293,22 +293,27 @@ namespace tanks3d.ParticleSystems
             if (gameTime == null)
                 throw new ArgumentNullException("gameTime");
 
-            currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            switch (game.currentState1)
+            {
+                case Game1.GameState1.Play:
+                    currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            RetireActiveParticles();
-            FreeRetiredParticles();
+                    RetireActiveParticles();
+                    FreeRetiredParticles();
 
-            // If we let our timer go on increasing for ever, it would eventually
-            // run out of floating point precision, at which point the particles
-            // would render incorrectly. An easy way to prevent this is to notice
-            // that the time value doesn't matter when no particles are being drawn,
-            // so we can reset it back to zero any time the active queue is empty.
+                    // If we let our timer go on increasing for ever, it would eventually
+                    // run out of floating point precision, at which point the particles
+                    // would render incorrectly. An easy way to prevent this is to notice
+                    // that the time value doesn't matter when no particles are being drawn,
+                    // so we can reset it back to zero any time the active queue is empty.
 
-            if (firstActiveParticle == firstFreeParticle)
-                currentTime = 0;
+                    if (firstActiveParticle == firstFreeParticle)
+                        currentTime = 0;
 
-            if (firstRetiredParticle == firstActiveParticle)
-                drawCounter = 0;
+                    if (firstRetiredParticle == firstActiveParticle)
+                        drawCounter = 0;
+                    break;
+            }
         }
 
 
