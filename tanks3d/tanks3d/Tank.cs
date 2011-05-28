@@ -40,6 +40,8 @@ namespace tank3d
         const float TurretUpBound = 115f;
         const float TurretDownBound = -15f;
 
+        const float TankSize = 75f;
+
         #endregion
 
 
@@ -100,6 +102,28 @@ namespace tank3d
 
         private Game1.GameState currentGameState = Game1.GameState.Move;
 
+        public int health = 100, power = 50;
+
+        Vector3 bBoxMinPoint;
+        Vector3 bBoxMaxPoint;
+
+        public BoundingBox boundingBox
+        {
+            get
+            {
+                Matrix m0 = Matrix.CreateTranslation(position);
+                Matrix m2 = Matrix.CreateScale(TankSize);
+
+                bBoxMinPoint = new Vector3(-0.5f, -0.5f, -0.5f);
+                bBoxMinPoint = Vector3.Transform(bBoxMinPoint, m2 * m0);
+                bBoxMaxPoint = new Vector3(0.5f, 0.5f, 0.5f);
+                bBoxMaxPoint = Vector3.Transform(bBoxMaxPoint, m2 * m0);
+
+                return new BoundingBox(bBoxMinPoint, bBoxMaxPoint);
+            }
+
+        }
+
         /// <summary>
         /// Length of the turret's barrel.
         /// </summary>
@@ -140,8 +164,6 @@ namespace tank3d
         Matrix rightFrontWheelTransform;
         Matrix turretTransform;
         Matrix canonTransform;
-
-        public int health = 100, power = 50;
 
         #endregion
 
@@ -191,6 +213,8 @@ namespace tank3d
         /// It'll move the tank around the heightmap, and update all of the tank's 
         /// necessary state.
         /// </summary>
+
+
         public void HandleInput(GamePadState currentGamePadState,
                                 KeyboardState currentKeyboardState, 
                                 MouseState currentMouseState,
@@ -295,10 +319,11 @@ namespace tank3d
                 // once we've finished all computations, we can set our position to the
                 // new position that we calculated.
                 position = newPosition;
+
             }
         }
 
-        public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
+        public void Draw(Matrix viewMatrix, Matrix projectionMatrix, GraphicsDevice graphicsDevice)
         {
             // Apply matrices to the relevant bones, as discussed in the Simple 
             // Animation Sample.
@@ -344,6 +369,8 @@ namespace tank3d
                 }
                 mesh.Draw();
             }
+
+            //tanks3d.Utility.BoundingBoxRenderer.Render(game, boundingBox, graphicsDevice, viewMatrix, projectionMatrix, Color.Red);
         }
 
         #endregion
