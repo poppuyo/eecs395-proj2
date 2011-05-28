@@ -353,7 +353,7 @@ namespace tank3d
             }
         }
 
-		public void Draw(Matrix viewMatrix, Matrix projectionMatrix, GraphicsDevice graphicsDevice)
+		public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
         {
             // Apply matrices to the relevant bones, as discussed in the Simple 
             // Animation Sample.
@@ -400,7 +400,7 @@ namespace tank3d
                 mesh.Draw();
             }
 
-            //tanks3d.Utility.BoundingBoxRenderer.Render(game, boundingBox, graphicsDevice, viewMatrix, projectionMatrix, Color.Red);
+            tanks3d.Utility.BoundingBoxRenderer.Render(game, boundingBox, game.GraphicsDevice, viewMatrix, projectionMatrix, Color.Red);
         }
 
         #endregion
@@ -416,6 +416,5 @@ namespace tank3d
         {
             currentGameState = Game1.GameState.Move;
         }
-
     }
 }
