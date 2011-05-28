@@ -102,7 +102,7 @@ namespace tank3d
 
         public int angle = 0 ;
 
-        private Game1.GameState currentGameState = Game1.GameState.Move;
+        public PlayerState currentPlayerState = PlayerState.Move;
 
         public int health = 100, power = 0;
 
@@ -224,7 +224,7 @@ namespace tank3d
                                 GameTime gameTime)
         {
             //Recalculates turretDirection based on current mouse position
-            if (currentGameState == Game1.GameState.Aim)
+            if (currentPlayerState == PlayerState.Aim)
             {
                 TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
                 TurretDirection = new Vector3(TurretDirection.X, -TurretDirection.Y, TurretDirection.Z);
@@ -408,14 +408,8 @@ namespace tank3d
 
         public void ChangeToAim()
         {
-            currentGameState = Game1.GameState.Aim;
             MouseState mouseState = Mouse.GetState();
             OriginalMousePos = new Vector3(mouseState.X, mouseState.Y, 0);
-        }
-
-        public void ChangeToMove()
-        {
-            currentGameState = Game1.GameState.Move;
         }
 
         /// <summary>

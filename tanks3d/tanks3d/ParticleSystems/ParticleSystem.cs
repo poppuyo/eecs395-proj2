@@ -290,15 +290,15 @@ namespace tanks3d.ParticleSystems
         /// </summary>
         public override void Update(GameTime gameTime)
         {
-            switch (game.currentState1)
+            switch (game.gameState)
             {
-                case Game1.GameState1.Play:
+                case GameState.Play:
                     if (gameTime == null)
                         throw new ArgumentNullException("gameTime");
 
-                    switch (game.currentState1)
+                    switch (game.gameState)
                     {
-                        case Game1.GameState1.Play:
+                        case GameState.Play:
                             currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                             RetireActiveParticles();
@@ -388,9 +388,9 @@ namespace tanks3d.ParticleSystems
         /// </summary>
         public override void Draw(GameTime gameTime)
         {
-            switch (game.currentState1)
+            switch (game.gameState)
             {
-                case Game1.GameState1.Play:
+                case GameState.Play:
                     GraphicsDevice device = GraphicsDevice;
 
                     device.SamplerStates[0] = SamplerState.LinearClamp;

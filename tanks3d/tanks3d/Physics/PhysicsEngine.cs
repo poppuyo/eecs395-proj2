@@ -65,9 +65,9 @@ namespace tanks3d.Physics
 
         public override void Update(GameTime gameTime)
         {
-            switch (game.currentState1)
+            switch (game.gameState)
             {
-                case Game1.GameState1.Play:
+                case GameState.Play:
                     
                     float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
                     t += elapsedSeconds;
