@@ -42,6 +42,18 @@ namespace tanks3d
 
         public HUD mainHUD;
 
+        private bool wireframe = false;
+        public bool WireframeMode
+        {
+            get { return wireframe; }
+            set
+            {
+                wireframe = value;
+            }
+        }
+        RasterizerState wireframeRasterizerState;
+        RasterizerState solidRasterizerState;
+
         Texture2D texture;
         BasicEffect quadEffect;
         Effect terrainDecalEffect;
@@ -112,6 +124,12 @@ namespace tanks3d
             worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
+
+            wireframeRasterizerState = new RasterizerState();
+            wireframeRasterizerState.FillMode = FillMode.WireFrame;
+
+            solidRasterizerState = new RasterizerState();
+            solidRasterizerState.FillMode = FillMode.Solid;
 
             physicsEngine = new PhysicsEngine(this);
             Components.Add(physicsEngine);
@@ -290,7 +308,10 @@ namespace tanks3d
 
             DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
-            sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+            if (!wireframe)
+            {
+                sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+            }
 
             tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
@@ -330,6 +351,15 @@ namespace tanks3d
             terrainDecalEffect.Parameters["Ambient"].SetValue(0.1f);
             terrainDecalEffect.Parameters["EnableLighting"].SetValue(true);
             terrainDecalEffect.Parameters["Texture"].SetValue(terrainTexture);
+
+            if (wireframe)
+            {
+                GraphicsDevice.RasterizerState = wireframeRasterizerState;
+            }
+            else
+            {
+                GraphicsDevice.RasterizerState = solidRasterizerState;
+            }
 
             foreach (ModelMesh mesh in terrain.Meshes)
             {

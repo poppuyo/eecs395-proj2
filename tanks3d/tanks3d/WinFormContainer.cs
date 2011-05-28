@@ -217,6 +217,8 @@ namespace tanks3d
             TurretAim = new Vector3(0, 1, -1);
             WeaponPower = 100.0f;
             UpdateTurretInfo();
+
+            SwitchRenderingMode();
         }
 
         private void UpdateTurretInfo()
@@ -391,6 +393,28 @@ namespace tanks3d
 
                 weaponMessageLabel.Visible = false;
             }
+        }
+
+        private void SwitchRenderingMode()
+        {
+            if (wireframeRadioButton.Checked)
+            {
+                game.WireframeMode = true;
+            }
+            else
+            {
+                game.WireframeMode = false;
+            }
+        }
+
+        private void wireframeRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            SwitchRenderingMode();
+        }
+
+        private void texturedRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            SwitchRenderingMode();
         }
     }
 }

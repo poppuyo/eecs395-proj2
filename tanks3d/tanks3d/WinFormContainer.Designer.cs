@@ -65,6 +65,8 @@
             this.WeaponTypesComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.DrawTurretTimer = new System.Windows.Forms.Timer(this.components);
+            this.wireframeRadioButton = new System.Windows.Forms.RadioButton();
+            this.texturedRadioButton = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).BeginInit();
             this.CameraGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -90,6 +92,8 @@
             // CameraGroupBox
             // 
             this.CameraGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.CameraGroupBox.Controls.Add(this.texturedRadioButton);
+            this.CameraGroupBox.Controls.Add(this.wireframeRadioButton);
             this.CameraGroupBox.Controls.Add(this.CameraMessageLabel);
             this.CameraGroupBox.Controls.Add(this.SetTargetButton);
             this.CameraGroupBox.Controls.Add(this.CameraTargetZ_TextBox);
@@ -422,6 +426,30 @@
             this.DrawTurretTimer.Interval = 10;
             this.DrawTurretTimer.Tick += new System.EventHandler(this.DrawTurretTimer_Tick);
             // 
+            // wireframeRadioButton
+            // 
+            this.wireframeRadioButton.AutoSize = true;
+            this.wireframeRadioButton.Location = new System.Drawing.Point(9, 131);
+            this.wireframeRadioButton.Name = "wireframeRadioButton";
+            this.wireframeRadioButton.Size = new System.Drawing.Size(73, 17);
+            this.wireframeRadioButton.TabIndex = 14;
+            this.wireframeRadioButton.Text = "Wireframe";
+            this.wireframeRadioButton.UseVisualStyleBackColor = true;
+            this.wireframeRadioButton.CheckedChanged += new System.EventHandler(this.wireframeRadioButton_CheckedChanged);
+            // 
+            // texturedRadioButton
+            // 
+            this.texturedRadioButton.AutoSize = true;
+            this.texturedRadioButton.Checked = true;
+            this.texturedRadioButton.Location = new System.Drawing.Point(9, 154);
+            this.texturedRadioButton.Name = "texturedRadioButton";
+            this.texturedRadioButton.Size = new System.Drawing.Size(67, 17);
+            this.texturedRadioButton.TabIndex = 15;
+            this.texturedRadioButton.TabStop = true;
+            this.texturedRadioButton.Text = "Textured";
+            this.texturedRadioButton.UseVisualStyleBackColor = true;
+            this.texturedRadioButton.CheckedChanged += new System.EventHandler(this.texturedRadioButton_CheckedChanged);
+            // 
             // WinFormContainer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -481,5 +509,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button FireButton;
         private System.Windows.Forms.LinkLabel LocateTurretPositionLink;
+        private System.Windows.Forms.RadioButton texturedRadioButton;
+        private System.Windows.Forms.RadioButton wireframeRadioButton;
     }
 }
