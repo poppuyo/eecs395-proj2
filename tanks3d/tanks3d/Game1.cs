@@ -58,7 +58,7 @@ namespace tanks3d
 
         public KeyboardState previousKeyboardState;
 
-        public int numPlayers = 2, currentPlayer = 0;
+        public int numPlayers = 4, currentPlayer = 0;
 
         private int timeOut = 0;
 
@@ -114,7 +114,7 @@ namespace tanks3d
         protected override void Initialize()
         {
             worldCamera = new Cameras.QuaternionCameraComponent(this);
-            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
+            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 20000.0f);
             worldCamera.Position = new Vector3(-88, -300, 195);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
@@ -137,7 +137,9 @@ namespace tanks3d
             for (int i = 0; i < numPlayers; i++)
             {
                 players[i] = new Player(this);
-                tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
+                //tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
+                tanks[i] = new Tank(this, Vector3.Zero);
+                //tanks[i] = new Tank(this, RandomLocation());
             }
 
             //tank1 = new Tank(this, new Vector3(0, 0, 0));
@@ -208,6 +210,7 @@ namespace tanks3d
                 }
             }
 
+
             // The terrain processor attached a HeightMapInfo to the terrain model's
             // Tag. We'll save that to a member variable now, and use it to
             // calculate the terrain's heights later.
@@ -219,6 +222,12 @@ namespace tanks3d
                     "TerrainProcessor?";
                 throw new InvalidOperationException(message);
             }
+
+            for (int i = 0; i < numPlayers; i++)
+            {
+                tanks[i].position = RandomLocation();
+            }
+
 
             sky = Content.Load<Sky>("sky");
 
@@ -361,6 +370,7 @@ namespace tanks3d
 
         private void HandleInput(GameTime gameTime)
         {
+            currentTank = tanks[currentPlayer];
             KeyboardState currentKeyboardState = Keyboard.GetState();
             GamePadState currentGamePadState = GamePad.GetState(PlayerIndex.One);
             MouseState currentMouseState = Mouse.GetState();
@@ -454,6 +464,19 @@ namespace tanks3d
         private float RandomFloat()
         {
             return (float)random.NextDouble() * 2f - 1f;
+        }
+
+        private Vector3 RandomLocation()
+        {
+            float randomX, randomZ;
+            randomX = (float)random.NextDouble() - 1/2f;
+            randomX *= heightMapInfo.terrainWidth;
+
+            randomZ = (float)random.NextDouble() - 1/2f;
+            randomZ *= heightMapInfo.terrainHeight;
+
+            return new Vector3(randomX, 0f, randomZ);
+
         }
 
         private void switchCurrentTank()
