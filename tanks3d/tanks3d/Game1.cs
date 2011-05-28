@@ -226,6 +226,7 @@ namespace tanks3d
             for (int i = 0; i < numPlayers; i++)
             {
                 tanks[i].position = RandomLocation();
+                tanks[i].FixGravity(heightMapInfo);
             }
 
 
