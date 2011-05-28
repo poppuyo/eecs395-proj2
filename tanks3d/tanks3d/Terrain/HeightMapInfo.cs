@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 #endregion
 
-namespace tanks3d
+namespace tanks3d.Terrain
 {
     /// <summary>
     /// HeightMapInfo is a collection of data about the heightmap. It includes

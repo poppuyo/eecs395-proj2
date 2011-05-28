@@ -132,7 +132,7 @@
     <Compile Include="Cameras\FPSCamera.cs" />
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
-    <Compile Include="HeightMapInfo.cs" />
+    <Compile Include="Terrain\HeightMapInfo.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
     <Compile Include="ParticleSystems\ExplosionSmokeParticleSystem.cs" />
     <Compile Include="ParticleSystems\FireParticleSystem.cs" />
@@ -146,7 +146,7 @@
     <Compile Include="Physics\PhysicsUtil.cs" />
     <Compile Include="Physics\PhysicsEngine.cs" />
     <Compile Include="Physics\TestPhysicsObject.cs" />
-    <Compile Include="Sky.cs" />
+    <Compile Include="Terrain\Sky.cs" />
     <Compile Include="Tank.cs" />
     <Compile Include="HUD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -154,6 +154,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Quad.cs" />
     <Compile Include="Reticle.cs" />
+    <Compile Include="Terrain\Terrain.cs" />
     <Compile Include="Utility\BezierPrimitive.cs" />
     <Compile Include="Utility\BoundingBoxRenderer.cs" />
     <Compile Include="Utility\CubePrimitive.cs" />

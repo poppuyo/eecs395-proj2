@@ -23,14 +23,10 @@ namespace tanks3d
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        public Terrain.Terrain terrain;
+
         TexturedQuad.Quad[] ground;
         VertexDeclaration vertexDeclaration;
-
-        Model terrain;
-        public Texture2D terrainTexture;
-        BasicEffect terrainEffect;
-        public HeightMapInfo heightMapInfo;
-        Sky sky;
 
         public Cameras.QuaternionCameraComponent worldCamera;
 
@@ -51,12 +47,11 @@ namespace tanks3d
                 wireframe = value;
             }
         }
-        RasterizerState wireframeRasterizerState;
-        RasterizerState solidRasterizerState;
+        public RasterizerState wireframeRasterizerState;
+        public RasterizerState solidRasterizerState;
 
         Texture2D texture;
         BasicEffect quadEffect;
-        Effect terrainDecalEffect;
 
         public Tank tank1;
 
@@ -131,6 +126,9 @@ namespace tanks3d
             solidRasterizerState = new RasterizerState();
             solidRasterizerState.FillMode = FillMode.Solid;
 
+            terrain = new Terrain.Terrain(this);
+            Components.Add(terrain);
+
             physicsEngine = new PhysicsEngine(this);
             Components.Add(physicsEngine);
             
@@ -139,10 +137,6 @@ namespace tanks3d
 
             drawUtils = new DrawUtils(this);
             Components.Add(drawUtils);
-
-            //terrain = new Terrains.SimpleGridTerrain(this);
-            //terrain = new Terrains.HeightmapTerrain(this);
-            //Components.Add(terrain);
 
             tank1 = new Tank(this);
 
@@ -165,72 +159,12 @@ namespace tanks3d
             base.Initialize();
         }
 
-        protected void LoadTerrainEffects()
-        {
-            // Load the regular terrain effect
-
-            terrainEffect = new BasicEffect(GraphicsDevice);
-            terrainEffect.EnableDefaultLighting();
-            
-            // Set the specular lighting to match the sky color.
-            terrainEffect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
-            terrainEffect.SpecularPower = 8;
-
-            // Set the fog to match the distant mountains
-            // that are drawn into the sky texture.
-            terrainEffect.FogEnabled = false;
-            terrainEffect.FogColor = new Vector3(0.15f);
-            terrainEffect.FogStart = 100 * 2;
-            terrainEffect.FogEnd = 320 * 5;
-
-            // Load the terrain effect for rendering decals
-            terrainDecalEffect = Content.Load<Effect>("decals");
-        }
-
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
         {
-            terrain = Content.Load<Model>("terrain");
-            terrainTexture = Content.Load<Texture2D>("rocks");
-
-            LoadTerrainEffects();
-
-            foreach (ModelMesh mesh in terrain.Meshes)
-            {
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    // Set the terrain texture
-                    // TODO: This part will have to go in the draw loop if we want the terrain to have
-                    // multiple textures. See: http://forums.create.msdn.com/forums/p/70607/432670.aspx
-                    // In fact, right now this next line of code is kind of stupid because it will result
-                    // the global terrainEffect to have the texture associated with the last mesh part
-                    // in the terrain mesh (because it keeps getting overwritten in the loop). Setting the
-                    // texture for the current mesh part is something that should be done when you
-                    // draw the terrain, as described in above forum post.
-                    terrainEffect.Texture = ((BasicEffect)meshPart.Effect).Texture;
-                    terrainEffect.TextureEnabled = true;
-
-                    meshPart.Effect = terrainEffect.Clone();
-                }
-            }
-
-            // The terrain processor attached a HeightMapInfo to the terrain model's
-            // Tag. We'll save that to a member variable now, and use it to
-            // calculate the terrain's heights later.
-            heightMapInfo = terrain.Tag as HeightMapInfo;
-            if (heightMapInfo == null)
-            {
-                string message = "The terrain model did not have a HeightMapInfo " +
-                    "object attached. Are you sure you are using the " +
-                    "TerrainProcessor?";
-                throw new InvalidOperationException(message);
-            }
-
-            sky = Content.Load<Sky>("sky");
-
             tank1.LoadContent(Content);
 
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -306,13 +240,6 @@ namespace tanks3d
             }
             */
 
-            DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-
-            if (!wireframe)
-            {
-                sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-            }
-
             tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
@@ -331,45 +258,6 @@ namespace tanks3d
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-        }
-
-        /// <summary>
-        /// Helper for drawing the terrain model.
-        /// </summary>
-        void DrawTerrain(Matrix view, Matrix projection)
-        {
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
-
-            terrainDecalEffect.CurrentTechnique = terrainDecalEffect.Techniques["Textured"];
-
-            terrainDecalEffect.Parameters["View"].SetValue(worldCamera.ViewMatrix);
-            terrainDecalEffect.Parameters["Projection"].SetValue(worldCamera.ProjectionMatrix);
-            terrainDecalEffect.Parameters["World"].SetValue(Matrix.Identity);
-            terrainDecalEffect.Parameters["LightDirection"].SetValue(new Vector3(-0.45f, -0.25f, -1.0f));
-            terrainDecalEffect.Parameters["Ambient"].SetValue(0.1f);
-            terrainDecalEffect.Parameters["EnableLighting"].SetValue(true);
-            terrainDecalEffect.Parameters["Texture"].SetValue(terrainTexture);
-
-            if (wireframe)
-            {
-                GraphicsDevice.RasterizerState = wireframeRasterizerState;
-            }
-            else
-            {
-                GraphicsDevice.RasterizerState = solidRasterizerState;
-            }
-
-            foreach (ModelMesh mesh in terrain.Meshes)
-            {
-                foreach (ModelMeshPart part in mesh.MeshParts)
-                {
-                    part.Effect = terrainDecalEffect;
-                }
-
-                mesh.Draw();
-            }
         }
 
         /// <summary>
@@ -474,7 +362,7 @@ namespace tanks3d
             tank1.HandleInput(currentGamePadState, 
                               currentKeyboardState, 
                               currentMouseState, 
-                              heightMapInfo,
+                              terrain.heightMapInfo,
                               gameTime);
 
             previousKeyboardState = currentKeyboardState;
