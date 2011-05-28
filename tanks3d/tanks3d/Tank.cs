@@ -42,8 +42,9 @@ namespace tank3d
 
         const float TankSize = 75f;
 
-        #endregion
+        const int moveLimit = 1000;
 
+        #endregion
 
         #region Properties
 
@@ -238,24 +239,23 @@ namespace tank3d
             // First, we want to check to see if the tank should turn. turnAmount will 
             // be an accumulation of all the different possible inputs.
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
-            if (currentKeyboardState.IsKeyDown(Keys.A) ||
-                //currentKeyboardState.IsKeyDown(Keys.Left) ||
-                currentGamePadState.DPad.Left == ButtonState.Pressed)
+            if (currentKeyboardState.IsKeyDown(Keys.A) || currentGamePadState.DPad.Left == ButtonState.Pressed)
             {
                 turnAmount += 1;
+                game.moves++;
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.D) ||
-                //currentKeyboardState.IsKeyDown(Keys.Right) ||
-                currentGamePadState.DPad.Right == ButtonState.Pressed)
+            if (currentKeyboardState.IsKeyDown(Keys.D) || currentGamePadState.DPad.Right == ButtonState.Pressed)
             {
                 turnAmount -= 1;
+                game.moves++;
             }
 
             // clamp the turn amount between -1 and 1, and then use the finished
             // value to turn the tank.
             turnAmount = MathHelper.Clamp(turnAmount, -1, 1);
-            facingDirection += turnAmount * TankTurnSpeed;
+            if (game.moves < moveLimit)
+                facingDirection += turnAmount * TankTurnSpeed;
 
 
             // Next, we want to move the tank forward or back. to do this, 
@@ -264,17 +264,15 @@ namespace tank3d
             Vector3 movement = Vector3.Zero;
             movement.Z = -currentGamePadState.ThumbSticks.Left.Y;
 
-            if (currentKeyboardState.IsKeyDown(Keys.W) ||
-                //currentKeyboardState.IsKeyDown(Keys.Up) ||
-                currentGamePadState.DPad.Up == ButtonState.Pressed)
+            if (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed)
             {
                 movement.Z = 1;
+                game.moves++;
             }
-            if (currentKeyboardState.IsKeyDown(Keys.S) ||
-                //currentKeyboardState.IsKeyDown(Keys.Down) ||
-                currentGamePadState.DPad.Down == ButtonState.Pressed)
+            if (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
                 movement.Z = -1;
+                game.moves++;
             }
 
             // next, we'll create a rotation matrix from the direction the tank is 
@@ -282,6 +280,9 @@ namespace tank3d
             orientation = Matrix.CreateRotationY(FacingDirection);
             Vector3 velocity = Vector3.Transform(movement, orientation);
             velocity *= TankVelocity;
+
+            if (game.moves > moveLimit)
+                velocity = Vector3.Zero;
 
             // Now we know how much the user wants to move. We'll construct a temporary
             // vector, newPosition, which will represent where the user wants to go. If
