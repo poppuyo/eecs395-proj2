@@ -217,6 +217,10 @@ namespace tanks3d
             TurretAim = new Vector3(0, -1, 0);
             WeaponPower = 100.0f;
             UpdateTurretInfo();
+
+            // Initialize game states
+            InitGameState();
+            UpdateGameState();
         }
 
         private void UpdateTurretInfo()
@@ -391,6 +395,141 @@ namespace tanks3d
 
                 weaponMessageLabel.Visible = false;
             }
+        }
+
+        private void InitGameState()
+        {
+            foreach (string gameState in Enum.GetNames(typeof(tanks3d.Game1.GameState1)))
+            {
+                gameStateComboBox.Items.Add(gameState);
+            }
+
+            foreach (string playerState in Enum.GetNames(typeof(tanks3d.Game1.GameState)))
+            {
+                playerStateComboBox.Items.Add(playerState);
+            }
+
+            foreach (string cameraState in Enum.GetNames(typeof(tanks3d.Cameras.QuaternionCamera.Behavior)))
+            {
+                cameraStateComboBox.Items.Add(cameraState);
+            }
+        }
+
+        private void gameStateComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Update Game State (GameState1)
+            string selected = gameStateComboBox.SelectedItem.ToString();
+            if (Enum.IsDefined(typeof(tanks3d.Game1.GameState1), selected))
+            {
+                gameState = (tanks3d.Game1.GameState1)Enum.Parse(typeof(tanks3d.Game1.GameState1), selected);
+                game.currentState1 = gameState;
+                stateMessageLabel.Visible = false;
+            }
+            else
+            {
+                stateMessageLabel.Text = "Unrecognized game state.";
+                stateMessageLabel.Visible = true;
+            }
+        }
+
+        private void playerStateComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Update Player State (GameState)
+            string selected = playerStateComboBox.SelectedItem.ToString();
+            if (Enum.IsDefined(typeof(tanks3d.Game1.GameState), selected))
+            {
+                playerState = (tanks3d.Game1.GameState)Enum.Parse(typeof(tanks3d.Game1.GameState), selected);
+                game.currentState = playerState;
+                stateMessageLabel.Visible = false;
+            }
+            else
+            {
+                stateMessageLabel.Text = "Unrecognized player state.";
+                stateMessageLabel.Visible = true;
+            }
+        }
+
+        private void cameraStateComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Update camera state
+            string selected = cameraStateComboBox.SelectedItem.ToString();
+            if (Enum.IsDefined(typeof(tanks3d.Cameras.QuaternionCamera.Behavior), selected))
+            {
+                cameraState = (tanks3d.Cameras.QuaternionCamera.Behavior)Enum.Parse(typeof(tanks3d.Cameras.QuaternionCamera.Behavior), selected);
+                game.worldCamera.CurrentBehavior = cameraState;
+                stateMessageLabel.Visible = false;
+            }
+            else
+            {
+                stateMessageLabel.Text = "Unrecognized camera state.";
+                stateMessageLabel.Visible = true;
+            }
+        }
+
+        private void UpdateStateTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateGameState();
+        }
+
+        private tanks3d.Game1.GameState1 gameState;
+        private tanks3d.Game1.GameState playerState;
+        private tanks3d.Cameras.QuaternionCamera.Behavior cameraState;
+
+        private void UpdateGameState()
+        {
+            // Update game state
+            if (!gameStateComboBox.DroppedDown)
+            {
+                tanks3d.Game1.GameState1 gameState = game.currentState1;
+                string gameStateString = System.Enum.GetName(typeof(tanks3d.Game1.GameState1), gameState);
+                if (gameStateComboBox.Items.Contains(gameStateString))
+                {
+                    gameStateComboBox.SelectedIndex = gameStateComboBox.Items.IndexOf(gameStateString);
+                    stateMessageLabel.Visible = false;
+                }
+                else
+                {
+                    stateMessageLabel.Text = "Unknown game state: \"" + gameStateString + "\".";
+                    stateMessageLabel.Visible = true;
+                }
+            }
+
+            // Update player state
+            if (!playerStateComboBox.DroppedDown)
+            {
+                tanks3d.Game1.GameState playerState = game.currentState;
+                string playerStateString = System.Enum.GetName(typeof(tanks3d.Game1.GameState), playerState);
+                if (playerStateComboBox.Items.Contains(playerStateString))
+                {
+                    playerStateComboBox.SelectedIndex = playerStateComboBox.Items.IndexOf(playerStateString);
+                }
+                else
+                {
+                    stateMessageLabel.Text = "Unknown player state: \"" + playerStateString + "\".";
+                    stateMessageLabel.Visible = true;
+                }
+            }
+
+            // Update camera state
+            if (!cameraStateComboBox.DroppedDown)
+            {
+                tanks3d.Cameras.QuaternionCamera.Behavior cameraState = game.worldCamera.CurrentBehavior;
+                string cameraStateString = System.Enum.GetName(typeof(tanks3d.Cameras.QuaternionCamera.Behavior), cameraState);
+                if (cameraStateComboBox.Items.Contains(cameraStateString))
+                {
+                    cameraStateComboBox.SelectedIndex = cameraStateComboBox.Items.IndexOf(cameraStateString);
+                }
+                else
+                {
+                    stateMessageLabel.Text = "Unknown camera state: \"" + cameraStateString + "\".";
+                    stateMessageLabel.Visible = true;
+                }
+            }
+        }
+
+        private void pctSurface_Click(object sender, EventArgs e)
+        {
+            pctSurface.Focus();
         }
     }
 }
