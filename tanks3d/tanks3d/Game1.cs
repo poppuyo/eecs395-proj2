@@ -298,6 +298,9 @@ namespace tanks3d
         {
             switch (currentState1)
             {
+                case GameState1.Menu:
+                    GraphicsDevice.Clear(Color.Black);
+                    break;
                 case GameState1.Play:
                     GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -309,6 +312,9 @@ namespace tanks3d
 
                     for (int i = 0; i < numPlayers; i++)
                         tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix, this.GraphicsDevice);
+                    break;
+                case GameState1.Pause:
+                    GraphicsDevice.Clear(Color.Black);
                     break;
             }
 

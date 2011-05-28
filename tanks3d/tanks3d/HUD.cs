@@ -73,6 +73,7 @@ namespace tanks3d
                     hudString += "T (aim)\n";
                     hudString += "F (fire)\n";
                     hudString += "C (bullet view)\n";
+                    hudString += "P (pause)\n";
                     spriteBatch.DrawString(hudFont, hudString, new Vector2(75, 125), Color.LimeGreen);
                     break;
                 case Game1.GameState1.Play:
