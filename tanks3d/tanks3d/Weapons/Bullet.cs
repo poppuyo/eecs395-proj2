@@ -160,6 +160,7 @@ namespace tanks3d.Weapons
         public void HandleCollisionWithTerrain()
         {
             StartExplosion();
+            game.terrain.AddExplosionDecal(this.position);
         }
 
         public void StartExplosion()

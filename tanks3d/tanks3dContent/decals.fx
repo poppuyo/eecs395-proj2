@@ -27,6 +27,9 @@ float4x4 Projection;
 float3 LightDirection;
 float Ambient;
 bool EnableLighting;
+texture2D DecalTexture;
+float3 DecalCenter;
+float DecalRadius;
 
 //------- Texture Samplers --------
 Texture Texture;
@@ -55,8 +58,6 @@ VertexShaderOutput TexturedVS(VertexShaderInput input)
 	return output;
 }
 
-texture2D DecalTexture;
-
 sampler2D DecalSampler = sampler_state {
   Texture = (DecalTexture);
   AddressU = Clamp;
@@ -68,33 +69,19 @@ sampler2D DecalSampler = sampler_state {
 };
 
 float4 TexturedPS(VertexShaderOutput input) : COLOR0 {
-  float3 Center = float3(20, 10, 30);
-  float Radius = 100;
-  float3 UVector = float3(1, 0, 0) / (2 * Radius);
-  float3 VVector = float3(0, 0, 1) / (2 * Radius);
+  float3 UVector = float3(1, 0, 0) / (2 * DecalRadius);
+  float3 VVector = float3(0, 0, 1) / (2 * DecalRadius);
   float2 coord;
   float3 WorldPos = float3(input.TextureCoords.x, 0, input.TextureCoords.y);
-  coord.x = dot(WorldPos - Center, UVector) + 0.5;
-  coord.y = dot(WorldPos - Center, VVector) + 0.5;
+  coord.x = dot(WorldPos - DecalCenter, UVector) + 0.5;
+  coord.y = dot(WorldPos - DecalCenter, VVector) + 0.5;
   return tex2D(DecalSampler, coord);
 }
 
-/*
-float4 TexturedPS(VertexShaderOutput input) : COLOR0
-{
-    float4 output = tex2D(TextureSampler, input.TextureCoords);
-	output.rgb *= saturate(input.LightingFactor) + Ambient;
-
-	return output;
-}
-*/
-
-technique Textured
+technique Decal
 {
     pass Pass1
     {
-        // TODO: set renderstates here.
-
         VertexShader = compile vs_2_0 TexturedVS();
         PixelShader = compile ps_2_0 TexturedPS();
     }

@@ -20,9 +20,12 @@ namespace tanks3d.Terrain
 
         Effect terrainDecalEffect;
 
+        private List<Vector3> explosionDecalLocations;
+
         public Terrain(Game1 g) : base(g) 
         {
             game = g;
+            explosionDecalLocations = new List<Vector3>();
         }
 
         protected override void LoadContent()
@@ -133,39 +136,48 @@ namespace tanks3d.Terrain
 
         void ApplyDecals(Matrix view, Matrix projection)
         {
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            terrainDecalEffect.CurrentTechnique = terrainDecalEffect.Techniques["Textured"];
-
-            terrainDecalEffect.Parameters["View"].SetValue(game.worldCamera.ViewMatrix);
-            terrainDecalEffect.Parameters["Projection"].SetValue(game.worldCamera.ProjectionMatrix);
-            terrainDecalEffect.Parameters["World"].SetValue(Matrix.Identity);
-            terrainDecalEffect.Parameters["LightDirection"].SetValue(new Vector3(-0.45f, -0.25f, -1.0f));
-            terrainDecalEffect.Parameters["Ambient"].SetValue(0.1f);
-            terrainDecalEffect.Parameters["EnableLighting"].SetValue(true);
-            terrainDecalEffect.Parameters["Texture"].SetValue(terrainTexture);
-            terrainDecalEffect.Parameters["DecalTexture"].SetValue(decalTexture);
-
-            if (game.WireframeMode)
+            if (explosionDecalLocations.Any())
             {
-                GraphicsDevice.RasterizerState = game.wireframeRasterizerState;
-            }
-            else
-            {
-                GraphicsDevice.RasterizerState = game.solidRasterizerState;
-            }
+                GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-            foreach (ModelMesh mesh in terrain.Meshes)
-            {
-                foreach (ModelMeshPart part in mesh.MeshParts)
+                terrainDecalEffect.CurrentTechnique = terrainDecalEffect.Techniques["Decal"];
+
+                terrainDecalEffect.Parameters["View"].SetValue(game.worldCamera.ViewMatrix);
+                terrainDecalEffect.Parameters["Projection"].SetValue(game.worldCamera.ProjectionMatrix);
+                terrainDecalEffect.Parameters["World"].SetValue(Matrix.Identity);
+                terrainDecalEffect.Parameters["LightDirection"].SetValue(new Vector3(-0.45f, -0.25f, -1.0f));
+                terrainDecalEffect.Parameters["Ambient"].SetValue(0.1f);
+                terrainDecalEffect.Parameters["EnableLighting"].SetValue(true);
+                terrainDecalEffect.Parameters["Texture"].SetValue(terrainTexture);
+
+                foreach (Vector3 explosionLocation in explosionDecalLocations)
                 {
-                    part.Effect = terrainDecalEffect;
-                }
+                    terrainDecalEffect.Parameters["DecalTexture"].SetValue(decalTexture);
+                    terrainDecalEffect.Parameters["DecalCenter"].SetValue(explosionLocation);
+                    terrainDecalEffect.Parameters["DecalRadius"].SetValue(100.0f);
 
-                mesh.Draw();
+                    foreach (ModelMesh mesh in terrain.Meshes)
+                    {
+                        foreach (ModelMeshPart part in mesh.MeshParts)
+                        {
+                            part.Effect = terrainDecalEffect;
+                        }
+
+                        mesh.Draw();
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Overlays an explosion decal over the terrain at the specified location. The Y-coordinate of
+        /// the location is ignored since it will be read from the terrain heightmap.
+        /// </summary>
+        public void AddExplosionDecal(Vector3 location)
+        {
+            explosionDecalLocations.Add(location);
         }
     }
 }
