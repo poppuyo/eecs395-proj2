@@ -125,6 +125,14 @@ namespace tanks3d.Weapons
                             }
                             */
 
+                 		   foreach (tank3d.Tank tank in game.tanks)
+                   		   {
+                        		if (tank.boundingBox.Intersects(this.GetBoundingBox()))
+                        		{
+                            		game.drawUtils.DrawCylinder(tank.Position, 100, 50, Color.Yellow);
+                        		}  
+                   		    }
+
                             break;
                         case BulletState.Exploding:
                             if (this == game.bulletManager.ActiveBullet)
@@ -157,6 +165,7 @@ namespace tanks3d.Weapons
                     {
                         case BulletState.Unexploded:
                             game.drawUtils.DrawSphere(position, 5.0f, Color.Green);
+              		        tanks3d.Utility.BoundingBoxRenderer.Render(game, this.GetBoundingBox(), game.GraphicsDevice, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, Color.Violet);
                             break;
                         case BulletState.Exploding:
                             break;
