@@ -46,7 +46,7 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        public Tank tank1;
+        public Tank tank1, tank2, currentTank;
 
         public DrawUtils drawUtils;
 
@@ -100,10 +100,6 @@ namespace tanks3d
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            //ground = new TexturedQuad.Quad[1];
-            //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
-
             worldCamera = new Cameras.QuaternionCameraComponent(this);
             worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 10000.0f);
             worldCamera.Position = new Vector3(-88, -300, 195);
@@ -122,11 +118,10 @@ namespace tanks3d
             drawUtils = new DrawUtils(this);
             Components.Add(drawUtils);
 
-            //terrain = new Terrains.SimpleGridTerrain(this);
-            //terrain = new Terrains.HeightmapTerrain(this);
-            //Components.Add(terrain);
+            tank1 = new Tank(this, new Vector3(0, 0, 0));
+            tank2 = new Tank(this, new Vector3(100, 0, 0));
 
-            tank1 = new Tank(this);
+            currentTank = tank1;
 
             weaponManager = new WeaponManager(this);
 
@@ -139,10 +134,6 @@ namespace tanks3d
             testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
             Components.Add(testPhysicsObject);
             physicsEngine.AddPhysicsObject(testPhysicsObject);
-
-            //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
-            //aCamera.Position = new Vector3(-100, 100, 100);
-            //aCamera.View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
 
             base.Initialize();
         }
@@ -211,6 +202,7 @@ namespace tanks3d
             sky = Content.Load<Sky>("sky");
 
             tank1.LoadContent(Content);
+            tank2.LoadContent(Content);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -267,29 +259,12 @@ namespace tanks3d
 
             DrawAxes();
 
-            /*
-            spriteBatch.Begin();
-            spriteBatch.Draw(texture, new Rectangle(0, 0, 64, 64), Color.White);
-            spriteBatch.End();
-            */
-
-            // TODO: Add your drawing code here
-
-            /*
-            foreach(EffectPass pass in quadEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[0].Vertices, 0, 4, ground[0].Indexes, 0, 2);
-                //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[1].Vertices, 0, 4, ground[1].Indexes, 0, 2);
-            }
-            */
-
             DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+            tank2.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
         }
@@ -400,6 +375,7 @@ namespace tanks3d
                 if (currentKeyboardState.IsKeyUp(Keys.F))
                 {
                     weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                    switchCurrentTank();
                 }
             }
             if(previousKeyboardState.IsKeyDown(Keys.C))
@@ -430,17 +406,17 @@ namespace tanks3d
                     if (currentState == GameState.Move)
                     {
                         currentState = GameState.Aim;
-                        tank1.ChangeToAim();
+                        currentTank.ChangeToAim();
                     }
                     else
                     {
                         currentState = GameState.Move;
-                        tank1.ChangeToMove();
+                        currentTank.ChangeToMove();
                     }
                 }
             }
 
-            tank1.HandleInput(currentGamePadState, 
+            currentTank.HandleInput(currentGamePadState, 
                               currentKeyboardState, 
                               currentMouseState, 
                               heightMapInfo,
@@ -460,6 +436,14 @@ namespace tanks3d
         private float RandomFloat()
         {
             return (float)random.NextDouble() * 2f - 1f;
+        }
+
+        private void switchCurrentTank()
+        {
+            if (currentTank == tank1)
+                currentTank = tank2;
+            else
+                currentTank = tank1;
         }
     }
 }

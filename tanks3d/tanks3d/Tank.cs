@@ -148,8 +148,9 @@ namespace tank3d
 
         #region Initialization
 
-        public Tank(Game1 game)
+        public Tank(Game1 game, Vector3 pos)
         {
+            position = pos;
             this.game = game;
         }
 

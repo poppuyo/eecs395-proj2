@@ -1923,7 +1923,7 @@ namespace tanks3d.Cameras
                     break;
 
                 case QuaternionCamera.Behavior.FollowT:
-                    Vector3 tpos = g.tank1.Position;
+                    Vector3 tpos = g.currentTank.Position;
 
                     camera.LookAt(tpos + Vector3.Up*zFactor + new Vector3(500f,0,500f), tpos, Vector3.Up);
                     //this.CurrentBehavior = QuaternionCamera.Behavior.Orbit;

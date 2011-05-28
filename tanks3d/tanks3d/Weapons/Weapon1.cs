@@ -12,7 +12,7 @@ namespace tanks3d.Weapons
 
         public override void Fire()
         {
-            game.bulletManager.SpawnBullet(game.tank1.TurretEndPosition, 200.0f * game.tank1.GetTurretDirection());
+            game.bulletManager.SpawnBullet(game.currentTank.TurretEndPosition, 200.0f * game.currentTank.GetTurretDirection());
         }
     }
 }
