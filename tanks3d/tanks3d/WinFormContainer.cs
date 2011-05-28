@@ -441,6 +441,11 @@ namespace tanks3d
                 playerState = (tanks3d.PlayerState)Enum.Parse(typeof(tanks3d.PlayerState), selected);
                 game.currentTank.currentPlayerState = playerState;
                 stateMessageLabel.Visible = false;
+
+                if (playerState == PlayerState.Aim)
+                {
+                    game.currentTank.ChangeToAim();
+                }
             }
             else
             {
@@ -525,11 +530,61 @@ namespace tanks3d
                     stateMessageLabel.Visible = true;
                 }
             }
+
+            UpdateActivePlayer();
+        }
+
+        private void UpdateActivePlayer()
+        {
+            if (!activePlayerComboBox.DroppedDown)
+            {
+                string previousNumPlayers = numPlayersLabel.Text;
+                numPlayersLabel.Text = game.numPlayers.ToString();
+
+                if (previousNumPlayers != numPlayersLabel.Text)
+                {
+                    RepopulateActivePlayerComboBox(game.numPlayers);
+                }
+
+                if (activePlayerComboBox.Items.Contains(game.currentPlayer.ToString()))
+                {
+                    activePlayerComboBox.SelectedIndex = activePlayerComboBox.Items.IndexOf(game.currentPlayer.ToString());
+                }
+                else
+                {
+                    stateMessageLabel.Text = "Currently active player is >= num players";
+                    stateMessageLabel.Visible = true;
+                }
+            }
+        }
+
+        private void RepopulateActivePlayerComboBox(int numPlayers)
+        {
+            activePlayerComboBox.Items.Clear();
+
+            for (int i = 0; i < numPlayers; i++)
+            {
+                activePlayerComboBox.Items.Add(i.ToString());
+            }
         }
 
         private void pctSurface_Click(object sender, EventArgs e)
         {
             pctSurface.Focus();
+        }
+
+        private void activePlayerComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                game.currentPlayer = int.Parse(activePlayerComboBox.SelectedItem.ToString());
+                stateMessageLabel.Visible = false;
+            }
+            catch (Exception ex)
+            {
+                stateMessageLabel.Text = "Failed to change active player: " + ex.Message;
+                stateMessageLabel.Visible = true;
+            }
         }
     }
 }
