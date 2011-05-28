@@ -44,23 +44,28 @@ namespace tanks3d.Physics
 
         public override void Update(GameTime gameTime)
         {
-            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            foreach (IPhysicsObject physicsObject in physicsObjects)
+            switch (game.currentState1)
             {
-                Gravity(physicsObject, elapsedSeconds);
+                case Game1.GameState1.Play:
+                    float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Move all objects according to their current velocities
-                Vector3 oldPosition = physicsObject.GetPosition();
-                Vector3 newPosition = oldPosition + physicsObject.GetVelocity() * elapsedSeconds;
-                physicsObject.UpdatePosition(newPosition);
+                    foreach (IPhysicsObject physicsObject in physicsObjects)
+                    {
+                        Gravity(physicsObject, elapsedSeconds);
 
-                DoCollisionDetectionWithTerrain(physicsObject);
+                        // Move all objects according to their current velocities
+                        Vector3 oldPosition = physicsObject.GetPosition();
+                        Vector3 newPosition = oldPosition + physicsObject.GetVelocity() * elapsedSeconds;
+                        physicsObject.UpdatePosition(newPosition);
 
-                //System.Console.WriteLine(physicsObject.GetPosition());
+                        DoCollisionDetectionWithTerrain(physicsObject);
+
+                        //System.Console.WriteLine(physicsObject.GetPosition());
+                    }
+
+                    base.Update(gameTime);
+                    break;
             }
-
-            base.Update(gameTime);
         }
 
         private void DoCollisionDetectionWithTerrain(IPhysicsObject physicsObject)
@@ -85,11 +90,19 @@ namespace tanks3d.Physics
                 {
                     float terrainElevation;
                     Vector3 terrainNormal;
-                    game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
-                    if ((corners[i] + v).Y <= terrainElevation)
+
+                    if (game.heightMapInfo.IsOnHeightmap(corners[i]))
                     {
-                        HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
-                        return;
+                        game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
+                        if ((corners[i] + v).Y <= terrainElevation)
+                        {
+                            HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
+
+                            // Notify the physics object that a collision with the terrain had occurred.
+                            physicsObject.HandleCollisionWithTerrain();
+
+                            return;
+                        }
                     }
                 }
             }

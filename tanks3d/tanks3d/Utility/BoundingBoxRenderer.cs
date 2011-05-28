@@ -63,10 +63,27 @@ namespace tanks3d.Utility
                 effect.LightingEnabled = false;
             }
 
+            
             Vector3[] corners = box.GetCorners();
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 4; i++)
             {
-                game.drawUtils.DrawLine(corners[i], corners[i + 1], color);
+                int j = i + 1;
+                if (i == 3)
+                {
+                    j = 0;
+                }
+                game.drawUtils.DrawLine(corners[i], corners[j], color);
+                game.drawUtils.DrawLine(corners[i], corners[i + 4], color);
+            }
+
+            for (int i = 4; i < 8; i++)
+            {
+                int j = i + 1;
+                if (i == 7)
+                {
+                    j = 4;
+                }
+                game.drawUtils.DrawLine(corners[i], corners[j], color);
             }
 
             

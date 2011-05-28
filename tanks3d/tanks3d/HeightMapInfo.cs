@@ -46,9 +46,11 @@ namespace tanks3d
 
         // the total width of the heightmap, including terrainscale.
         private float heightmapWidth;
+        public float terrainWidth;
 
         // the total height of the height map, including terrainscale.
         private float heightmapHeight;
+        public float terrainHeight;
 
 
         #endregion
@@ -70,8 +72,8 @@ namespace tanks3d
             this.heights = heights;
             this.normals = normals;
 
-            heightmapWidth = (heights.GetLength(0) - 1) * terrainScale;
-            heightmapHeight = (heights.GetLength(1) - 1) * terrainScale;
+            terrainWidth = heightmapWidth = (heights.GetLength(0) - 1) * terrainScale;
+            terrainHeight = heightmapHeight = (heights.GetLength(1) - 1) * terrainScale;
 
             heightmapPosition.X = -(heights.GetLength(0) - 1) / 2 * terrainScale;
             heightmapPosition.Z = -(heights.GetLength(1) - 1) / 2 * terrainScale;

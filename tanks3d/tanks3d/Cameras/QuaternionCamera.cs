@@ -36,7 +36,7 @@ namespace tanks3d.Cameras
     /// </summary>
     public interface ICamera
     {
-    #region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// Builds a look at style viewing matrix using the camera's current
@@ -44,7 +44,7 @@ namespace tanks3d.Cameras
         /// </summary>
         /// <param name="target">The target position to look at.</param>
         void LookAt(Vector3 target);
-        
+
         /// <summary>
         /// Builds a look at style viewing matrix.
         /// </summary>
@@ -79,7 +79,7 @@ namespace tanks3d.Cameras
         /// <param name="znear">The distance to the near clip plane.</param>
         /// <param name="zfar">The distance to the far clip plane.</param>
         void Perspective(float fovx, float aspect, float znear, float zfar);
-        
+
         /// <summary>
         /// Rotates the camera. Positive angles specify counter clockwise
         /// rotations when looking down the axis of rotation towards the
@@ -117,9 +117,9 @@ namespace tanks3d.Cameras
         /// </param>
         void Zoom(float zoom, float minZoom, float maxZoom);
 
-    #endregion
+        #endregion
 
-    #region Properties
+        #region Properties
 
         /// <summary>
         /// Property to get and set the camera's orientation.
@@ -138,7 +138,7 @@ namespace tanks3d.Cameras
             get;
             set;
         }
-        
+
         /// <summary>
         /// Property to get the camera's perspective projection matrix.
         /// </summary>
@@ -195,7 +195,7 @@ namespace tanks3d.Cameras
             get;
         }
 
-    #endregion
+        #endregion
     }
 
     /// <summary>
@@ -217,16 +217,20 @@ namespace tanks3d.Cameras
             FirstPerson,
             Spectator,
             Flight,
-            Orbit
+            Orbit,
+            FollowB,
+            FollowT,
+            LookAtT,
+            FollowActiveBullet
         };
 
         public const float DEFAULT_FOVX = 90.0f;
         public const float DEFAULT_ZNEAR = 0.1f;
         public const float DEFAULT_ZFAR = 1000.0f;
-        
+
         public const float DEFAULT_ORBIT_MIN_ZOOM = DEFAULT_ZNEAR + 1.0f;
         public const float DEFAULT_ORBIT_MAX_ZOOM = DEFAULT_ZFAR * 0.5f;
-        
+
         public const float DEFAULT_ORBIT_OFFSET_LENGTH = DEFAULT_ORBIT_MIN_ZOOM +
             (DEFAULT_ORBIT_MAX_ZOOM - DEFAULT_ORBIT_MIN_ZOOM) * 0.25f;
 
@@ -246,7 +250,7 @@ namespace tanks3d.Cameras
         private float orbitMaxZoom;
         private float orbitOffsetLength;
         private float firstPersonYOffset;
-        
+
         private Vector3 eye;
         private Vector3 target;
         private Vector3 targetYAxis;
@@ -263,7 +267,7 @@ namespace tanks3d.Cameras
         private Vector3 savedEye;
         private float savedAccumPitchDegrees;
 
-    #region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// Constructs a new instance of the camera class. The camera will
@@ -319,6 +323,11 @@ namespace tanks3d.Cameras
         {
             this.eye = eye;
             this.target = target;
+
+            if (target.X == eye.X && target.Z == eye.Z)
+            {
+                target += new Vector3(0.1f, 0f, 0f);
+            }
 
             zAxis = eye - target;
             zAxis.Normalize();
@@ -480,21 +489,21 @@ namespace tanks3d.Cameras
 
             switch (behavior)
             {
-            case Behavior.FirstPerson:
-            case Behavior.Spectator:
-                RotateFirstPerson(headingDegrees, pitchDegrees);
-                break;
+                case Behavior.FirstPerson:
+                case Behavior.Spectator:
+                    RotateFirstPerson(headingDegrees, pitchDegrees);
+                    break;
 
-            case Behavior.Flight:
-                RotateFlight(headingDegrees, pitchDegrees, rollDegrees);
-                break;
+                case Behavior.Flight:
+                    RotateFlight(headingDegrees, pitchDegrees, rollDegrees);
+                    break;
 
-            case Behavior.Orbit:
-                RotateOrbit(headingDegrees, pitchDegrees, rollDegrees);
-                break;
+                case Behavior.Orbit:
+                    RotateOrbit(headingDegrees, pitchDegrees, rollDegrees);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
 
             UpdateViewMatrix();
@@ -559,9 +568,9 @@ namespace tanks3d.Cameras
             }
         }
 
-    #endregion
+        #endregion
 
-    #region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Change to a new camera behavior.
@@ -578,84 +587,84 @@ namespace tanks3d.Cameras
 
             switch (newBehavior)
             {
-            case Behavior.FirstPerson:
-                switch (prevBehavior)
-                {
-                case Behavior.Flight:
+                case Behavior.FirstPerson:
+                    switch (prevBehavior)
+                    {
+                        case Behavior.Flight:
+                        case Behavior.Spectator:
+                            eye.Y = firstPersonYOffset;
+                            UpdateViewMatrix();
+                            break;
+
+                        case Behavior.Orbit:
+                            eye.X = savedEye.X;
+                            eye.Z = savedEye.Z;
+                            eye.Y = firstPersonYOffset;
+                            orientation = savedOrientation;
+                            accumPitchDegrees = savedAccumPitchDegrees;
+                            UpdateViewMatrix();
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    UndoRoll();
+                    break;
+
                 case Behavior.Spectator:
-                    eye.Y = firstPersonYOffset;
-                    UpdateViewMatrix();
+                    switch (prevBehavior)
+                    {
+                        case Behavior.Flight:
+                            UpdateViewMatrix();
+                            break;
+
+                        case Behavior.Orbit:
+                            eye = savedEye;
+                            orientation = savedOrientation;
+                            accumPitchDegrees = savedAccumPitchDegrees;
+                            UpdateViewMatrix();
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    UndoRoll();
                     break;
 
-                case Behavior.Orbit:
-                    eye.X = savedEye.X;
-                    eye.Z = savedEye.Z;
-                    eye.Y = firstPersonYOffset;
-                    orientation = savedOrientation;
-                    accumPitchDegrees = savedAccumPitchDegrees;
-                    UpdateViewMatrix();
-                    break;
-
-                default:
-                    break;
-                }
-
-                UndoRoll();
-                break;
-
-            case Behavior.Spectator:
-                switch (prevBehavior)
-                {
                 case Behavior.Flight:
-                    UpdateViewMatrix();
+                    if (prevBehavior == Behavior.Orbit)
+                    {
+                        eye = savedEye;
+                        orientation = savedOrientation;
+                        accumPitchDegrees = savedAccumPitchDegrees;
+                        UpdateViewMatrix();
+                    }
+                    else
+                    {
+                        savedEye = eye;
+                        UpdateViewMatrix();
+                    }
                     break;
 
                 case Behavior.Orbit:
-                    eye = savedEye;
-                    orientation = savedOrientation;
-                    accumPitchDegrees = savedAccumPitchDegrees;
-                    UpdateViewMatrix();
+                    if (prevBehavior == Behavior.FirstPerson)
+                        firstPersonYOffset = eye.Y;
+
+                    savedEye = eye;
+                    savedOrientation = orientation;
+                    savedAccumPitchDegrees = accumPitchDegrees;
+
+                    targetYAxis = yAxis;
+
+                    Vector3 newEye = eye + zAxis * orbitOffsetLength;
+
+                    LookAt(newEye, eye, targetYAxis);
                     break;
 
                 default:
                     break;
-                }
-
-                UndoRoll();
-                break;
-
-            case Behavior.Flight:
-                if (prevBehavior == Behavior.Orbit)
-                {
-                    eye = savedEye;
-                    orientation = savedOrientation;
-                    accumPitchDegrees = savedAccumPitchDegrees;
-                    UpdateViewMatrix();
-                }
-                else
-                {
-                    savedEye = eye;
-                    UpdateViewMatrix();
-                }
-                break;
-
-            case Behavior.Orbit:
-                if (prevBehavior == Behavior.FirstPerson)
-                    firstPersonYOffset = eye.Y;
-
-                savedEye = eye;
-                savedOrientation = orientation;
-                savedAccumPitchDegrees = accumPitchDegrees;
-
-                targetYAxis = yAxis;
-
-                Vector3 newEye = eye + zAxis * orbitOffsetLength;
-
-                LookAt(newEye, eye, targetYAxis);
-                break;
-
-            default:
-                break;
             }
         }
 
@@ -666,7 +675,7 @@ namespace tanks3d.Cameras
         private void ChangeOrientation(Quaternion newOrientation)
         {
             Matrix m = Matrix.CreateFromQuaternion(newOrientation);
-            
+
             // Store the pitch for this new orientation.
             // First person and spectator behaviors limit pitching to
             // 90 degrees straight up and down.
@@ -763,7 +772,7 @@ namespace tanks3d.Cameras
         {
             float heading = MathHelper.ToRadians(headingDegrees);
             float pitch = MathHelper.ToRadians(pitchDegrees);
-            
+
             if (preferTargetYAxisOrbiting)
             {
                 Quaternion rotation = Quaternion.Identity;
@@ -826,9 +835,9 @@ namespace tanks3d.Cameras
             viewDir.Z = -zAxis.Z;
         }
 
-    #endregion
-        
-    #region Properties
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Property to get and set the camera's behavior.
@@ -906,9 +915,9 @@ namespace tanks3d.Cameras
         public bool PreferTargetYAxisOrbiting
         {
             get { return preferTargetYAxisOrbiting; }
-            
+
             set
-            { 
+            {
                 preferTargetYAxisOrbiting = value;
 
                 if (preferTargetYAxisOrbiting)
@@ -972,7 +981,7 @@ namespace tanks3d.Cameras
             get { return zAxis; }
         }
 
-    #endregion
+        #endregion
     }
 
     /// <summary>
@@ -990,44 +999,44 @@ namespace tanks3d.Cameras
         public enum Actions
         {
             FlightYawLeftPrimary,
-            FlightYawLeftAlternate,
+            //FlightYawLeftAlternate,
             FlightYawRightPrimary,
-            FlightYawRightAlternate,
+            //FlightYawRightAlternate,
 
             MoveForwardsPrimary,
-            MoveForwardsAlternate,
+            //MoveForwardsAlternate,
             MoveBackwardsPrimary,
-            MoveBackwardsAlternate,
+            //MoveBackwardsAlternate,
 
             MoveDownPrimary,
-            MoveDownAlternate,
+            //MoveDownAlternate,
             MoveUpPrimary,
-            MoveUpAlternate,
+            //MoveUpAlternate,
 
             OrbitRollLeftPrimary,
-            OrbitRollLeftAlternate,
+            //OrbitRollLeftAlternate,
             OrbitRollRightPrimary,
-            OrbitRollRightAlternate,
+            //OrbitRollRightAlternate,
 
             PitchUpPrimary,
-            PitchUpAlternate,
+            //PitchUpAlternate,
             PitchDownPrimary,
-            PitchDownAlternate,
-            
+            //PitchDownAlternate,
+
             YawLeftPrimary,
-            YawLeftAlternate,
+            //YawLeftAlternate,
             YawRightPrimary,
-            YawRightAlternate,
+            //YawRightAlternate,
 
             RollLeftPrimary,
-            RollLeftAlternate,
+            //RollLeftAlternate,
             RollRightPrimary,
-            RollRightAlternate,
-            
+            //RollRightAlternate,
+
             StrafeRightPrimary,
-            StrafeRightAlternate,
+            //StrafeRightAlternate,
             StrafeLeftPrimary,
-            StrafeLeftAlternate
+            //StrafeLeftAlternate
         };
 
         private const float DEFAULT_ACCELERATION_X = 8.0f;
@@ -1042,9 +1051,9 @@ namespace tanks3d.Cameras
         private const float DEFAULT_VELOCITY_X = 1.0f;
         private const float DEFAULT_VELOCITY_Y = 1.0f;
         private const float DEFAULT_VELOCITY_Z = 1.0f;
-                
+
         private const int MOUSE_SMOOTHING_CACHE_SIZE = 10;
-        
+
         private QuaternionCamera camera;
         private bool clickAndDragMouseRotation;
         private bool movingAlongPosX;
@@ -1056,6 +1065,7 @@ namespace tanks3d.Cameras
         private int savedMousePosX;
         private int savedMousePosY;
         private int mouseIndex;
+        private int zFactor = 1500;
         private float rotationSpeed;
         private float orbitRollSpeed;
         private float flightYawSpeed;
@@ -1072,8 +1082,10 @@ namespace tanks3d.Cameras
         private MouseState previousMouseState;
         private KeyboardState currentKeyboardState;
         private Dictionary<Actions, Keys> actionKeys;
-        
-    #region Public Methods
+
+        private Game1 g;
+
+        #region Public Methods
 
         /// <summary>
         /// Constructs a new instance of the CameraComponent class. The
@@ -1082,8 +1094,10 @@ namespace tanks3d.Cameras
         /// z axis. An initial perspective projection matrix is created
         /// as well as setting up initial key bindings to the actions.
         /// </summary>
-        public QuaternionCameraComponent(Game game) : base(game)
+        public QuaternionCameraComponent(Game1 game)
+            : base(game)
         {
+            g = game;
             camera = new QuaternionCamera();
             camera.CurrentBehavior = QuaternionCamera.Behavior.Spectator;
 
@@ -1093,7 +1107,7 @@ namespace tanks3d.Cameras
             movingAlongNegY = false;
             movingAlongPosZ = false;
             movingAlongNegZ = false;
-            
+
             savedMousePosX = -1;
             savedMousePosY = -1;
 
@@ -1122,25 +1136,25 @@ namespace tanks3d.Cameras
             actionKeys = new Dictionary<Actions, Keys>();
 
             actionKeys.Add(Actions.FlightYawLeftPrimary, Keys.Left);
-            actionKeys.Add(Actions.FlightYawLeftAlternate, Keys.A);
+            //actionKeys.Add(Actions.FlightYawLeftAlternate, Keys.A);
             actionKeys.Add(Actions.FlightYawRightPrimary, Keys.Right);
-            actionKeys.Add(Actions.FlightYawRightAlternate, Keys.D);
+            //actionKeys.Add(Actions.FlightYawRightAlternate, Keys.D);
             actionKeys.Add(Actions.MoveForwardsPrimary, Keys.Up);
-            actionKeys.Add(Actions.MoveForwardsAlternate, Keys.W);
+            //actionKeys.Add(Actions.MoveForwardsAlternate, Keys.W);
             actionKeys.Add(Actions.MoveBackwardsPrimary, Keys.Down);
-            actionKeys.Add(Actions.MoveBackwardsAlternate, Keys.S);
+            //actionKeys.Add(Actions.MoveBackwardsAlternate, Keys.S);
             actionKeys.Add(Actions.MoveDownPrimary, Keys.Q);
-            actionKeys.Add(Actions.MoveDownAlternate, Keys.PageDown);
+            //actionKeys.Add(Actions.MoveDownAlternate, Keys.PageDown);
             actionKeys.Add(Actions.MoveUpPrimary, Keys.E);
-            actionKeys.Add(Actions.MoveUpAlternate, Keys.PageUp);
+            //actionKeys.Add(Actions.MoveUpAlternate, Keys.PageUp);
             actionKeys.Add(Actions.OrbitRollLeftPrimary, Keys.Left);
-            actionKeys.Add(Actions.OrbitRollLeftAlternate, Keys.A);
+            //actionKeys.Add(Actions.OrbitRollLeftAlternate, Keys.A);
             actionKeys.Add(Actions.OrbitRollRightPrimary, Keys.Right);
-            actionKeys.Add(Actions.OrbitRollRightAlternate, Keys.D);
+            //actionKeys.Add(Actions.OrbitRollRightAlternate, Keys.D);
             actionKeys.Add(Actions.StrafeRightPrimary, Keys.Right);
-            actionKeys.Add(Actions.StrafeRightAlternate, Keys.D);
+            //actionKeys.Add(Actions.StrafeRightAlternate, Keys.D);
             actionKeys.Add(Actions.StrafeLeftPrimary, Keys.Left);
-            actionKeys.Add(Actions.StrafeLeftAlternate, Keys.A);
+            //actionKeys.Add(Actions.StrafeLeftAlternate, Keys.A);
 
             Game.Activated += HandleGameActivatedEvent;
             Game.Deactivated += HandleGameDeactivatedEvent;
@@ -1248,6 +1262,7 @@ namespace tanks3d.Cameras
             base.Update(gameTime);
             UpdateInput();
             UpdateCamera(gameTime);
+
         }
 
         /// <summary>
@@ -1290,9 +1305,9 @@ namespace tanks3d.Cameras
             camera.Zoom(zoom, minZoom, maxZoom);
         }
 
-    #endregion
+        #endregion
 
-    #region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Determines which way to move the camera based on player input.
@@ -1305,8 +1320,7 @@ namespace tanks3d.Cameras
             direction.Y = 0.0f;
             direction.Z = 0.0f;
 
-            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveForwardsPrimary]) ||
-                currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveForwardsAlternate]))
+            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveForwardsPrimary]))
             {
                 if (!movingAlongNegZ)
                 {
@@ -1321,8 +1335,7 @@ namespace tanks3d.Cameras
                 movingAlongNegZ = false;
             }
 
-            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveBackwardsPrimary]) ||
-                currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveBackwardsAlternate]))
+            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveBackwardsPrimary]))
             {
                 if (!movingAlongPosZ)
                 {
@@ -1337,8 +1350,7 @@ namespace tanks3d.Cameras
                 movingAlongPosZ = false;
             }
 
-            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveUpPrimary]) ||
-                currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveUpAlternate]))
+            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveUpPrimary]))
             {
                 if (!movingAlongPosY)
                 {
@@ -1353,8 +1365,7 @@ namespace tanks3d.Cameras
                 movingAlongPosY = false;
             }
 
-            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveDownPrimary]) ||
-                currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveDownAlternate]))
+            if (currentKeyboardState.IsKeyDown(actionKeys[Actions.MoveDownPrimary]))
             {
                 if (!movingAlongNegY)
                 {
@@ -1371,112 +1382,106 @@ namespace tanks3d.Cameras
 
             switch (CurrentBehavior)
             {
-            case QuaternionCamera.Behavior.FirstPerson:
-            case QuaternionCamera.Behavior.Spectator:
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightAlternate]))
-                {
-                    if (!movingAlongPosX)
+                case QuaternionCamera.Behavior.FirstPerson:
+                case QuaternionCamera.Behavior.Spectator:
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightPrimary]))
                     {
-                        movingAlongPosX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongPosX)
+                        {
+                            movingAlongPosX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X += 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongPosX = false;
                     }
 
-                    direction.X += 1.0f;
-                }
-                else
-                {
-                    movingAlongPosX = false;
-                }
-
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftAlternate]))
-                {
-                    if (!movingAlongNegX)
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftPrimary]))
                     {
-                        movingAlongNegX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongNegX)
+                        {
+                            movingAlongNegX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X -= 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongNegX = false;
                     }
 
-                    direction.X -= 1.0f;
-                }
-                else
-                {
-                    movingAlongNegX = false;
-                }
+                    break;
 
-                break;
-
-            case QuaternionCamera.Behavior.Flight:
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftAlternate]))
-                {
-                    if (!movingAlongPosX)
+                case QuaternionCamera.Behavior.Flight:
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftPrimary]))
                     {
-                        movingAlongPosX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongPosX)
+                        {
+                            movingAlongPosX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X += 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongPosX = false;
                     }
 
-                    direction.X += 1.0f;
-                }
-                else
-                {
-                    movingAlongPosX = false;
-                }
-
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightAlternate]))
-                {
-                    if (!movingAlongNegX)
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightPrimary]))
                     {
-                        movingAlongNegX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongNegX)
+                        {
+                            movingAlongNegX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X -= 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongNegX = false;
+                    }
+                    break;
+
+                case QuaternionCamera.Behavior.Orbit:
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftPrimary]))
+                    {
+                        if (!movingAlongPosX)
+                        {
+                            movingAlongPosX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X += 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongPosX = false;
                     }
 
-                    direction.X -= 1.0f;
-                }
-                else
-                {
-                    movingAlongNegX = false;
-                }
-                break;
-
-            case QuaternionCamera.Behavior.Orbit:
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftAlternate]))
-                {
-                    if (!movingAlongPosX)
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightPrimary]))
                     {
-                        movingAlongPosX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongNegX)
+                        {
+                            movingAlongNegX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X -= 1.0f;
                     }
-
-                    direction.X += 1.0f;
-                }
-                else
-                {
-                    movingAlongPosX = false;
-                }
-
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightAlternate]))
-                {
-                    if (!movingAlongNegX)
+                    else
                     {
-                        movingAlongNegX = true;
-                        currentVelocity.X = 0.0f;
+                        movingAlongNegX = false;
                     }
+                    break;
 
-                    direction.X -= 1.0f;
-                }
-                else
-                {
-                    movingAlongNegX = false;
-                }
-                break;
-
-            default:
-                break;
+                default:
+                    break;
             }
         }
 
@@ -1550,7 +1555,7 @@ namespace tanks3d.Cameras
             // Store the current mouse movement entry at the front of cache.
             mouseSmoothingCache[0].X = x;
             mouseSmoothingCache[0].Y = y;
-            
+
             float averageX = 0.0f;
             float averageY = 0.0f;
             float averageTotal = 0.0f;
@@ -1566,7 +1571,7 @@ namespace tanks3d.Cameras
                 averageTotal += 1.0f * currentWeight;
                 currentWeight *= mouseSmoothingSensitivity;
             }
-            
+
             // Calculate the new smoothed mouse movement.
             smoothedMouseMovement.X = averageX / averageTotal;
             smoothedMouseMovement.Y = averageY / averageTotal;
@@ -1648,6 +1653,15 @@ namespace tanks3d.Cameras
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
 
+            if (currentMouseState.ScrollWheelValue > previousMouseState.ScrollWheelValue)
+            {
+                zFactor+=100;
+            }
+            if (currentMouseState.ScrollWheelValue < previousMouseState.ScrollWheelValue)
+            {
+                zFactor-=100;
+            }
+
             if (clickAndDragMouseRotation)
             {
                 int deltaX = 0;
@@ -1657,19 +1671,19 @@ namespace tanks3d.Cameras
                 {
                     switch (CurrentBehavior)
                     {
-                    case QuaternionCamera.Behavior.FirstPerson:
-                    case QuaternionCamera.Behavior.Spectator:
-                    case QuaternionCamera.Behavior.Flight:
-                        deltaX = previousMouseState.X - currentMouseState.X;
-                        deltaY = previousMouseState.Y - currentMouseState.Y;
-                        break;
+                        case QuaternionCamera.Behavior.FirstPerson:
+                        case QuaternionCamera.Behavior.Spectator:
+                        case QuaternionCamera.Behavior.Flight:
+                            deltaX = previousMouseState.X - currentMouseState.X;
+                            deltaY = previousMouseState.Y - currentMouseState.Y;
+                            break;
 
-                    case QuaternionCamera.Behavior.Orbit:
-                        deltaX = currentMouseState.X - previousMouseState.X;
-                        deltaY = currentMouseState.Y - previousMouseState.Y;
-                        break;
+                        case QuaternionCamera.Behavior.Orbit:
+                            deltaX = currentMouseState.X - previousMouseState.X;
+                            deltaY = currentMouseState.Y - previousMouseState.Y;
+                            break;
                     }
-                    
+
                     PerformMouseFiltering((float)deltaX, (float)deltaY);
                     PerformMouseSmoothing(smoothedMouseMovement.X, smoothedMouseMovement.Y);
                 }
@@ -1851,53 +1865,82 @@ namespace tanks3d.Cameras
 
             switch (camera.CurrentBehavior)
             {
-            case QuaternionCamera.Behavior.FirstPerson:
-            case QuaternionCamera.Behavior.Spectator:
-                dx = smoothedMouseMovement.X;
-                dy = smoothedMouseMovement.Y;
-                
-                RotateSmoothly(dx, dy, 0.0f);
-                UpdatePosition(ref direction, elapsedTimeSec);
-                break;
+                case QuaternionCamera.Behavior.FirstPerson:
+                case QuaternionCamera.Behavior.Spectator:
+                    dx = smoothedMouseMovement.X;
+                    dy = smoothedMouseMovement.Y;
 
-            case QuaternionCamera.Behavior.Flight:
-                dy = -smoothedMouseMovement.Y;
-                dz = smoothedMouseMovement.X;
-                
-                RotateSmoothly(0.0f, dy, dz);
+                    RotateSmoothly(dx, dy, 0.0f);
+                    UpdatePosition(ref direction, elapsedTimeSec);
+                    break;
+                case QuaternionCamera.Behavior.Flight:
+                    dy = -smoothedMouseMovement.Y;
+                    dz = smoothedMouseMovement.X;
 
-                if ((dx = direction.X * flightYawSpeed * elapsedTimeSec) != 0.0f)
-                    camera.Rotate(dx, 0.0f, 0.0f);
+                    RotateSmoothly(0.0f, dy, dz);
 
-                direction.X = 0.0f; // ignore yaw motion when updating camera's velocity
-                UpdatePosition(ref direction, elapsedTimeSec);
-                break;
+                    if ((dx = direction.X * flightYawSpeed * elapsedTimeSec) != 0.0f)
+                        camera.Rotate(dx, 0.0f, 0.0f);
 
-            case QuaternionCamera.Behavior.Orbit:
-                dx = -smoothedMouseMovement.X;
-                dy = -smoothedMouseMovement.Y;
+                    direction.X = 0.0f; // ignore yaw motion when updating camera's velocity
+                    UpdatePosition(ref direction, elapsedTimeSec);
+                    break;
 
-                RotateSmoothly(dx, dy, 0.0f);
+                case QuaternionCamera.Behavior.Orbit:
+                    dx = -smoothedMouseMovement.X;
+                    dy = -smoothedMouseMovement.Y;
 
-                if (!camera.PreferTargetYAxisOrbiting)
-                {
-                    if ((dz = direction.X * orbitRollSpeed * elapsedTimeSec) != 0.0f)
-                        camera.Rotate(0.0f, 0.0f, dz);
-                }
+                    RotateSmoothly(dx, dy, 0.0f);
 
-                if ((dz = GetMouseWheelDirection() * mouseWheelSpeed) != 0.0f)
-                    camera.Zoom(dz, camera.OrbitMinZoom, camera.OrbitMaxZoom);
-                    
-                break;
+                    if (!camera.PreferTargetYAxisOrbiting)
+                    {
+                        if ((dz = direction.X * orbitRollSpeed * elapsedTimeSec) != 0.0f)
+                            camera.Rotate(0.0f, 0.0f, dz);
+                    }
 
-            default:
-                break;
+                    if ((dz = GetMouseWheelDirection() * mouseWheelSpeed) != 0.0f)
+                        camera.Zoom(dz, camera.OrbitMinZoom, camera.OrbitMaxZoom);
+
+                    break;
+
+                case QuaternionCamera.Behavior.FollowB:
+                    Vector3 pos = g.testPhysicsObject.GetPosition();
+                    Vector3 vel = g.testPhysicsObject.GetVelocity();
+
+                    Vector3 smoothedBack = pos - Vector3.Normalize(vel) * 75;
+                    smoothedBack.Y += Vector3.Normalize(vel).Y * 100;
+                    smoothedBack.Y += Vector3.Up.Y * 100;
+                    //pos - (Vector3.Normalize(vel) * 100) + (Vector3.Up * 50)
+                    camera.LookAt(smoothedBack, pos, Vector3.Up);
+                    break;
+
+                case QuaternionCamera.Behavior.FollowActiveBullet:
+                    Vector3 bpos = g.bulletManager.ActiveBullet.position;
+                    Vector3 bvel = g.bulletManager.ActiveBullet.velocity;
+
+                    Vector3 smoothFollow = bpos - Vector3.Normalize(bvel) * 75;
+                    camera.LookAt(smoothFollow, bpos, Vector3.Up);
+                    break;
+
+                case QuaternionCamera.Behavior.FollowT:
+                    Vector3 tpos = g.currentTank.Position;
+
+                    camera.LookAt(tpos + Vector3.Up*zFactor + new Vector3(500f,0,500f), tpos, Vector3.Up);
+                    //this.CurrentBehavior = QuaternionCamera.Behavior.Orbit;
+
+                    break;
+
+                case QuaternionCamera.Behavior.LookAtT:
+                    break;
+
+                default:
+                    break;
             }
         }
 
-    #endregion
+        #endregion
 
-    #region Properties
+        #region Properties
 
         /// <summary>
         /// Property to get and set the camera's acceleration.
@@ -1927,9 +1970,9 @@ namespace tanks3d.Cameras
         public bool ClickAndDragMouseRotation
         {
             get { return clickAndDragMouseRotation; }
-            
+
             set
-            { 
+            {
                 clickAndDragMouseRotation = value;
                 Game.IsMouseVisible = value;
 
@@ -2010,7 +2053,7 @@ namespace tanks3d.Cameras
             get { return camera.OrbitOffsetDistance; }
             set { camera.OrbitOffsetDistance = value; }
         }
-        
+
         /// <summary>
         /// Property to get and set the orbit behavior's rolling speed.
         /// This only applies when PreferTargetYAxisOrbiting is set to false.
@@ -2135,6 +2178,6 @@ namespace tanks3d.Cameras
             get { return camera.ZAxis; }
         }
 
-    #endregion
+        #endregion
     }
 }

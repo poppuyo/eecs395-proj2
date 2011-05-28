@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using tanks3d.Physics;
+using tanks3d.Weapons;
+using tanks3d.ParticleSystems;
+using tank3d;
 
 namespace tanks3d
 {
@@ -24,31 +27,66 @@ namespace tanks3d
         VertexDeclaration vertexDeclaration;
 
         Model terrain;
+        //public Texture2D terrainTexture;
+        BasicEffect terrainEffect;
         public HeightMapInfo heightMapInfo;
         Sky sky;
 
         public Cameras.QuaternionCameraComponent worldCamera;
+        public Cameras.QuaternionCamera.Behavior previousBehavior;
 
         public PhysicsEngine physicsEngine;
         public TestPhysicsObject testPhysicsObject;
+
+        public WeaponManager weaponManager;
+        public BulletManager bulletManager;
 
         public HUD mainHUD;
 
         Texture2D texture;
         BasicEffect quadEffect;
 
-        Tank tank1;
-        Bullet bullet1;
+        public Player[] players;
+
+        public Tank currentTank;
+        public Tank[] tanks;
 
         public DrawUtils drawUtils;
 
         public WinFormContainer winFormContainer = null;
         public IntPtr drawSurface;
 
+        public KeyboardState previousKeyboardState;
+
+        public int numPlayers = 4, currentPlayer = 0;
+
+        private int timeOut = 0;
+
+        public enum GameState
+        {
+            Start,
+            Move,
+            Aim,
+            Fired,
+            Transition
+        }
+
+        public enum GameState1
+        {
+            Menu,
+            Play,
+            Pause,
+            End
+        }
+
+        public GameState currentState;
+        public GameState1 currentState1;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            currentState1 = GameState1.Menu;
 
             // Make the window resizable
             this.Window.AllowUserResizing = true;
@@ -76,12 +114,8 @@ namespace tanks3d
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            //ground = new TexturedQuad.Quad[1];
-            //ground[0] = new TexturedQuad.Quad(Vector3.Zero, Vector3.Backward, Vector3.Up, 64f, 64f);
-
             worldCamera = new Cameras.QuaternionCameraComponent(this);
-            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 5000.0f);
+            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 20000.0f);
             worldCamera.Position = new Vector3(-88, -300, 195);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
@@ -98,15 +132,28 @@ namespace tanks3d
             drawUtils = new DrawUtils(this);
             Components.Add(drawUtils);
 
-            //terrain = new Terrains.SimpleGridTerrain(this);
-            //terrain = new Terrains.HeightmapTerrain(this);
-            //Components.Add(terrain);
+            tanks = new Tank[numPlayers];
+            players = new Player[numPlayers];
 
-            tank1 = new Tank(this);
-            Components.Add(tank1);
+            for (int i = 0; i < numPlayers; i++)
+            {
+                players[i] = new Player(this);
+                //tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
+                tanks[i] = new Tank(this, Vector3.Zero);
+                //tanks[i] = new Tank(this, RandomLocation());
+            }
 
-            //bullet1 = new Bullet(this);
-            //Components.Add(bullet1);
+            tanks[1].power = 10;
+
+            //tank1 = new Tank(this, new Vector3(0, 0, 0));
+            //tank2 = new Tank(this, new Vector3(100, 0, 0));
+
+            currentTank = tanks[currentPlayer];
+
+            weaponManager = new WeaponManager(this);
+
+            bulletManager = new BulletManager(this);
+            Components.Add(bulletManager);
 
             Reticle reticle = new Reticle(this);
             Components.Add(reticle);
@@ -115,11 +162,25 @@ namespace tanks3d
             Components.Add(testPhysicsObject);
             physicsEngine.AddPhysicsObject(testPhysicsObject);
 
-            //View = Matrix.CreateLookAt(new Vector3(0, 0, 2), Vector3.Zero, Vector3.Up);
-            //aCamera.Position = new Vector3(-100, 100, 100);
-            //aCamera.View = Matrix.CreateLookAt(new Vector3(-100, 100, 100), Vector3.Zero, Vector3.Up);
-
             base.Initialize();
+        }
+
+        protected void LoadTerrainEffect()
+        {
+            terrainEffect = new BasicEffect(GraphicsDevice);
+
+            terrainEffect.EnableDefaultLighting();
+
+            // Set the specular lighting to match the sky color.
+            terrainEffect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
+            terrainEffect.SpecularPower = 8;
+
+            // Set the fog to match the distant mountains
+            // that are drawn into the sky texture.
+            terrainEffect.FogEnabled = false;
+            terrainEffect.FogColor = new Vector3(0.15f);
+            terrainEffect.FogStart = 100 * 2;
+            terrainEffect.FogEnd = 320 * 5;
         }
 
         /// <summary>
@@ -129,6 +190,29 @@ namespace tanks3d
         protected override void LoadContent()
         {
             terrain = Content.Load<Model>("terrain");
+            //terrainTexture = Content.Load<Texture2D>("64x64");
+
+            LoadTerrainEffect();
+
+            foreach (ModelMesh mesh in terrain.Meshes)
+            {
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                {
+                    // Set the terrain texture
+                    // TODO: This part will have to go in the draw loop if we want the terrain to have
+                    // multiple textures. See: http://forums.create.msdn.com/forums/p/70607/432670.aspx
+                    // In fact, right now this next line of code is kind of stupid because it will result
+                    // the global terrainEffect to have the texture associated with the last mesh part
+                    // in the terrain mesh (because it keeps getting overwritten in the loop). Setting the
+                    // texture for the current mesh part is something that should be done when you
+                    // draw the terrain, as described in above forum post.
+                    terrainEffect.Texture = ((BasicEffect)meshPart.Effect).Texture;
+                    terrainEffect.TextureEnabled = true;
+
+                    meshPart.Effect = terrainEffect.Clone();
+                }
+            }
+
 
             // The terrain processor attached a HeightMapInfo to the terrain model's
             // Tag. We'll save that to a member variable now, and use it to
@@ -142,7 +226,20 @@ namespace tanks3d
                 throw new InvalidOperationException(message);
             }
 
+            for (int i = 0; i < numPlayers; i++)
+            {
+                tanks[i].position = RandomLocation();
+                tanks[i].FixGravity(heightMapInfo);
+            }
+
+
             sky = Content.Load<Sky>("sky");
+
+            for (int i = 0; i < numPlayers; i++)
+                tanks[i].LoadContent(Content);
+
+            //tank1.LoadContent(Content);
+            //tank2.LoadContent(Content);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -162,16 +259,7 @@ namespace tanks3d
 
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
-            MediaPlayer.Play(mySong);
-        }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            Components.Remove(tank1);
+            //MediaPlayer.Play(mySong);
         }
 
         /// <summary>
@@ -181,20 +269,24 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            KeyboardState keyboard = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
+            switch (currentState1)
+            {
+                case GameState1.Menu:
+                    HandleInput(gameTime);
+                    break;
 
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-            if (keyboard.IsKeyDown(Keys.Escape))
-                this.Exit();
+                case GameState1.Play:
+                    HandleInput(gameTime);
 
-            // worldCamera.Update(mouseState, keyboard);
+                    quadEffect.TextureEnabled = true;
+                    quadEffect.Texture = texture;
+                    break;
 
-            quadEffect.TextureEnabled = true;
-            quadEffect.Texture = texture;
-            //worldCamera.Update(gameTime);
+                case GameState1.Pause:
+                    HandleInput(gameTime);
+                    break;
+            }
+
             base.Update(gameTime);
         }
 
@@ -204,31 +296,21 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            DrawAxes();
-
-            /*
-            spriteBatch.Begin();
-            spriteBatch.Draw(texture, new Rectangle(0, 0, 64, 64), Color.White);
-            spriteBatch.End();
-            */
-
-            // TODO: Add your drawing code here
-
-            /*
-            foreach(EffectPass pass in quadEffect.CurrentTechnique.Passes)
+            switch (currentState1)
             {
-                pass.Apply();
+                case GameState1.Play:
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[0].Vertices, 0, 4, ground[0].Indexes, 0, 2);
-                //GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList, ground[1].Vertices, 0, 4, ground[1].Indexes, 0, 2);
+                    DrawAxes();
+
+                    DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
+                    sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
+                    for (int i = 0; i < numPlayers; i++)
+                        tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix, this.GraphicsDevice);
+                    break;
             }
-            */
-
-            DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-
-            sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
         }
@@ -253,26 +335,18 @@ namespace tanks3d
         /// </summary>
         void DrawTerrain(Matrix view, Matrix projection)
         {
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+
             foreach (ModelMesh mesh in terrain.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.View = view;
                     effect.Projection = projection;
-
-                    effect.EnableDefaultLighting();
-                    //effect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f); 
-
-                    // Set the specular lighting to match the sky color.
-                    effect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
-                    effect.SpecularPower = 8;
-
-                    // Set the fog to match the distant mountains
-                    // that are drawn into the sky texture.
-                    effect.FogEnabled = false;
-                    effect.FogColor = new Vector3(0.15f);
-                    effect.FogStart = 100*2;
-                    effect.FogEnd = 320*5;
+                    //effect.Texture = terrainTexture;
+                    //effect.TextureEnabled = true;
                 }
 
                 mesh.Draw();
@@ -311,6 +385,152 @@ namespace tanks3d
                 {
                     System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
                 }
+            }
+        }
+
+        private void HandleInput(GameTime gameTime)
+        {
+            currentTank = tanks[currentPlayer];
+            KeyboardState currentKeyboardState = Keyboard.GetState();
+            GamePadState currentGamePadState = GamePad.GetState(PlayerIndex.One);
+            MouseState currentMouseState = Mouse.GetState();
+
+            // Allows the game to exit
+            if (currentKeyboardState.IsKeyDown(Keys.Escape) ||
+                    currentGamePadState.Buttons.Back == ButtonState.Pressed)
+                this.Exit();
+
+            switch (currentState1)
+            {
+                case GameState1.Menu:
+                    if (currentKeyboardState.IsKeyDown(Keys.B))
+                        currentState1 = GameState1.Play;
+                    break;
+
+                case GameState1.Play:
+                    if (previousKeyboardState.IsKeyDown(Keys.P))
+                    {
+                        if(currentKeyboardState.IsKeyUp(Keys.P))
+                            currentState1 = GameState1.Pause;
+                    }
+                    // Changes Camera View
+                    if (previousKeyboardState.IsKeyDown(Keys.Space))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.Space))
+                        {
+                            if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
+                            {
+                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                            }
+                            else
+                            {
+                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
+                            }
+                        }
+                    }
+
+                    // Fires bullets
+                    if (previousKeyboardState.IsKeyDown(Keys.F))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.F))
+                        {
+                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                            switchCurrentTank();
+                            //Shake();
+                        }
+                    }
+                    if (previousKeyboardState.IsKeyDown(Keys.C))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.C))
+                        {
+                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                            previousBehavior = this.worldCamera.CurrentBehavior;
+                            this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
+                        }
+                    }
+
+                    // Shakes screen
+                    if (currentKeyboardState.IsKeyDown(Keys.G))
+                        timeOut = 45;
+
+                    if (timeOut != 0)
+                    {
+                        Shake();
+                        timeOut--;
+                    }
+
+                    // Changes Gamestate from Move to Aim
+                    if (previousKeyboardState.IsKeyDown(Keys.T))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.T))
+                        {
+                            if (currentState == GameState.Move)
+                            {
+                                currentState = GameState.Aim;
+                                currentTank.ChangeToAim();
+                            }
+                            else
+                            {
+                                currentState = GameState.Move;
+                                currentTank.ChangeToMove();
+                            }
+                        }
+                    }
+
+                    currentTank.HandleInput(currentGamePadState,
+                                      currentKeyboardState,
+                                      currentMouseState,
+                                      heightMapInfo,
+                                      gameTime);
+                    break;
+
+                case GameState1.Pause:
+                    if (previousKeyboardState.IsKeyDown(Keys.P))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.P))
+                            currentState1 = GameState1.Play;
+                    }
+                    break;
+            }
+            previousKeyboardState = currentKeyboardState;
+        }
+
+        public static readonly Random random = new Random();
+
+        private void Shake()
+        {
+            worldCamera.Rotate(RandomFloat(), RandomFloat(), RandomFloat());
+        }
+
+        private float RandomFloat()
+        {
+            return (float)random.NextDouble() * 2f - 1f;
+        }
+
+        private Vector3 RandomLocation()
+        {
+            float randomX, randomZ;
+            randomX = (float)random.NextDouble() - 1/2f;
+            randomX *= heightMapInfo.terrainWidth;
+
+            randomZ = (float)random.NextDouble() - 1/2f;
+            randomZ *= heightMapInfo.terrainHeight;
+
+            return new Vector3(randomX, 0f, randomZ);
+
+        }
+
+        private void switchCurrentTank()
+        {
+            if (currentPlayer < numPlayers - 1)
+            {
+                currentPlayer++;
+                currentTank = tanks[currentPlayer];
+            }
+            else
+            {
+                currentPlayer = 0;
+                currentTank = tanks[currentPlayer];
             }
         }
     }

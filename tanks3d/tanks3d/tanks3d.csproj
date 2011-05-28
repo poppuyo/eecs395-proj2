@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
+    <XnaProfile>HiDef</XnaProfile>
     <XnaCrossPlatformGroupID>71231214-d656-42a8-bd09-3eaed6fb876c</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
@@ -129,11 +129,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bullet.cs" />
     <Compile Include="Cameras\FPSCamera.cs" />
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="HeightMapInfo.cs" />
+    <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ExplosionSmokeParticleSystem.cs" />
+    <Compile Include="ParticleSystems\FireParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ParticleEmitter.cs" />
+    <Compile Include="ParticleSystems\ParticleSettings.cs" />
+    <Compile Include="ParticleSystems\ParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ParticleVertex.cs" />
+    <Compile Include="ParticleSystems\ProjectileTrailParticleSystem.cs" />
+    <Compile Include="ParticleSystems\SmokePlumeParticleSystem.cs" />
     <Compile Include="Physics\IPhysicsObject.cs" />
     <Compile Include="Physics\PhysicsUtil.cs" />
     <Compile Include="Physics\PhysicsEngine.cs" />
@@ -159,6 +168,11 @@
     <Compile Include="Utility\TorusPrimitive.cs" />
     <Compile Include="Utility\VertexPositionNormal.cs" />
     <Compile Include="VertexTypes.cs" />
+    <Compile Include="Weapons\BulletManager.cs" />
+    <Compile Include="Weapons\Bullet.cs" />
+    <Compile Include="Weapons\Weapon.cs" />
+    <Compile Include="Weapons\Weapon1.cs" />
+    <Compile Include="Weapons\WeaponManager.cs" />
     <Compile Include="WinFormContainer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,6 +222,7 @@
       <DependentUpon>WinFormContainer.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
