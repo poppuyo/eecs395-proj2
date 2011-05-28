@@ -54,7 +54,7 @@ namespace tank3d
         {
             get { return position; }
         }
-        private Vector3 position;
+        public Vector3 position;
 
         /// <summary>
         /// The direction that the tank is facing, in radians. This value will be used
@@ -323,7 +323,37 @@ namespace tank3d
             }
         }
 
-        public void Draw(Matrix viewMatrix, Matrix projectionMatrix, GraphicsDevice graphicsDevice)
+
+        public void FixGravity(HeightMapInfo heightMapInfo)
+        {
+            Vector3 newPosition = Position;
+            if (heightMapInfo.IsOnHeightmap(newPosition))
+            {
+                // now that we know we're on the heightmap, we need to know the correct
+                // height and normal at this position.
+                Vector3 normal;
+                heightMapInfo.GetHeightAndNormal(newPosition,
+                                                 out newPosition.Y,
+                                                 out normal);
+
+                // As discussed in the doc, we'll use the normal of the heightmap
+                // and our desired forward direction to recalculate our orientation
+                // matrix. It's important to normalize, as well.
+                orientation.Up = normal;
+
+                orientation.Right = Vector3.Cross(orientation.Forward, orientation.Up);
+                orientation.Right = Vector3.Normalize(orientation.Right);
+
+                orientation.Forward = Vector3.Cross(orientation.Up, orientation.Right);
+                orientation.Forward = Vector3.Normalize(orientation.Forward);
+
+                // once we've finished all computations, we can set our position to the
+                // new position that we calculated.
+                position = newPosition;
+            }
+        }
+
+		public void Draw(Matrix viewMatrix, Matrix projectionMatrix, GraphicsDevice graphicsDevice)
         {
             // Apply matrices to the relevant bones, as discussed in the Simple 
             // Animation Sample.
