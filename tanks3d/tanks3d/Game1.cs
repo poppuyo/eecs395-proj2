@@ -120,14 +120,14 @@ namespace tanks3d
         {
             worldCamera = new Cameras.QuaternionCameraComponent(this);
             worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 20000.0f);
-            worldCamera.Position = new Vector3(-88, -300, 195);
+            worldCamera.Position = new Vector3(0, -370, 160);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
             worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
-            physicsEngine = new PhysicsEngine(this);
+            physicsEngine = new PhysicsEngine(this, IntegrationMethod.RungeKutta4);
             Components.Add(physicsEngine);
             
             mainHUD = new HUD(this);

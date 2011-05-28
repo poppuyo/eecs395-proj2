@@ -20,11 +20,32 @@ namespace tanks3d.Physics
         /// </summary>
         private List<IPhysicsObject> physicsObjects;
 
-        public PhysicsEngine(Game1 g)
+        /// <summary>
+        /// The global time - how long the physics simulation has been running.
+        /// </summary>
+        private float t;
+
+        private PhysicsIntegrator integrator;
+
+        public PhysicsEngine(Game1 g, IntegrationMethod integrationMethod)
             : base(g)
         {
             game = g;
             physicsObjects = new List<IPhysicsObject>();
+            t = 0.0f;
+
+            switch (integrationMethod)
+            {
+                case IntegrationMethod.Euler:
+                    this.integrator = new EulerIntegrator();
+                    break;
+                case IntegrationMethod.RungeKutta4:
+                    this.integrator = new RK4Integrator();
+                    break;
+                default:
+                    this.integrator = new EulerIntegrator();
+                    break;
+            }
         }
 
 
@@ -47,16 +68,21 @@ namespace tanks3d.Physics
             switch (game.currentState1)
             {
                 case Game1.GameState1.Play:
+                    
                     float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    t += elapsedSeconds;
 
                     foreach (IPhysicsObject physicsObject in physicsObjects)
                     {
-                        Gravity(physicsObject, elapsedSeconds);
+                        Vector3 initialPosition = physicsObject.GetPosition();
+                        Vector3 initialVelocity = physicsObject.GetVelocity();
+                        Vector3 gravity = PhysicsUtil.GravityConstant * Vector3.Down;
+                        State initialState = new State(initialPosition, initialVelocity);
 
-                        // Move all objects according to their current velocities
-                        Vector3 oldPosition = physicsObject.GetPosition();
-                        Vector3 newPosition = oldPosition + physicsObject.GetVelocity() * elapsedSeconds;
-                        physicsObject.UpdatePosition(newPosition);
+                        State finalState = integrator.integrate(initialState, t, elapsedSeconds, gravity);
+
+                        physicsObject.UpdatePosition(finalState.Position);
+                        physicsObject.UpdateVelocity(finalState.Velocity);
 
                         DoCollisionDetectionWithTerrain(physicsObject);
                     }
@@ -92,7 +118,7 @@ namespace tanks3d.Physics
                     if (game.heightMapInfo.IsOnHeightmap(corners[i]))
                     {
                         game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
-                        if ((corners[i] + v).Y <= terrainElevation)
+                        if (corners[i].Y <= terrainElevation)
                         {
                             HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);
 
@@ -134,17 +160,6 @@ namespace tanks3d.Physics
             // Add the normal force to the motion vector to get the new velocity
             Vector3 newVelocity = oldVelocity + normalForce;
 
-            physicsObject.UpdateVelocity(newVelocity);
-        }
-
-        /// <summary>
-        /// Update the given object's velocity based on the effect of gravity.
-        /// </summary>
-        /// <param name="physicsObject"></param>
-        private static void Gravity(IPhysicsObject physicsObject, float elapsedSeconds)
-        {
-            Vector3 oldVelocity = physicsObject.GetVelocity();
-            Vector3 newVelocity = oldVelocity + PhysicsUtil.GravityConstant * Vector3.Down * elapsedSeconds;
             physicsObject.UpdateVelocity(newVelocity);
         }
     }

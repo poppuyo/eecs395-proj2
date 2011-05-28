@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>HiDef</XnaProfile>
+    <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>71231214-d656-42a8-bd09-3eaed6fb876c</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
@@ -132,6 +132,9 @@
     <Compile Include="Cameras\FPSCamera.cs" />
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
+    <Compile Include="Physics\EulerIntegrator.cs" />
+    <Compile Include="Physics\PhysicsIntegrator.cs" />
+    <Compile Include="Physics\RK4Integrator.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="HeightMapInfo.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
