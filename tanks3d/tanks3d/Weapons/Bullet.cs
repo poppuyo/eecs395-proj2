@@ -96,9 +96,9 @@ namespace tanks3d.Weapons
 
         public override void Update(GameTime gameTime)
         {
-            switch (game.currentState1)
+            switch (game.gameState)
             {
-                case Game1.GameState1.Play:
+                case GameState.Play:
 
                     float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -152,9 +152,9 @@ namespace tanks3d.Weapons
 
         public override void Draw(GameTime gameTime)
         {
-            switch (game.currentState1)
+            switch (game.gameState)
             {
-                case Game1.GameState1.Play:
+                case GameState.Play:
                     switch (bulletState)
                     {
                         case BulletState.Unexploded:

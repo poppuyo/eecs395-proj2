@@ -15,6 +15,14 @@ using tank3d;
 
 namespace tanks3d
 {
+    public enum GameState
+    {
+        Menu,
+        Play,
+        Pause,
+        End
+    }
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -66,31 +74,13 @@ namespace tanks3d
         float VelocityCountMax = 150f;
         float VelocityMult = 10.0f;
 
-        public enum GameState
-        {
-            Start,
-            Move,
-            Aim,
-            Fired,
-            Transition
-        }
-
-        public enum GameState1
-        {
-            Menu,
-            Play,
-            Pause,
-            End
-        }
-
-        public GameState currentState;
-        public GameState1 currentState1;
+        public GameState gameState;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            currentState1 = GameState1.Menu;
+            gameState = GameState.Menu;
 
             // Make the window resizable
             this.Window.AllowUserResizing = true;
@@ -274,13 +264,13 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            switch (currentState1)
+            switch (gameState)
             {
-                case GameState1.Menu:
+                case GameState.Menu:
                     HandleInput(gameTime);
                     break;
 
-                case GameState1.Play:
+                case GameState.Play:
                     HandleInput(gameTime);
                     currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
 
@@ -288,7 +278,7 @@ namespace tanks3d
                     quadEffect.Texture = texture;
                     break;
 
-                case GameState1.Pause:
+                case GameState.Pause:
                     HandleInput(gameTime);
                     break;
             }
@@ -302,12 +292,12 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            switch (currentState1)
+            switch (gameState)
             {
-                case GameState1.Menu:
+                case GameState.Menu:
                     GraphicsDevice.Clear(Color.Black);
                     break;
-                case GameState1.Play:
+                case GameState.Play:
                     GraphicsDevice.Clear(Color.CornflowerBlue);
 
                     DrawAxes();
@@ -319,7 +309,7 @@ namespace tanks3d
                     for (int i = 0; i < numPlayers; i++)
                         tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
                     break;
-                case GameState1.Pause:
+                case GameState.Pause:
                     GraphicsDevice.Clear(Color.Black);
                     break;
             }
@@ -412,18 +402,18 @@ namespace tanks3d
                     currentGamePadState.Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            switch (currentState1)
+            switch (gameState)
             {
-                case GameState1.Menu:
+                case GameState.Menu:
                     if (currentKeyboardState.IsKeyDown(Keys.B))
-                        currentState1 = GameState1.Play;
+                        gameState = GameState.Play;
                     break;
 
-                case GameState1.Play:
+                case GameState.Play:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
                         if(currentKeyboardState.IsKeyUp(Keys.P))
-                            currentState1 = GameState1.Pause;
+                            gameState = GameState.Pause;
                     }
                     // Changes Camera View
                     if (previousKeyboardState.IsKeyDown(Keys.Space))
@@ -482,15 +472,14 @@ namespace tanks3d
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.T))
                         {
-                            if (currentState == GameState.Move)
+                            if (currentTank.currentPlayerState == PlayerState.Move)
                             {
-                                currentState = GameState.Aim;
+                                currentTank.currentPlayerState = PlayerState.Aim;
                                 currentTank.ChangeToAim();
                             }
                             else
                             {
-                                currentState = GameState.Move;
-                                currentTank.ChangeToMove();
+                                currentTank.currentPlayerState = PlayerState.Move;
                             }
                         }
                     }
@@ -502,11 +491,11 @@ namespace tanks3d
                                       gameTime);
                     break;
 
-                case GameState1.Pause:
+                case GameState.Pause:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.P))
-                            currentState1 = GameState1.Play;
+                            gameState = GameState.Play;
                     }
                     break;
             }

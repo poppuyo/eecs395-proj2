@@ -399,12 +399,12 @@ namespace tanks3d
 
         private void InitGameState()
         {
-            foreach (string gameState in Enum.GetNames(typeof(tanks3d.Game1.GameState1)))
+            foreach (string gameState in Enum.GetNames(typeof(tanks3d.GameState)))
             {
                 gameStateComboBox.Items.Add(gameState);
             }
 
-            foreach (string playerState in Enum.GetNames(typeof(tanks3d.Game1.GameState)))
+            foreach (string playerState in Enum.GetNames(typeof(tanks3d.PlayerState)))
             {
                 playerStateComboBox.Items.Add(playerState);
             }
@@ -419,10 +419,10 @@ namespace tanks3d
         {
             // Update Game State (GameState1)
             string selected = gameStateComboBox.SelectedItem.ToString();
-            if (Enum.IsDefined(typeof(tanks3d.Game1.GameState1), selected))
+            if (Enum.IsDefined(typeof(tanks3d.GameState), selected))
             {
-                gameState = (tanks3d.Game1.GameState1)Enum.Parse(typeof(tanks3d.Game1.GameState1), selected);
-                game.currentState1 = gameState;
+                gameState = (tanks3d.GameState)Enum.Parse(typeof(tanks3d.GameState), selected);
+                game.gameState = gameState;
                 stateMessageLabel.Visible = false;
             }
             else
@@ -436,10 +436,10 @@ namespace tanks3d
         {
             // Update Player State (GameState)
             string selected = playerStateComboBox.SelectedItem.ToString();
-            if (Enum.IsDefined(typeof(tanks3d.Game1.GameState), selected))
+            if (Enum.IsDefined(typeof(tanks3d.PlayerState), selected))
             {
-                playerState = (tanks3d.Game1.GameState)Enum.Parse(typeof(tanks3d.Game1.GameState), selected);
-                game.currentState = playerState;
+                playerState = (tanks3d.PlayerState)Enum.Parse(typeof(tanks3d.PlayerState), selected);
+                game.currentTank.currentPlayerState = playerState;
                 stateMessageLabel.Visible = false;
             }
             else
@@ -471,8 +471,8 @@ namespace tanks3d
             UpdateGameState();
         }
 
-        private tanks3d.Game1.GameState1 gameState;
-        private tanks3d.Game1.GameState playerState;
+        private tanks3d.GameState gameState;
+        private tanks3d.PlayerState playerState;
         private tanks3d.Cameras.QuaternionCamera.Behavior cameraState;
 
         private void UpdateGameState()
@@ -480,8 +480,8 @@ namespace tanks3d
             // Update game state
             if (!gameStateComboBox.DroppedDown)
             {
-                tanks3d.Game1.GameState1 gameState = game.currentState1;
-                string gameStateString = System.Enum.GetName(typeof(tanks3d.Game1.GameState1), gameState);
+                tanks3d.GameState gameState = game.gameState;
+                string gameStateString = System.Enum.GetName(typeof(tanks3d.GameState), gameState);
                 if (gameStateComboBox.Items.Contains(gameStateString))
                 {
                     gameStateComboBox.SelectedIndex = gameStateComboBox.Items.IndexOf(gameStateString);
@@ -497,8 +497,8 @@ namespace tanks3d
             // Update player state
             if (!playerStateComboBox.DroppedDown)
             {
-                tanks3d.Game1.GameState playerState = game.currentState;
-                string playerStateString = System.Enum.GetName(typeof(tanks3d.Game1.GameState), playerState);
+                tanks3d.PlayerState playerState = game.currentTank.currentPlayerState;
+                string playerStateString = System.Enum.GetName(typeof(tanks3d.PlayerState), playerState);
                 if (playerStateComboBox.Items.Contains(playerStateString))
                 {
                     playerStateComboBox.SelectedIndex = playerStateComboBox.Items.IndexOf(playerStateString);

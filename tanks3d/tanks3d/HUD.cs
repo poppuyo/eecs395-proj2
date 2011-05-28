@@ -59,9 +59,9 @@ namespace tanks3d
         {
             spriteBatch.Begin();
 
-            switch (game.currentState1)
+            switch (game.gameState)
             {
-                case Game1.GameState1.Menu:
+                case GameState.Menu:
                     string hudString;
                     hudString = "Welcome to Tanks 3D!\n";
                     hudString += "By: Sergey, John, Jason, Josiah\n";
@@ -76,7 +76,7 @@ namespace tanks3d
                     hudString += "P (pause)\n";
                     spriteBatch.DrawString(hudFont, hudString, new Vector2(75, 125), Color.LimeGreen);
                     break;
-                case Game1.GameState1.Play:
+                case GameState.Play:
                     string text;
 
                     hudString = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
@@ -95,7 +95,7 @@ namespace tanks3d
 
                     game.DoSpriteBatchFix();
                     break;
-                case Game1.GameState1.Pause:
+                case GameState.Pause:
                     hudString = "Press 'P' to unpause, or 'Escape' to quit.\n";
                     spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 220), Color.MediumVioletRed, 0.0f, new Vector2(0,0), 2.0f, SpriteEffects.None, 0.0f);
                     break;
