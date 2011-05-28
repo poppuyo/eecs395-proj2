@@ -10,9 +10,9 @@ namespace tanks3d.Weapons
     {
         public Weapon1(Game1 game) : base(game) { }
 
-        public override void Fire()
+        public override void Fire(float VelocityScale)
         {
-            game.bulletManager.SpawnBullet(game.currentTank.TurretEndPosition, 200.0f * game.currentTank.GetTurretDirection());
+            game.bulletManager.SpawnBullet(game.currentTank.TurretEndPosition, VelocityScale * game.currentTank.GetTurretDirection());
         }
     }
 }

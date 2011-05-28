@@ -102,7 +102,7 @@ namespace tank3d
 
         private Game1.GameState currentGameState = Game1.GameState.Move;
 
-        public int health = 100, power = 50;
+        public int health = 100, power = 0;
 
         Vector3 bBoxMinPoint;
         Vector3 bBoxMaxPoint;
@@ -234,7 +234,6 @@ namespace tank3d
                 else if (TurretDirection.Y < TurretDownBound) TurretDirection = new Vector3(TurretDirection.X, TurretDownBound, TurretDirection.Z);
             }
 
-            Console.Write(TurretDirection + "\n");
             // First, we want to check to see if the tank should turn. turnAmount will 
             // be an accumulation of all the different possible inputs.
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
@@ -400,7 +399,7 @@ namespace tank3d
                 mesh.Draw();
             }
 
-            tanks3d.Utility.BoundingBoxRenderer.Render(game, boundingBox, game.GraphicsDevice, viewMatrix, projectionMatrix, Color.Red);
+            //tanks3d.Utility.BoundingBoxRenderer.Render(game, boundingBox, game.GraphicsDevice, viewMatrix, projectionMatrix, Color.Red);
         }
 
         #endregion

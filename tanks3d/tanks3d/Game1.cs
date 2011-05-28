@@ -62,6 +62,10 @@ namespace tanks3d
 
         private int timeOut = 0;
 
+        float VelocityCount = 0;
+        float VelocityCountMax = 150f;
+        float VelocityMult = 10.0f;
+
         public enum GameState
         {
             Start,
@@ -277,6 +281,7 @@ namespace tanks3d
 
                 case GameState1.Play:
                     HandleInput(gameTime);
+                    currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
 
                     quadEffect.TextureEnabled = true;
                     quadEffect.Texture = texture;
@@ -311,7 +316,7 @@ namespace tanks3d
                     sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
                     for (int i = 0; i < numPlayers; i++)
-                        tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix, this.GraphicsDevice);
+                        tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
                     break;
                 case GameState1.Pause:
                     GraphicsDevice.Clear(Color.Black);
@@ -438,10 +443,16 @@ namespace tanks3d
                     // Fires bullets
                     if (previousKeyboardState.IsKeyDown(Keys.F))
                     {
+                        if (VelocityCount < VelocityCountMax)
+                        {
+                            VelocityCount += 1;
+                        }
+
                         if (currentKeyboardState.IsKeyUp(Keys.F))
                         {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
-                            switchCurrentTank();
+                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
+                            VelocityCount = 0;
+                            //switchCurrentTank();
                             //Shake();
                         }
                     }
@@ -449,7 +460,7 @@ namespace tanks3d
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.C))
                         {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
+                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
                             previousBehavior = this.worldCamera.CurrentBehavior;
                             this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
                         }

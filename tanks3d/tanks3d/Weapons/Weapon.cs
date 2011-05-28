@@ -15,6 +15,6 @@ namespace tanks3d.Weapons
             this.game = game;
         }
 
-        public abstract void Fire();
+        public abstract void Fire(float VelocityScale);
     }
 }
