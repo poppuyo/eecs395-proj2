@@ -152,7 +152,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Quad.cs" />
     <Compile Include="Reticle.cs" />
     <Compile Include="Terrain\Terrain.cs" />
     <Compile Include="Utility\BezierPrimitive.cs" />
@@ -167,7 +166,6 @@
     <Compile Include="Utility\TeapotPrimitive.cs" />
     <Compile Include="Utility\TorusPrimitive.cs" />
     <Compile Include="Utility\VertexPositionNormal.cs" />
-    <Compile Include="VertexTypes.cs" />
     <Compile Include="Weapons\BulletManager.cs" />
     <Compile Include="Weapons\Bullet.cs" />
     <Compile Include="Weapons\Weapon.cs" />

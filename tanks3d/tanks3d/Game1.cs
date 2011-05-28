@@ -25,9 +25,6 @@ namespace tanks3d
 
         public Terrain.Terrain terrain;
 
-        TexturedQuad.Quad[] ground;
-        VertexDeclaration vertexDeclaration;
-
         public Cameras.QuaternionCameraComponent worldCamera;
 
         public PhysicsEngine physicsEngine;
@@ -49,9 +46,6 @@ namespace tanks3d
         }
         public RasterizerState wireframeRasterizerState;
         public RasterizerState solidRasterizerState;
-
-        Texture2D texture;
-        BasicEffect quadEffect;
 
         public Tank tank1;
 
@@ -169,20 +163,6 @@ namespace tanks3d
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            texture = Content.Load<Texture2D>("64x64");
-            quadEffect = new BasicEffect(graphics.GraphicsDevice);
-            quadEffect.EnableDefaultLighting();
-
-            quadEffect.TextureEnabled = true;
-            quadEffect.Texture = texture;
-
-            vertexDeclaration = new VertexDeclaration(new VertexElement[]
-            {
-                    new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                    new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                    new VertexElement(24, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0)
-            });
-
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
             //MediaPlayer.Play(mySong);
@@ -205,9 +185,6 @@ namespace tanks3d
         protected override void Update(GameTime gameTime)
         {
             HandleInput(gameTime);
-
-            quadEffect.TextureEnabled = true;
-            quadEffect.Texture = texture;
 
             base.Update(gameTime);
         }
