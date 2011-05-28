@@ -46,7 +46,10 @@ namespace tanks3d
         Texture2D texture;
         BasicEffect quadEffect;
 
-        public Tank tank1, tank2, currentTank;
+        public Player[] players;
+
+        public Tank currentTank;
+        public Tank[] tanks;
 
         public DrawUtils drawUtils;
 
@@ -54,6 +57,8 @@ namespace tanks3d
         public IntPtr drawSurface;
 
         public KeyboardState previousKeyboardState;
+
+        public int numPlayers = 2, currentPlayer = 0;
 
         private int timeOut = 0;
 
@@ -63,11 +68,19 @@ namespace tanks3d
             Move,
             Aim,
             Fired,
-            Aftermath,
             Transition
         }
 
+        public enum GameState1
+        {
+            Menu,
+            Play,
+            Pause,
+            End
+        }
+
         public GameState currentState;
+        public GameState1 currentState1;
 
         public Game1()
         {
@@ -118,10 +131,19 @@ namespace tanks3d
             drawUtils = new DrawUtils(this);
             Components.Add(drawUtils);
 
-            tank1 = new Tank(this, new Vector3(0, 0, 0));
-            tank2 = new Tank(this, new Vector3(100, 0, 0));
+            tanks = new Tank[numPlayers];
+            players = new Player[numPlayers];
 
-            currentTank = tank1;
+            for (int i = 0; i < numPlayers; i++)
+            {
+                players[i] = new Player(this);
+                tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
+            }
+
+            //tank1 = new Tank(this, new Vector3(0, 0, 0));
+            //tank2 = new Tank(this, new Vector3(100, 0, 0));
+
+            currentTank = tanks[currentPlayer];
 
             weaponManager = new WeaponManager(this);
 
@@ -143,7 +165,6 @@ namespace tanks3d
             terrainEffect = new BasicEffect(GraphicsDevice);
 
             terrainEffect.EnableDefaultLighting();
-            //effect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f); 
 
             // Set the specular lighting to match the sky color.
             terrainEffect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
@@ -201,8 +222,11 @@ namespace tanks3d
 
             sky = Content.Load<Sky>("sky");
 
-            tank1.LoadContent(Content);
-            tank2.LoadContent(Content);
+            for (int i = 0; i < numPlayers; i++)
+                tanks[i].LoadContent(Content);
+
+            //tank1.LoadContent(Content);
+            //tank2.LoadContent(Content);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -223,15 +247,6 @@ namespace tanks3d
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
             //MediaPlayer.Play(mySong);
-        }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            //Components.Remove(tank1);
         }
 
         /// <summary>
@@ -263,8 +278,10 @@ namespace tanks3d
 
             sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
-            tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-            tank2.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+            for (int i = 0; i < numPlayers; i++)
+                tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+            //tank1.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+            //tank2.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
 
             base.Draw(gameTime);
         }
@@ -376,6 +393,7 @@ namespace tanks3d
                 {
                     weaponManager.Weapons[WeaponTypes.Weapon1].Fire();
                     switchCurrentTank();
+                    //Shake();
                 }
             }
             if(previousKeyboardState.IsKeyDown(Keys.C))
@@ -440,10 +458,16 @@ namespace tanks3d
 
         private void switchCurrentTank()
         {
-            if (currentTank == tank1)
-                currentTank = tank2;
+            if (currentPlayer < numPlayers - 1)
+            {
+                currentPlayer++;
+                currentTank = tanks[currentPlayer];
+            }
             else
-                currentTank = tank1;
+            {
+                currentPlayer = 0;
+                currentTank = tanks[currentPlayer];
+            }
         }
     }
 }

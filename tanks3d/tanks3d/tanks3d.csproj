@@ -132,6 +132,7 @@
     <Compile Include="Cameras\FPSCamera.cs" />
     <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="HeightMapInfo.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
     <Compile Include="ParticleSystems\ExplosionSmokeParticleSystem.cs" />

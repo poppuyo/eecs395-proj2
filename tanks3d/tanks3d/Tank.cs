@@ -52,7 +52,7 @@ namespace tank3d
         {
             get { return position; }
         }
-        private Vector3 position;
+        public Vector3 position;
 
         /// <summary>
         /// The direction that the tank is facing, in radians. This value will be used
