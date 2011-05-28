@@ -95,68 +95,78 @@ namespace tanks3d.Weapons
 
         public override void Update(GameTime gameTime)
         {
-            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            switch (bulletState)
+            switch (game.currentState1)
             {
-                case BulletState.Unexploded:
-                    
-                    age += elapsedTime;
+                case Game1.GameState1.Play:
+                    float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    // Update the particle emitter, which will create our particle trail.
-                    trailEmitter.Update(gameTime, position);
-
-                    // If enough time has passed, explode! Note how we pass our velocity
-                    // in to the AddParticle method: this lets the explosion be influenced
-                    // by the speed and direction of the projectile which created it.
-                    /*
-                    if (age > projectileLifespan)
+                    switch (bulletState)
                     {
-                        bulletState = BulletState.Exploding;
+                        case BulletState.Unexploded:
 
-                        for (int i = 0; i < numExplosionParticles; i++)
-                            explosionParticles.AddParticle(position, velocity);
+                            age += elapsedTime;
 
-                        for (int i = 0; i < numExplosionSmokeParticles; i++)
-                            explosionSmokeParticles.AddParticle(position, velocity);
+                            // Update the particle emitter, which will create our particle trail.
+                            trailEmitter.Update(gameTime, position);
+
+                            // If enough time has passed, explode! Note how we pass our velocity
+                            // in to the AddParticle method: this lets the explosion be influenced
+                            // by the speed and direction of the projectile which created it.
+                            /*
+                            if (age > projectileLifespan)
+                            {
+                                bulletState = BulletState.Exploding;
+
+                                for (int i = 0; i < numExplosionParticles; i++)
+                                    explosionParticles.AddParticle(position, velocity);
+
+                                for (int i = 0; i < numExplosionSmokeParticles; i++)
+                                    explosionSmokeParticles.AddParticle(position, velocity);
+                            }
+                            */
+
+                            break;
+                        case BulletState.Exploding:
+                            if (this == game.bulletManager.ActiveBullet)
+                            {
+                                //game.worldCamera.CurrentBehavior = game.previousBehavior;
+                                game.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                            }
+                            explosionAge += elapsedTime;
+                            if (explosionAge >= explosionLifetime)
+                            {
+                                game.bulletManager.RemoveBullet(this);
+                            }
+
+                            break;
+                        default:
+                            break;
                     }
-                    */
 
-                    break;
-                case BulletState.Exploding:
-                    if (this == game.bulletManager.ActiveBullet)
-                    {
-                        //game.worldCamera.CurrentBehavior = game.previousBehavior;
-                        game.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
-                    }
-                    explosionAge += elapsedTime;
-                    if (explosionAge >= explosionLifetime)
-                    {
-                        game.bulletManager.RemoveBullet(this);
-                    }
-
-                    break;
-                default:
+                    base.Update(gameTime);
                     break;
             }
-
-            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            switch (bulletState)
+            switch (game.currentState1)
             {
-                case BulletState.Unexploded:
-                    game.drawUtils.DrawSphere(position, 5.0f, Color.Green);
-                    break;
-                case BulletState.Exploding:
-                    break;
-                default:
+                case Game1.GameState1.Play:
+                    switch (bulletState)
+                    {
+                        case BulletState.Unexploded:
+                            game.drawUtils.DrawSphere(position, 5.0f, Color.Green);
+                            break;
+                        case BulletState.Exploding:
+                            break;
+                        default:
+                            break;
+                    }
+
+                    base.Draw(gameTime);
                     break;
             }
-
-            base.Draw(gameTime);
         }
 
         /// <summary>

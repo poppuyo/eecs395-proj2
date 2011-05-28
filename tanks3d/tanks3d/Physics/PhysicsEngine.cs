@@ -59,8 +59,6 @@ namespace tanks3d.Physics
                         physicsObject.UpdatePosition(newPosition);
 
                         DoCollisionDetectionWithTerrain(physicsObject);
-
-                        //System.Console.WriteLine(physicsObject.GetPosition());
                     }
 
                     base.Update(gameTime);

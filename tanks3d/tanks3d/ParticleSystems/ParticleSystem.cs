@@ -290,28 +290,33 @@ namespace tanks3d.ParticleSystems
         /// </summary>
         public override void Update(GameTime gameTime)
         {
-            if (gameTime == null)
-                throw new ArgumentNullException("gameTime");
-
             switch (game.currentState1)
             {
                 case Game1.GameState1.Play:
-                    currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (gameTime == null)
+                        throw new ArgumentNullException("gameTime");
 
-                    RetireActiveParticles();
-                    FreeRetiredParticles();
+                    switch (game.currentState1)
+                    {
+                        case Game1.GameState1.Play:
+                            currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    // If we let our timer go on increasing for ever, it would eventually
-                    // run out of floating point precision, at which point the particles
-                    // would render incorrectly. An easy way to prevent this is to notice
-                    // that the time value doesn't matter when no particles are being drawn,
-                    // so we can reset it back to zero any time the active queue is empty.
+                            RetireActiveParticles();
+                            FreeRetiredParticles();
 
-                    if (firstActiveParticle == firstFreeParticle)
-                        currentTime = 0;
+                            // If we let our timer go on increasing for ever, it would eventually
+                            // run out of floating point precision, at which point the particles
+                            // would render incorrectly. An easy way to prevent this is to notice
+                            // that the time value doesn't matter when no particles are being drawn,
+                            // so we can reset it back to zero any time the active queue is empty.
 
-                    if (firstRetiredParticle == firstActiveParticle)
-                        drawCounter = 0;
+                            if (firstActiveParticle == firstFreeParticle)
+                                currentTime = 0;
+
+                            if (firstRetiredParticle == firstActiveParticle)
+                                drawCounter = 0;
+                            break;
+                    }
                     break;
             }
         }
@@ -383,81 +388,86 @@ namespace tanks3d.ParticleSystems
         /// </summary>
         public override void Draw(GameTime gameTime)
         {
-            GraphicsDevice device = GraphicsDevice;
-
-            device.SamplerStates[0] = SamplerState.LinearClamp;
-
-            // Restore the vertex buffer contents if the graphics device was lost.
-            if (vertexBuffer.IsContentLost)
+            switch (game.currentState1)
             {
-                vertexBuffer.SetData(particles);
-            }
+                case Game1.GameState1.Play:
+                    GraphicsDevice device = GraphicsDevice;
 
-            // If there are any particles waiting in the newly added queue,
-            // we'd better upload them to the GPU ready for drawing.
-            if (firstNewParticle != firstFreeParticle)
-            {
-                AddNewParticlesToVertexBuffer();
-            }
+                    device.SamplerStates[0] = SamplerState.LinearClamp;
 
-            // If there are any active particles, draw them now!
-            if (firstActiveParticle != firstFreeParticle)
-            {
-                device.BlendState = settings.BlendState;
-                device.DepthStencilState = DepthStencilState.DepthRead;
-
-                // Set an effect parameter describing the viewport size. This is
-                // needed to convert particle sizes into screen space point sizes.
-                effectViewportScaleParameter.SetValue(new Vector2(0.5f / device.Viewport.AspectRatio, -0.5f));
-
-                // Set an effect parameter describing the current time. All the vertex
-                // shader particle animation is keyed off this value.
-                effectTimeParameter.SetValue(currentTime);
-
-                // Set the particle vertex and index buffer.
-                device.SetVertexBuffer(vertexBuffer);
-                device.Indices = indexBuffer;
-
-                // Set the camera parameters
-                particleEffect.Parameters["View"].SetValue(game.worldCamera.ViewMatrix);
-                particleEffect.Parameters["Projection"].SetValue(game.worldCamera.ProjectionMatrix);
-
-                // Activate the particle effect.
-                foreach (EffectPass pass in particleEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-
-                    if (firstActiveParticle < firstFreeParticle)
+                    // Restore the vertex buffer contents if the graphics device was lost.
+                    if (vertexBuffer.IsContentLost)
                     {
-                        // If the active particles are all in one consecutive range,
-                        // we can draw them all in a single call.
-                        device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
-                                                     firstActiveParticle * 4, (firstFreeParticle - firstActiveParticle) * 4,
-                                                     firstActiveParticle * 6, (firstFreeParticle - firstActiveParticle) * 2);
+                        vertexBuffer.SetData(particles);
                     }
-                    else
-                    {
-                        // If the active particle range wraps past the end of the queue
-                        // back to the start, we must split them over two draw calls.
-                        device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
-                                                     firstActiveParticle * 4, (settings.MaxParticles - firstActiveParticle) * 4,
-                                                     firstActiveParticle * 6, (settings.MaxParticles - firstActiveParticle) * 2);
 
-                        if (firstFreeParticle > 0)
+                    // If there are any particles waiting in the newly added queue,
+                    // we'd better upload them to the GPU ready for drawing.
+                    if (firstNewParticle != firstFreeParticle)
+                    {
+                        AddNewParticlesToVertexBuffer();
+                    }
+
+                    // If there are any active particles, draw them now!
+                    if (firstActiveParticle != firstFreeParticle)
+                    {
+                        device.BlendState = settings.BlendState;
+                        device.DepthStencilState = DepthStencilState.DepthRead;
+
+                        // Set an effect parameter describing the viewport size. This is
+                        // needed to convert particle sizes into screen space point sizes.
+                        effectViewportScaleParameter.SetValue(new Vector2(0.5f / device.Viewport.AspectRatio, -0.5f));
+
+                        // Set an effect parameter describing the current time. All the vertex
+                        // shader particle animation is keyed off this value.
+                        effectTimeParameter.SetValue(currentTime);
+
+                        // Set the particle vertex and index buffer.
+                        device.SetVertexBuffer(vertexBuffer);
+                        device.Indices = indexBuffer;
+
+                        // Set the camera parameters
+                        particleEffect.Parameters["View"].SetValue(game.worldCamera.ViewMatrix);
+                        particleEffect.Parameters["Projection"].SetValue(game.worldCamera.ProjectionMatrix);
+
+                        // Activate the particle effect.
+                        foreach (EffectPass pass in particleEffect.CurrentTechnique.Passes)
                         {
-                            device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
-                                                         0, firstFreeParticle * 4,
-                                                         0, firstFreeParticle * 2);
+                            pass.Apply();
+
+                            if (firstActiveParticle < firstFreeParticle)
+                            {
+                                // If the active particles are all in one consecutive range,
+                                // we can draw them all in a single call.
+                                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
+                                                             firstActiveParticle * 4, (firstFreeParticle - firstActiveParticle) * 4,
+                                                             firstActiveParticle * 6, (firstFreeParticle - firstActiveParticle) * 2);
+                            }
+                            else
+                            {
+                                // If the active particle range wraps past the end of the queue
+                                // back to the start, we must split them over two draw calls.
+                                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
+                                                             firstActiveParticle * 4, (settings.MaxParticles - firstActiveParticle) * 4,
+                                                             firstActiveParticle * 6, (settings.MaxParticles - firstActiveParticle) * 2);
+
+                                if (firstFreeParticle > 0)
+                                {
+                                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
+                                                                 0, firstFreeParticle * 4,
+                                                                 0, firstFreeParticle * 2);
+                                }
+                            }
                         }
+
+                        // Reset some of the renderstates that we changed,
+                        // so as not to mess up any other subsequent drawing.
+                        device.DepthStencilState = DepthStencilState.Default;
                     }
-                }
 
-                // Reset some of the renderstates that we changed,
-                // so as not to mess up any other subsequent drawing.
-                device.DepthStencilState = DepthStencilState.Default;
+                    drawCounter++;
+                    break;
             }
-
-            drawCounter++;
         }
 
 
