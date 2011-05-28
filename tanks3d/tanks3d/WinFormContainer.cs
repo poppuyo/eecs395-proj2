@@ -214,7 +214,7 @@ namespace tanks3d
 
             // Create a default turret
             TurretPosition = new Vector3(0, -15, 0);
-            TurretAim = new Vector3(0, 1, -1);
+            TurretAim = new Vector3(0, -1, 0);
             WeaponPower = 100.0f;
             UpdateTurretInfo();
         }

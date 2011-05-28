@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using tanks3d;
+using tanks3d.Weapons;
 #endregion
 
 namespace tank3d
@@ -415,6 +416,14 @@ namespace tank3d
         public void ChangeToMove()
         {
             currentGameState = Game1.GameState.Move;
+        }
+
+        /// <summary>
+        /// This method gets called when a bullet hits the tank.
+        /// </summary>
+        public void GetHit(Bullet bullet)
+        {
+            throw new NotImplementedException("The tank got hit. Maybe we should do something about it.");
         }
     }
 }

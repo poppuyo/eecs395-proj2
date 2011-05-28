@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using tanks3d.ParticleSystems;
 using tanks3d.Physics;
+using tank3d;
 
 namespace tanks3d.Weapons
 {
@@ -98,6 +99,7 @@ namespace tanks3d.Weapons
             switch (game.currentState1)
             {
                 case Game1.GameState1.Play:
+
                     float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     switch (bulletState)
@@ -109,31 +111,18 @@ namespace tanks3d.Weapons
                             // Update the particle emitter, which will create our particle trail.
                             trailEmitter.Update(gameTime, position);
 
-                            // If enough time has passed, explode! Note how we pass our velocity
-                            // in to the AddParticle method: this lets the explosion be influenced
-                            // by the speed and direction of the projectile which created it.
-                            /*
-                            if (age > projectileLifespan)
+                            // Perform collision detection with any tanks present in the game.
+                            foreach (Tank tank in game.tanks)
                             {
-                                bulletState = BulletState.Exploding;
-
-                                for (int i = 0; i < numExplosionParticles; i++)
-                                    explosionParticles.AddParticle(position, velocity);
-
-                                for (int i = 0; i < numExplosionSmokeParticles; i++)
-                                    explosionSmokeParticles.AddParticle(position, velocity);
+                                if (tank.boundingBox.Intersects(this.GetBoundingBox()))
+                                {
+                                    tank.GetHit(this);
+                                    this.StartExplosion();
+                                    break;
+                                }
                             }
-                            */
-
-                 		   foreach (tank3d.Tank tank in game.tanks)
-                   		   {
-                        		if (tank.boundingBox.Intersects(this.GetBoundingBox()))
-                        		{
-                            		game.drawUtils.DrawCylinder(tank.Position, 100, 50, Color.Yellow);
-                        		}  
-                   		    }
-
                             break;
+
                         case BulletState.Exploding:
                             if (this == game.bulletManager.ActiveBullet)
                             {
@@ -147,13 +136,18 @@ namespace tanks3d.Weapons
                             }
 
                             break;
+
                         default:
                             break;
                     }
 
-                    base.Update(gameTime);
+                    break;
+
+                default:
                     break;
             }
+
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)

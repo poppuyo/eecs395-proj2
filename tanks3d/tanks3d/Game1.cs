@@ -236,6 +236,7 @@ namespace tanks3d
                 tanks[i].FixGravity(heightMapInfo);
             }
 
+            tanks[0].position = Vector3.Zero;
 
             sky = Content.Load<Sky>("sky");
 
