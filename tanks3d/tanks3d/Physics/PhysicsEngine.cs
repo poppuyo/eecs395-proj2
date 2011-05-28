@@ -20,6 +20,11 @@ namespace tanks3d.Physics
         /// </summary>
         private List<IPhysicsObject> physicsObjects;
 
+        /// <summary>
+        /// The global time - how long the physics simulation has been running.
+        /// </summary>
+        private float t;
+
         private PhysicsIntegrator integrator;
 
         public PhysicsEngine(Game1 g, IntegrationMethod integrationMethod)
@@ -27,11 +32,15 @@ namespace tanks3d.Physics
         {
             game = g;
             physicsObjects = new List<IPhysicsObject>();
+            t = 0.0f;
 
             switch (integrationMethod)
             {
                 case IntegrationMethod.Euler:
                     this.integrator = new EulerIntegrator();
+                    break;
+                case IntegrationMethod.RungeKutta4:
+                    this.integrator = new RK4Integrator();
                     break;
                 default:
                     this.integrator = new EulerIntegrator();
@@ -59,7 +68,9 @@ namespace tanks3d.Physics
             switch (game.currentState1)
             {
                 case Game1.GameState1.Play:
+                    
                     float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    t += elapsedSeconds;
 
                     foreach (IPhysicsObject physicsObject in physicsObjects)
                     {
@@ -68,7 +79,7 @@ namespace tanks3d.Physics
                         Vector3 gravity = PhysicsUtil.GravityConstant * Vector3.Down;
                         State initialState = new State(initialPosition, initialVelocity);
 
-                        State finalState = integrator.integrate(initialState, elapsedSeconds, gravity);
+                        State finalState = integrator.integrate(initialState, t, elapsedSeconds, gravity);
 
                         physicsObject.UpdatePosition(finalState.Position);
                         physicsObject.UpdateVelocity(finalState.Velocity);

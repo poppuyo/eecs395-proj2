@@ -134,6 +134,7 @@
     <Compile Include="Cameras\QuaternionCamera.cs" />
     <Compile Include="Physics\EulerIntegrator.cs" />
     <Compile Include="Physics\PhysicsIntegrator.cs" />
+    <Compile Include="Physics\RK4Integrator.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="HeightMapInfo.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />

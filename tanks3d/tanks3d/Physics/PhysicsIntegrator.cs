@@ -14,19 +14,19 @@ namespace tanks3d.Physics
         Euler,
 
         /// <summary>
-        /// Slow, expensive, but accurate.
+        /// Slow, complicated, but accurate.
         /// </summary>
-        // RungeKutta4,
+        RungeKutta4,
     }
 
     public abstract class PhysicsIntegrator
     {
-        public abstract State integrate(State state, float dt, Vector3 accel);
+        public abstract State integrate(State state, float t, float dt, Vector3 accel);
 
-        protected Derivative evaluate(State initial, float dt, Derivative d, Vector3 accel)
+        protected Derivative evaluate(State initial, float t, float dt, Derivative d, Vector3 accel)
         {
             Vector3 Position = initial.Position + d.dx * dt;
-            Vector3 Velocity = initial.Position + d.dv * dt;
+            Vector3 Velocity = initial.Velocity + d.dv * dt;
             State state = new State(Position, Velocity);
 
             Derivative output = new Derivative();
