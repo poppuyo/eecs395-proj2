@@ -1,2 +1,6 @@
 tanks3d/*/bin/
 tanks3d/*/obj/
+*.cachefile
+*.psess
+*.vsp
+*.suo
