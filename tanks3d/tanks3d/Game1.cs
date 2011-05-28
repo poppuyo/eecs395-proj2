@@ -123,7 +123,7 @@ namespace tanks3d
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
-            physicsEngine = new PhysicsEngine(this);
+            physicsEngine = new PhysicsEngine(this, IntegrationMethod.Euler);
             Components.Add(physicsEngine);
             
             mainHUD = new HUD(this);
