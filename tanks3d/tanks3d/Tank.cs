@@ -300,6 +300,8 @@ namespace tank3d
 
         public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
         {
+            game.GraphicsDevice.BlendState = BlendState.Opaque;
+
             // Apply matrices to the relevant bones, as discussed in the Simple 
             // Animation Sample.
             leftBackWheelBone.Transform = wheelRollMatrix * leftBackWheelTransform;

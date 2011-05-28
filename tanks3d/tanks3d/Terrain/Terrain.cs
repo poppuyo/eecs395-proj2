@@ -13,6 +13,7 @@ namespace tanks3d.Terrain
 
         Model terrain;
         Texture2D terrainTexture;
+        Texture2D decalTexture;
         BasicEffect terrainEffect;
         public HeightMapInfo heightMapInfo;
         Sky sky;
@@ -28,6 +29,7 @@ namespace tanks3d.Terrain
         {
             terrain = game.Content.Load<Model>("terrain");
             terrainTexture = game.Content.Load<Texture2D>("rocks");
+            decalTexture = game.Content.Load<Texture2D>("explosion_decal");
 
             LoadTerrainEffects();
 
@@ -111,6 +113,30 @@ namespace tanks3d.Terrain
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
 
+            foreach (ModelMesh mesh in terrain.Meshes)
+            {
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                {
+                    //terrainEffect.Texture = terrainTexture;
+                    //terrainEffect.TextureEnabled = true;
+
+                    terrainEffect.View = view;
+                    terrainEffect.Projection = projection;
+                    meshPart.Effect = terrainEffect;
+                }
+
+                mesh.Draw();
+            }
+
+            ApplyDecals(view, projection);
+        }
+
+        void ApplyDecals(Matrix view, Matrix projection)
+        {
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+
             terrainDecalEffect.CurrentTechnique = terrainDecalEffect.Techniques["Textured"];
 
             terrainDecalEffect.Parameters["View"].SetValue(game.worldCamera.ViewMatrix);
@@ -120,6 +146,7 @@ namespace tanks3d.Terrain
             terrainDecalEffect.Parameters["Ambient"].SetValue(0.1f);
             terrainDecalEffect.Parameters["EnableLighting"].SetValue(true);
             terrainDecalEffect.Parameters["Texture"].SetValue(terrainTexture);
+            terrainDecalEffect.Parameters["DecalTexture"].SetValue(decalTexture);
 
             if (game.WireframeMode)
             {

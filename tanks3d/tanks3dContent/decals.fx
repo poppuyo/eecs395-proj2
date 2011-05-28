@@ -42,7 +42,10 @@ VertexShaderOutput TexturedVS(VertexShaderInput input)
 	float4x4 preWorldViewProjection = mul(World, preViewProjection);
 
 	output.Position = mul(input.Position, preWorldViewProjection);
-	output.TextureCoords = input.TexCoords;
+	//output.TextureCoords = input.TexCoords;
+
+	output.TextureCoords.x = input.Position.x;
+	output.TextureCoords.y = input.Position.z;
 
 	float3 Normal = normalize(mul(normalize(input.Normal), World));
 	output.LightingFactor = 1;
@@ -52,6 +55,31 @@ VertexShaderOutput TexturedVS(VertexShaderInput input)
 	return output;
 }
 
+texture2D DecalTexture;
+
+sampler2D DecalSampler = sampler_state {
+  Texture = (DecalTexture);
+  AddressU = Clamp;
+  AddressV = Clamp;
+  MinFilter = Anisotropic;
+  MagFilter = Linear;
+  MipFilter = Linear;
+  MaxAnisotropy = 8;
+};
+
+float4 TexturedPS(VertexShaderOutput input) : COLOR0 {
+  float3 Center = float3(20, 10, 30);
+  float Radius = 100;
+  float3 UVector = float3(1, 0, 0) / (2 * Radius);
+  float3 VVector = float3(0, 0, 1) / (2 * Radius);
+  float2 coord;
+  float3 WorldPos = float3(input.TextureCoords.x, 0, input.TextureCoords.y);
+  coord.x = dot(WorldPos - Center, UVector) + 0.5;
+  coord.y = dot(WorldPos - Center, VVector) + 0.5;
+  return tex2D(DecalSampler, coord);
+}
+
+/*
 float4 TexturedPS(VertexShaderOutput input) : COLOR0
 {
     float4 output = tex2D(TextureSampler, input.TextureCoords);
@@ -59,6 +87,7 @@ float4 TexturedPS(VertexShaderOutput input) : COLOR0
 
 	return output;
 }
+*/
 
 technique Textured
 {
