@@ -129,8 +129,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cameras\FPSCamera.cs" />
-    <Compile Include="Cameras\OldCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
     <Compile Include="Terrain\HeightMapInfo.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
