@@ -65,9 +65,19 @@
             this.WeaponTypesComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.DrawTurretTimer = new System.Windows.Forms.Timer(this.components);
+            this.gameStateGroupBox = new System.Windows.Forms.GroupBox();
+            this.cameraStateComboBox = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.stateMessageLabel = new System.Windows.Forms.Label();
+            this.playerStateComboBox = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.gameStateComboBox = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.UpdateStateTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).BeginInit();
             this.CameraGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.gameStateGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // pctSurface
@@ -81,6 +91,7 @@
             this.pctSurface.TabIndex = 0;
             this.pctSurface.TabStop = false;
             this.pctSurface.SizeChanged += new System.EventHandler(this.pctSurface_SizeChanged);
+            this.pctSurface.Click += new System.EventHandler(this.pctSurface_Click);
             // 
             // UpdateTimer
             // 
@@ -104,9 +115,9 @@
             this.CameraGroupBox.Controls.Add(this.CameraPositionY_TextBox);
             this.CameraGroupBox.Controls.Add(this.CameraPositionX_TextBox);
             this.CameraGroupBox.Controls.Add(this.label1);
-            this.CameraGroupBox.Location = new System.Drawing.Point(12, 429);
+            this.CameraGroupBox.Location = new System.Drawing.Point(279, 429);
             this.CameraGroupBox.Name = "CameraGroupBox";
-            this.CameraGroupBox.Size = new System.Drawing.Size(231, 206);
+            this.CameraGroupBox.Size = new System.Drawing.Size(251, 206);
             this.CameraGroupBox.TabIndex = 1;
             this.CameraGroupBox.TabStop = false;
             this.CameraGroupBox.Text = "Camera";
@@ -255,7 +266,7 @@
             this.groupBox1.Controls.Add(this.TurretPositionX_TextBox);
             this.groupBox1.Controls.Add(this.WeaponTypesComboBox);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Location = new System.Drawing.Point(249, 429);
+            this.groupBox1.Location = new System.Drawing.Point(536, 429);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(236, 206);
             this.groupBox1.TabIndex = 2;
@@ -422,11 +433,101 @@
             this.DrawTurretTimer.Interval = 10;
             this.DrawTurretTimer.Tick += new System.EventHandler(this.DrawTurretTimer_Tick);
             // 
+            // gameStateGroupBox
+            // 
+            this.gameStateGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gameStateGroupBox.Controls.Add(this.cameraStateComboBox);
+            this.gameStateGroupBox.Controls.Add(this.label10);
+            this.gameStateGroupBox.Controls.Add(this.stateMessageLabel);
+            this.gameStateGroupBox.Controls.Add(this.playerStateComboBox);
+            this.gameStateGroupBox.Controls.Add(this.label9);
+            this.gameStateGroupBox.Controls.Add(this.gameStateComboBox);
+            this.gameStateGroupBox.Controls.Add(this.label8);
+            this.gameStateGroupBox.Location = new System.Drawing.Point(12, 429);
+            this.gameStateGroupBox.Name = "gameStateGroupBox";
+            this.gameStateGroupBox.Size = new System.Drawing.Size(261, 206);
+            this.gameStateGroupBox.TabIndex = 3;
+            this.gameStateGroupBox.TabStop = false;
+            this.gameStateGroupBox.Text = "Game State";
+            // 
+            // cameraStateComboBox
+            // 
+            this.cameraStateComboBox.FormattingEnabled = true;
+            this.cameraStateComboBox.Location = new System.Drawing.Point(84, 79);
+            this.cameraStateComboBox.Name = "cameraStateComboBox";
+            this.cameraStateComboBox.Size = new System.Drawing.Size(121, 21);
+            this.cameraStateComboBox.TabIndex = 16;
+            this.cameraStateComboBox.SelectedIndexChanged += new System.EventHandler(this.cameraStateComboBox_SelectedIndexChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 82);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(72, 13);
+            this.label10.TabIndex = 15;
+            this.label10.Text = "Camera state:";
+            // 
+            // stateMessageLabel
+            // 
+            this.stateMessageLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.stateMessageLabel.ForeColor = System.Drawing.Color.Maroon;
+            this.stateMessageLabel.Location = new System.Drawing.Point(6, 183);
+            this.stateMessageLabel.Name = "stateMessageLabel";
+            this.stateMessageLabel.Size = new System.Drawing.Size(249, 20);
+            this.stateMessageLabel.TabIndex = 14;
+            this.stateMessageLabel.Text = "[ Message ]";
+            this.stateMessageLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.stateMessageLabel.Visible = false;
+            // 
+            // playerStateComboBox
+            // 
+            this.playerStateComboBox.FormattingEnabled = true;
+            this.playerStateComboBox.Location = new System.Drawing.Point(84, 52);
+            this.playerStateComboBox.Name = "playerStateComboBox";
+            this.playerStateComboBox.Size = new System.Drawing.Size(121, 21);
+            this.playerStateComboBox.TabIndex = 3;
+            this.playerStateComboBox.SelectedIndexChanged += new System.EventHandler(this.playerStateComboBox_SelectedIndexChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 55);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(65, 13);
+            this.label9.TabIndex = 2;
+            this.label9.Text = "Player state:";
+            // 
+            // gameStateComboBox
+            // 
+            this.gameStateComboBox.FormattingEnabled = true;
+            this.gameStateComboBox.Location = new System.Drawing.Point(84, 24);
+            this.gameStateComboBox.Name = "gameStateComboBox";
+            this.gameStateComboBox.Size = new System.Drawing.Size(121, 21);
+            this.gameStateComboBox.TabIndex = 1;
+            this.gameStateComboBox.SelectedIndexChanged += new System.EventHandler(this.gameStateComboBox_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 27);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(64, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Game state:";
+            // 
+            // UpdateStateTimer
+            // 
+            this.UpdateStateTimer.Enabled = true;
+            this.UpdateStateTimer.Interval = 200;
+            this.UpdateStateTimer.Tick += new System.EventHandler(this.UpdateStateTimer_Tick);
+            // 
             // WinFormContainer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 647);
+            this.Controls.Add(this.gameStateGroupBox);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.CameraGroupBox);
             this.Controls.Add(this.pctSurface);
@@ -439,6 +540,8 @@
             this.CameraGroupBox.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.gameStateGroupBox.ResumeLayout(false);
+            this.gameStateGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -481,5 +584,14 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button FireButton;
         private System.Windows.Forms.LinkLabel LocateTurretPositionLink;
+        private System.Windows.Forms.GroupBox gameStateGroupBox;
+        private System.Windows.Forms.ComboBox playerStateComboBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox gameStateComboBox;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label stateMessageLabel;
+        private System.Windows.Forms.Timer UpdateStateTimer;
+        private System.Windows.Forms.ComboBox cameraStateComboBox;
+        private System.Windows.Forms.Label label10;
     }
 }
