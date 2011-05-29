@@ -170,16 +170,21 @@ namespace tanks3d
             base.Initialize();
         }
 
-            base.Initialize();
-        }
-
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
         {
-            tank1.LoadContent(Content);
+            for (int i = 0; i < numPlayers; i++)
+            {
+                tanks[i].LoadContent(Content);
+                tanks[i].position = RandomLocation();
+                tanks[i].FixGravity(terrain.heightMapInfo);
+            }
+
+            tanks[0].position = Vector3.Zero;
+                
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -201,7 +206,15 @@ namespace tanks3d
                     HandleInput(gameTime);
                     break;
 
-            HandleInput(gameTime);
+                case GameState.Play:
+                    HandleInput(gameTime);
+                    currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
+                    break;
+
+                case GameState.Pause:
+                    HandleInput(gameTime);
+                    break;
+            }
 
             base.Update(gameTime);
         }
@@ -217,18 +230,17 @@ namespace tanks3d
                 case GameState.Menu:
                     GraphicsDevice.Clear(Color.Black);
                     break;
+
                 case GameState.Play:
                     GraphicsDevice.Clear(Color.CornflowerBlue);
 
                     DrawAxes();
 
-                    DrawTerrain(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-
-                    sky.Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
-
                     for (int i = 0; i < numPlayers; i++)
                         tanks[i].Draw(worldCamera.ViewMatrix, worldCamera.ProjectionMatrix);
+
                     break;
+
                 case GameState.Pause:
                     GraphicsDevice.Clear(Color.Black);
                     break;
@@ -384,7 +396,7 @@ namespace tanks3d
                     currentTank.HandleInput(currentGamePadState,
                                       currentKeyboardState,
                                       currentMouseState,
-                                      heightMapInfo,
+                                      terrain.heightMapInfo,
                                       gameTime);
                     break;
 
@@ -415,10 +427,10 @@ namespace tanks3d
         {
             float randomX, randomZ;
             randomX = (float)random.NextDouble() - 1/2f;
-            randomX *= heightMapInfo.terrainWidth;
+            randomX *= terrain.heightMapInfo.terrainWidth;
 
             randomZ = (float)random.NextDouble() - 1/2f;
-            randomZ *= heightMapInfo.terrainHeight;
+            randomZ *= terrain.heightMapInfo.terrainHeight;
 
             return new Vector3(randomX, 0f, randomZ);
 

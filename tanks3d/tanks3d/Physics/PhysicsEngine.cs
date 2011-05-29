@@ -117,7 +117,7 @@ namespace tanks3d.Physics
 
                     if (game.terrain.heightMapInfo.IsOnHeightmap(corners[i]))
                     {
-                        game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
+                        game.terrain.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
                         if (corners[i].Y <= terrainElevation)
                         {
                             HandleCollisionWithSurface(physicsObject, terrainNormal, 0.7f);

@@ -105,8 +105,6 @@
             // CameraGroupBox
             // 
             this.CameraGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CameraGroupBox.Controls.Add(this.texturedRadioButton);
-            this.CameraGroupBox.Controls.Add(this.wireframeRadioButton);
             this.CameraGroupBox.Controls.Add(this.CameraMessageLabel);
             this.CameraGroupBox.Controls.Add(this.SetTargetButton);
             this.CameraGroupBox.Controls.Add(this.CameraTargetZ_TextBox);
