@@ -586,5 +586,10 @@ namespace tanks3d
                 stateMessageLabel.Visible = true;
             }
         }
+
+        private void WinFormContainer_Resize(object sender, EventArgs e)
+        {
+            game.Window_ClientSizeChanged(null, null);
+        }
     }
 }

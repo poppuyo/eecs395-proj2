@@ -66,6 +66,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.DrawTurretTimer = new System.Windows.Forms.Timer(this.components);
             this.gameStateGroupBox = new System.Windows.Forms.GroupBox();
+            this.activePlayerComboBox = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.numPlayersLabel = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.cameraStateComboBox = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.stateMessageLabel = new System.Windows.Forms.Label();
@@ -74,10 +78,6 @@
             this.gameStateComboBox = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.UpdateStateTimer = new System.Windows.Forms.Timer(this.components);
-            this.label11 = new System.Windows.Forms.Label();
-            this.numPlayersLabel = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.activePlayerComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).BeginInit();
             this.CameraGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -458,6 +458,42 @@
             this.gameStateGroupBox.TabStop = false;
             this.gameStateGroupBox.Text = "Game State";
             // 
+            // activePlayerComboBox
+            // 
+            this.activePlayerComboBox.FormattingEnabled = true;
+            this.activePlayerComboBox.Location = new System.Drawing.Point(210, 107);
+            this.activePlayerComboBox.Name = "activePlayerComboBox";
+            this.activePlayerComboBox.Size = new System.Drawing.Size(45, 21);
+            this.activePlayerComboBox.TabIndex = 20;
+            this.activePlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.activePlayerComboBox_SelectedIndexChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(133, 110);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(72, 13);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "Active Player:";
+            // 
+            // numPlayersLabel
+            // 
+            this.numPlayersLabel.AutoSize = true;
+            this.numPlayersLabel.Location = new System.Drawing.Point(107, 110);
+            this.numPlayersLabel.Name = "numPlayersLabel";
+            this.numPlayersLabel.Size = new System.Drawing.Size(13, 13);
+            this.numPlayersLabel.TabIndex = 18;
+            this.numPlayersLabel.Text = "0";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 110);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(95, 13);
+            this.label11.TabIndex = 17;
+            this.label11.Text = "Number of players:";
+            // 
             // cameraStateComboBox
             // 
             this.cameraStateComboBox.FormattingEnabled = true;
@@ -530,42 +566,6 @@
             this.UpdateStateTimer.Interval = 200;
             this.UpdateStateTimer.Tick += new System.EventHandler(this.UpdateStateTimer_Tick);
             // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 110);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(95, 13);
-            this.label11.TabIndex = 17;
-            this.label11.Text = "Number of players:";
-            // 
-            // numPlayersLabel
-            // 
-            this.numPlayersLabel.AutoSize = true;
-            this.numPlayersLabel.Location = new System.Drawing.Point(107, 110);
-            this.numPlayersLabel.Name = "numPlayersLabel";
-            this.numPlayersLabel.Size = new System.Drawing.Size(13, 13);
-            this.numPlayersLabel.TabIndex = 18;
-            this.numPlayersLabel.Text = "0";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(133, 110);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(72, 13);
-            this.label12.TabIndex = 19;
-            this.label12.Text = "Active Player:";
-            // 
-            // activePlayerComboBox
-            // 
-            this.activePlayerComboBox.FormattingEnabled = true;
-            this.activePlayerComboBox.Location = new System.Drawing.Point(210, 107);
-            this.activePlayerComboBox.Name = "activePlayerComboBox";
-            this.activePlayerComboBox.Size = new System.Drawing.Size(45, 21);
-            this.activePlayerComboBox.TabIndex = 20;
-            this.activePlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.activePlayerComboBox_SelectedIndexChanged);
-            // 
             // WinFormContainer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -579,6 +579,7 @@
             this.Text = "WinFormContainer";
             this.Load += new System.EventHandler(this.WinFormContainer_Load);
             this.Shown += new System.EventHandler(this.WinFormContainer_Shown);
+            this.Resize += new System.EventHandler(this.WinFormContainer_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).EndInit();
             this.CameraGroupBox.ResumeLayout(false);
             this.CameraGroupBox.PerformLayout();

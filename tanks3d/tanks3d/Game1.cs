@@ -111,7 +111,8 @@ namespace tanks3d
         protected override void Initialize()
         {
             worldCamera = new Cameras.QuaternionCameraComponent(this);
-            worldCamera.Perspective(90.0f, 16.0f / 9.0f, 0.5f, 20000.0f);
+            float fov = 9.0f/16.0f*this.GraphicsDevice.Viewport.AspectRatio*90.0f;
+            worldCamera.Perspective(fov, 16.0f / 9.0f, 0.5f, 20000.0f);
             worldCamera.Position = new Vector3(0, -370, 160);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
@@ -267,10 +268,14 @@ namespace tanks3d
         /// <summary>
         /// This gets called when the game window is resized.
         /// </summary>
-        void Window_ClientSizeChanged(object sender, EventArgs e)
+        public void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             // Make changes to handle the new window size.
 
+            // Change the field of view to maintain a constant aspect ratio.
+            float fov = 9.0f / 16.0f * this.GraphicsDevice.Viewport.AspectRatio * 90.0f;
+            if (fov >= 130.0f) fov = 130.0f;
+            worldCamera.Perspective(fov, 16.0f / 9.0f, 0.5f, 20000.0f);
         }
 
         /// <summary>
