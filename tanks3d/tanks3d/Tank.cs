@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using tanks3d;
 using tanks3d.Weapons;
+using tanks3d.Terrain;
 #endregion
 
 namespace tank3d
@@ -356,6 +357,8 @@ namespace tank3d
 
 		public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
         {
+            game.GraphicsDevice.BlendState = BlendState.Opaque;
+
             // Apply matrices to the relevant bones, as discussed in the Simple 
             // Animation Sample.
             leftBackWheelBone.Transform = wheelRollMatrix * leftBackWheelTransform;

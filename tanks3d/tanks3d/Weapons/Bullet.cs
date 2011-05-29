@@ -177,7 +177,17 @@ namespace tanks3d.Weapons
         /// </summary>
         public void HandleCollisionWithTerrain()
         {
-            StartExplosion();
+            switch (bulletState)
+            {
+                case BulletState.Unexploded:
+                    StartExplosion();
+                    game.terrain.AddExplosionDecal(this.position);
+                    break;
+                case BulletState.Exploding:
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void StartExplosion()

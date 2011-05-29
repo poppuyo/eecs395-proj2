@@ -31,14 +31,7 @@ namespace tanks3d
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        TexturedQuad.Quad[] ground;
-        VertexDeclaration vertexDeclaration;
-
-        Model terrain;
-        //public Texture2D terrainTexture;
-        BasicEffect terrainEffect;
-        public HeightMapInfo heightMapInfo;
-        Sky sky;
+        public Terrain.Terrain terrain;
 
         public Cameras.QuaternionCameraComponent worldCamera;
         public Cameras.QuaternionCamera.Behavior previousBehavior;
@@ -51,8 +44,17 @@ namespace tanks3d
 
         public HUD mainHUD;
 
-        Texture2D texture;
-        BasicEffect quadEffect;
+        private bool wireframe = false;
+        public bool WireframeMode
+        {
+            get { return wireframe; }
+            set
+            {
+                wireframe = value;
+            }
+        }
+        public RasterizerState wireframeRasterizerState;
+        public RasterizerState solidRasterizerState;
 
         public Player[] players;
 
@@ -117,7 +119,16 @@ namespace tanks3d
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
-            physicsEngine = new PhysicsEngine(this, IntegrationMethod.RungeKutta4);
+            wireframeRasterizerState = new RasterizerState();
+            wireframeRasterizerState.FillMode = FillMode.WireFrame;
+
+            solidRasterizerState = new RasterizerState();
+            solidRasterizerState.FillMode = FillMode.Solid;
+
+            terrain = new Terrain.Terrain(this);
+            Components.Add(terrain);
+
+			physicsEngine = new PhysicsEngine(this, IntegrationMethod.RungeKutta4);
             Components.Add(physicsEngine);
             
             mainHUD = new HUD(this);
@@ -159,22 +170,7 @@ namespace tanks3d
             base.Initialize();
         }
 
-        protected void LoadTerrainEffect()
-        {
-            terrainEffect = new BasicEffect(GraphicsDevice);
-
-            terrainEffect.EnableDefaultLighting();
-
-            // Set the specular lighting to match the sky color.
-            terrainEffect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
-            terrainEffect.SpecularPower = 8;
-
-            // Set the fog to match the distant mountains
-            // that are drawn into the sky texture.
-            terrainEffect.FogEnabled = false;
-            terrainEffect.FogColor = new Vector3(0.15f);
-            terrainEffect.FogStart = 100 * 2;
-            terrainEffect.FogEnd = 320 * 5;
+            base.Initialize();
         }
 
         /// <summary>
@@ -183,75 +179,10 @@ namespace tanks3d
         /// </summary>
         protected override void LoadContent()
         {
-            terrain = Content.Load<Model>("terrain");
-            //terrainTexture = Content.Load<Texture2D>("64x64");
-
-            LoadTerrainEffect();
-
-            foreach (ModelMesh mesh in terrain.Meshes)
-            {
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    // Set the terrain texture
-                    // TODO: This part will have to go in the draw loop if we want the terrain to have
-                    // multiple textures. See: http://forums.create.msdn.com/forums/p/70607/432670.aspx
-                    // In fact, right now this next line of code is kind of stupid because it will result
-                    // the global terrainEffect to have the texture associated with the last mesh part
-                    // in the terrain mesh (because it keeps getting overwritten in the loop). Setting the
-                    // texture for the current mesh part is something that should be done when you
-                    // draw the terrain, as described in above forum post.
-                    terrainEffect.Texture = ((BasicEffect)meshPart.Effect).Texture;
-                    terrainEffect.TextureEnabled = true;
-
-                    meshPart.Effect = terrainEffect.Clone();
-                }
-            }
-
-
-            // The terrain processor attached a HeightMapInfo to the terrain model's
-            // Tag. We'll save that to a member variable now, and use it to
-            // calculate the terrain's heights later.
-            heightMapInfo = terrain.Tag as HeightMapInfo;
-            if (heightMapInfo == null)
-            {
-                string message = "The terrain model did not have a HeightMapInfo " +
-                    "object attached. Are you sure you are using the " +
-                    "TerrainProcessor?";
-                throw new InvalidOperationException(message);
-            }
-
-            for (int i = 0; i < numPlayers; i++)
-            {
-                tanks[i].position = RandomLocation();
-                tanks[i].FixGravity(heightMapInfo);
-            }
-
-            tanks[0].position = Vector3.Zero;
-
-            sky = Content.Load<Sky>("sky");
-
-            for (int i = 0; i < numPlayers; i++)
-                tanks[i].LoadContent(Content);
-
-            //tank1.LoadContent(Content);
-            //tank2.LoadContent(Content);
+            tank1.LoadContent(Content);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            texture = Content.Load<Texture2D>("64x64");
-            quadEffect = new BasicEffect(graphics.GraphicsDevice);
-            quadEffect.EnableDefaultLighting();
-
-            quadEffect.TextureEnabled = true;
-            quadEffect.Texture = texture;
-
-            vertexDeclaration = new VertexDeclaration(new VertexElement[]
-            {
-                    new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                    new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                    new VertexElement(24, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0)
-            });
-
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
             //MediaPlayer.Play(mySong);
@@ -270,18 +201,7 @@ namespace tanks3d
                     HandleInput(gameTime);
                     break;
 
-                case GameState.Play:
-                    HandleInput(gameTime);
-                    currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
-
-                    quadEffect.TextureEnabled = true;
-                    quadEffect.Texture = texture;
-                    break;
-
-                case GameState.Pause:
-                    HandleInput(gameTime);
-                    break;
-            }
+            HandleInput(gameTime);
 
             base.Update(gameTime);
         }
@@ -330,29 +250,6 @@ namespace tanks3d
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-        }
-
-        /// <summary>
-        /// Helper for drawing the terrain model.
-        /// </summary>
-        void DrawTerrain(Matrix view, Matrix projection)
-        {
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
-
-            foreach (ModelMesh mesh in terrain.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.View = view;
-                    effect.Projection = projection;
-                    //effect.Texture = terrainTexture;
-                    //effect.TextureEnabled = true;
-                }
-
-                mesh.Draw();
-            }
         }
 
         /// <summary>

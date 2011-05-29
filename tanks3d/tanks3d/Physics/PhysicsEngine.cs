@@ -96,7 +96,7 @@ namespace tanks3d.Physics
         {
             Vector3 position = physicsObject.GetPosition();
 
-            if (game.heightMapInfo.IsOnHeightmap(position))
+            if (game.terrain.heightMapInfo.IsOnHeightmap(position))
             {                
                 float objectBottom = physicsObject.GetBoundingBox().Min.Y;
 
@@ -115,7 +115,7 @@ namespace tanks3d.Physics
                     float terrainElevation;
                     Vector3 terrainNormal;
 
-                    if (game.heightMapInfo.IsOnHeightmap(corners[i]))
+                    if (game.terrain.heightMapInfo.IsOnHeightmap(corners[i]))
                     {
                         game.heightMapInfo.GetHeightAndNormal(corners[i], out terrainElevation, out terrainNormal);
                         if (corners[i].Y <= terrainElevation)

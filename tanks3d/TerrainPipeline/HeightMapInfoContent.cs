@@ -143,7 +143,7 @@ namespace TerrainPipeline
         /// </summary>
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
-            return "tanks3d.HeightMapInfo, " +
+            return "tanks3d.Terrain.HeightMapInfo, " +
                 "tanks3d, Version=1.0.0.0, Culture=neutral";
         }
 
@@ -154,7 +154,7 @@ namespace TerrainPipeline
         /// </summary>
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "tanks3d.HeightMapInfoReader, " +
+            return "tanks3d.Terrain.HeightMapInfoReader, " +
                 "tanks3d, Version=1.0.0.0, Culture=neutral";
         }
     }
