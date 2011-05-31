@@ -22,7 +22,7 @@ namespace tanks3d
         SpriteFont hudFont, hitFont, pauseFont;
         SpriteBatch spriteBatch;
 
-        Texture2D healthBar, heart, powerBar, power;
+        Texture2D healthBar, heart, powerBar, power, movementBar, movement;
 
         public int hitTimer = 1001;
 
@@ -43,6 +43,8 @@ namespace tanks3d
             heart = Game.Content.Load<Texture2D>("heart");
             powerBar = Game.Content.Load<Texture2D>("power bar");
             power = Game.Content.Load<Texture2D>("power");
+            movementBar = Game.Content.Load<Texture2D>("movement bar");
+            movement = Game.Content.Load<Texture2D>("movement");
 
             spriteBatch = new SpriteBatch(game.GraphicsDevice);
             base.LoadContent();
@@ -98,8 +100,11 @@ namespace tanks3d
                     spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 35, game.currentTank.power * 2, 12), Color.White);
                     
                     int smallMoves = (game.currentTank.moveLimit - game.moves) / 100;
-                    text = "Moves remaining: " + smallMoves;
-                    spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
+                    //text = "Moves remaining: " + smallMoves;
+                    //spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
+                    spriteBatch.Draw(movement, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 57), Color.White);
+                    spriteBatch.Draw(movementBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 60, (game.currentTank.moveLimit - game.moves) * 2, 12), Color.White);
+                    
 
                     if (hitTimer < 101)
                     {
