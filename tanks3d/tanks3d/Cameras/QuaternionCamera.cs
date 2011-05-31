@@ -1500,9 +1500,9 @@ namespace tanks3d.Cameras
             int previousWheelValue = previousMouseState.ScrollWheelValue;
 
             if (currentWheelValue > previousWheelValue)
-                return -1.0f;
-            else if (currentWheelValue < previousWheelValue)
                 return 1.0f;
+            else if (currentWheelValue < previousWheelValue)
+                return -1.0f;
             else
                 return 0.0f;
         }

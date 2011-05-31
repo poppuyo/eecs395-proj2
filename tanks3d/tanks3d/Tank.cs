@@ -44,8 +44,9 @@ namespace tank3d
 
         const float TankSize = 75f;
 
-        public int moveLimit = 500;
+        public int moveLimit = 5000;
         public int moves = 0;
+        public int thisTankNumber;
 
         #endregion
 
@@ -175,10 +176,12 @@ namespace tank3d
 
         #region Initialization
 
-        public Tank(Game1 game, Vector3 pos)
+        public Tank(Game1 game, Vector3 pos, int num)
         {
             position = pos;
             this.game = game;
+            thisTankNumber = num;
+
         }
 
         /// <summary>
@@ -244,12 +247,12 @@ namespace tank3d
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
             if (currentKeyboardState.IsKeyDown(Keys.A) || currentGamePadState.DPad.Left == ButtonState.Pressed)
             {
-                turnAmount += 1;
+                turnAmount += 5;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.D) || currentGamePadState.DPad.Right == ButtonState.Pressed)
             {
-                turnAmount -= 1;
+                turnAmount -= 5;
             }
 
             // clamp the turn amount between -1 and 1, and then use the finished
@@ -267,12 +270,12 @@ namespace tank3d
 
             if (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed)
             {
-                movement.Z = 1;
+                movement.Z = 5;
                 game.currentTank.moves++;
             }
             if (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
-                movement.Z = -1;
+                movement.Z = -5;
                 game.currentTank.moves++;
             }
 
@@ -429,7 +432,12 @@ namespace tank3d
         private void Dies()
         {
             IsAlive = false;
+            game.mainHUD.lastPlayerEliminated = thisTankNumber;
             game.numPlayersAlive -= 1;
+            game.mainHUD.playerTimer = 0;
+            
+            if (game.numPlayersAlive == 1)
+                game.gameState = GameState.End;
         }
     }
 }
