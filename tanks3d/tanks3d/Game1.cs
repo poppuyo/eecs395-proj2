@@ -69,8 +69,9 @@ namespace tanks3d
 
         public KeyboardState previousKeyboardState;
 
+        public int numPlayersAlive;
         public int numPlayers = 4, currentPlayer = 0;
-
+        
         private int timeOut = 0;
 
         float VelocityCount = 0;
@@ -150,7 +151,7 @@ namespace tanks3d
                 //tanks[i] = new Tank(this, RandomLocation());
             }
 
-            tanks[1].power = 10;
+            numPlayersAlive = numPlayers;
 
             currentTank = tanks[currentPlayer];
 
@@ -207,6 +208,7 @@ namespace tanks3d
 
                 case GameState.Play:
                     HandleInput(gameTime);
+                    CheckForWinner();
                     currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
                     break;
 
@@ -451,7 +453,28 @@ namespace tanks3d
                 currentPlayer = 0;
                 currentTank = tanks[currentPlayer];
             }
+            if (!currentTank.IsAlive)
+            {
+                switchCurrentTank();
+            }
             currentTank.moves = 0;
+        }
+
+        private void CheckForWinner()
+        {
+            if (numPlayersAlive == 1)
+            {
+                int winningPlayer = 1;
+                for (int i = 0; i < numPlayers; i++)
+                {
+                    if (tanks[i].IsAlive)
+                    {
+                        winningPlayer = i + 1;
+                    }
+                }
+
+                Console.Write("Player " + winningPlayer + " Wins The Game!!!\n");
+            }
         }
     }
 }

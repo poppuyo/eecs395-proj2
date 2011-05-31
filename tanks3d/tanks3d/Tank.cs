@@ -125,8 +125,9 @@ namespace tank3d
 
                 return new BoundingBox(bBoxMinPoint, bBoxMaxPoint);
             }
-
         }
+
+        public bool IsAlive = true;
 
         /// <summary>
         /// Length of the turret's barrel.
@@ -419,6 +420,16 @@ namespace tank3d
         {
             health -= 15;
             game.mainHUD.hitTimer = 0;
+            if (health <= 0)
+            {
+                Dies();
+            }
+        }
+
+        private void Dies()
+        {
+            IsAlive = false;
+            game.numPlayersAlive -= 1;
         }
     }
 }
