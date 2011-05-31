@@ -22,6 +22,8 @@ namespace tanks3d.Terrain
 
         private List<Vector3> explosionDecalLocations;
 
+        public const int MaxDecals = 10;
+
         public Terrain(Game1 g) : base(g) 
         {
             game = g;
@@ -173,10 +175,16 @@ namespace tanks3d.Terrain
 
         /// <summary>
         /// Overlays an explosion decal over the terrain at the specified location. The Y-coordinate of
-        /// the location is ignored since it will be read from the terrain heightmap.
+        /// the location is ignored since it will be read from the terrain heightmap. If the number of
+        /// decals on the terrain exceeds MaxDecals, then the oldest decal will be removed.
         /// </summary>
         public void AddExplosionDecal(Vector3 location)
         {
+            if (explosionDecalLocations.Count >= MaxDecals)
+            {
+                explosionDecalLocations.RemoveAt(0);
+            }
+
             explosionDecalLocations.Add(location);
         }
     }
