@@ -420,7 +420,7 @@ namespace tank3d
         /// </summary>
         public void GetHit(Bullet bullet)
         {
-            throw new NotImplementedException("The tank got hit. Maybe we should do something about it. (Oh yeah, and don't forget that a tank might get hit by its own bullet).");
+            health -= 15;
         }
     }
 }
