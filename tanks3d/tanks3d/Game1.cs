@@ -341,22 +341,6 @@ namespace tanks3d
                             gameState = GameState.Menu;
                     }
 
-                    // Changes Camera View
-                    if (previousKeyboardState.IsKeyDown(Keys.Space))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.Space))
-                        {
-                            if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
-                            {
-                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
-                            }
-                            else
-                            {
-                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
-                            }
-                        }
-                    }
-
                     // Fires bullets
                     if (previousKeyboardState.IsKeyDown(Keys.Space))
                     {
