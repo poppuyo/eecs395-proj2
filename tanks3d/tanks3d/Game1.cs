@@ -71,7 +71,7 @@ namespace tanks3d
         public KeyboardState previousKeyboardState;
 
         public int numPlayersAlive;
-        public int numPlayers = 4, currentPlayer = 0;
+        public int numPlayers = 10, currentPlayer = 0;
         
         private int timeOut = 0;
 
@@ -320,10 +320,73 @@ namespace tanks3d
             switch (gameState)
             {
                 case GameState.Menu:
+                    /*
                     if (currentKeyboardState.IsKeyDown(Keys.B))
                         gameState = GameState.Play;
-                    break;
+                     */
+                    Keys[] pressed_Key = Keyboard.GetState().GetPressedKeys();
 
+                    for(int i = 0; i < pressed_Key.Length; i++)
+                    {
+                        switch (pressed_Key[i])
+                        {
+                            case Keys.D2:
+                                numPlayers = 2;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D3:
+                                numPlayers = 3;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D4:
+                                numPlayers = 4;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D5:
+                                numPlayers = 5;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D6:
+                                numPlayers = 6;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D7:
+                                numPlayers = 7;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D8:
+                                numPlayers = 8;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D9:
+                                numPlayers = 9;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D0:
+                                numPlayers = 10;
+                                gameState = GameState.Play;
+                            break;
+
+                            default:
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < numPlayers; i++)
+                    {
+                        if (gameState == GameState.Play) 
+                        Components.Remove(tanks[9-i]);
+                    }
+
+                    break;
                 case GameState.Play:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
