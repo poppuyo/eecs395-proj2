@@ -163,8 +163,8 @@ namespace tanks3d
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
 
-            Reticle reticle = new Reticle(this);
-            Components.Add(reticle);
+            //Reticle reticle = new Reticle(this);
+            //Components.Add(reticle);
 
             testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
             Components.Add(testPhysicsObject);
@@ -420,7 +420,7 @@ namespace tanks3d
                             firing.Play();
                             Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
-                            switchCurrentTank();
+                            //switchCurrentTank();
                             //Shake();
 
                             // Switch to bullet view
