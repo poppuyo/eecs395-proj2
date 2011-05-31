@@ -53,6 +53,7 @@ namespace tanks3d
                 wireframe = value;
             }
         }
+        
         public RasterizerState wireframeRasterizerState;
         public RasterizerState solidRasterizerState;
 
@@ -150,9 +151,6 @@ namespace tanks3d
             }
 
             tanks[1].power = 10;
-
-            //tank1 = new Tank(this, new Vector3(0, 0, 0));
-            //tank2 = new Tank(this, new Vector3(100, 0, 0));
 
             currentTank = tanks[currentPlayer];
 
@@ -357,7 +355,7 @@ namespace tanks3d
                         {
                             weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
-                            //switchCurrentTank();
+                            switchCurrentTank();
                             //Shake();
                         }
                     }

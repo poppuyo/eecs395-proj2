@@ -19,10 +19,12 @@ namespace tanks3d
     public class HUD : DrawableGameComponent
     {
 
-        SpriteFont hudFont;
+        SpriteFont hudFont, hitFont, pauseFont;
         SpriteBatch spriteBatch;
 
         Texture2D healthBar, heart, powerBar, power;
+
+        public int hitTimer = 1001;
 
         protected Game1 game;
 
@@ -34,7 +36,9 @@ namespace tanks3d
 
         protected override void LoadContent()
         {
-            hudFont = Game.Content.Load<SpriteFont>("hudFont");
+            hudFont = Game.Content.Load<SpriteFont>("Fonts\\hudFont");
+            hitFont = Game.Content.Load<SpriteFont>("Fonts\\hitFont");
+            pauseFont = Game.Content.Load<SpriteFont>("Fonts\\hitFont");
             healthBar = Game.Content.Load<Texture2D>("health bar");
             heart = Game.Content.Load<Texture2D>("heart");
             powerBar = Game.Content.Load<Texture2D>("power bar");
@@ -92,12 +96,23 @@ namespace tanks3d
                     spriteBatch.Draw(healthBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 10, game.currentTank.health * 2, 12), Color.White);
                     spriteBatch.Draw(power, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 30), Color.White);
                     spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 35, game.currentTank.power * 2, 12), Color.White);
+                    
+                    int smallMoves = (game.currentTank.moveLimit - game.moves) / 100;
+                    text = "Moves remaining: " + smallMoves;
+                    spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
+
+                    if (hitTimer < 101)
+                    {
+                        DrawHit();
+                        hitTimer++;
+                    }
 
                     game.DoSpriteBatchFix();
                     break;
                 case GameState.Pause:
                     hudString = "Press 'P' to unpause, or 'Escape' to quit.\n";
-                    spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 220), Color.MediumVioletRed, 0.0f, new Vector2(0,0), 2.0f, SpriteEffects.None, 0.0f);
+                    spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
+                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkRed);
                     break;
                 }
 
@@ -114,6 +129,14 @@ namespace tanks3d
             // TODO: Add your update code here
 
             base.Update(gameTime);
+        }
+
+        private void DrawHit()
+        {
+            string hitString;
+            hitString = "HIT!";
+            spriteBatch.DrawString(hitFont, hitString, new Vector2((game.GraphicsDevice.Viewport.Width / 2),
+                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.YellowGreen);
         }
     }
 }

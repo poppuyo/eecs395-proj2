@@ -32,7 +32,7 @@ namespace tank3d
         // should be rotating as the tank moves.
         const float TankWheelRadius = 30;
 
-        // controls how quickly the tank can turn from side to side.
+        // Controls how quickly the tank can turn from side to side.
         const float TankTurnSpeed = .012f;
 
         public const float TurretLength = 185.0f;
@@ -44,7 +44,7 @@ namespace tank3d
 
         const float TankSize = 75f;
 
-        const int moveLimit = 1000;
+        public int moveLimit = 1099;
 
         #endregion
 
@@ -141,11 +141,11 @@ namespace tank3d
         // The tank's model - a fearsome sight.
         Model model;
 
-        // how is the tank oriented? We'll calculate this based on the user's input and
+        // How is the tank oriented? We'll calculate this based on the user's input and
         // the heightmap's normals, and then use it when drawing.
         Matrix orientation = Matrix.Identity;
 
-        // we'll use this value when making the wheels roll. It's calculated based on 
+        // We'll use this value when making the wheels roll. It's calculated based on 
         // the distance moved.
         Matrix wheelRollMatrix = Matrix.Identity;
 
@@ -187,7 +187,7 @@ namespace tank3d
         {
             model = content.Load<Model>("Models//tank");
 
-            // as discussed in the Simple Animation Sample, we'll look up the bones
+            // As discussed in the Simple Animation Sample, we'll look up the bones
             // that control the wheels.
             leftBackWheelBone = model.Bones["l_back_wheel_geo"];
             rightBackWheelBone = model.Bones["r_back_wheel_geo"];
@@ -276,7 +276,7 @@ namespace tank3d
                 game.moves++;
             }
 
-            // next, we'll create a rotation matrix from the direction the tank is 
+            // Next, we'll create a rotation matrix from the direction the tank is 
             // facing, and use it to transform the vector.
             orientation = Matrix.CreateRotationY(FacingDirection);
             Vector3 velocity = Vector3.Transform(movement, orientation);
@@ -291,7 +291,7 @@ namespace tank3d
             Vector3 newPosition = Position + velocity;
             if (heightMapInfo.IsOnHeightmap(newPosition))
             {
-                // now that we know we're on the heightmap, we need to know the correct
+                // Now that we know we're on the heightmap, we need to know the correct
                 // height and normal at this position.
                 Vector3 normal;
                 heightMapInfo.GetHeightAndNormal(newPosition,
@@ -309,7 +309,7 @@ namespace tank3d
                 orientation.Forward = Vector3.Cross(orientation.Up, orientation.Right);
                 orientation.Forward = Vector3.Normalize(orientation.Forward);
 
-                // now we need to roll the tank's wheels "forward." to do this, we'll
+                // Now we need to roll the tank's wheels "forward." to do this, we'll
                 // calculate how far they have rolled, and from there calculate how much
                 // they must have rotated.
                 float distanceMoved = Vector3.Distance(Position, newPosition);
@@ -349,7 +349,7 @@ namespace tank3d
                 orientation.Forward = Vector3.Cross(orientation.Up, orientation.Right);
                 orientation.Forward = Vector3.Normalize(orientation.Forward);
 
-                // once we've finished all computations, we can set our position to the
+                // Once we've finished all computations, we can set our position to the
                 // new position that we calculated.
                 position = newPosition;
             }
@@ -403,8 +403,6 @@ namespace tank3d
                 }
                 mesh.Draw();
             }
-
-            //tanks3d.Utility.BoundingBoxRenderer.Render(game, boundingBox, game.GraphicsDevice, viewMatrix, projectionMatrix, Color.Red);
         }
 
         #endregion
@@ -421,6 +419,7 @@ namespace tank3d
         public void GetHit(Bullet bullet)
         {
             health -= 15;
+            game.mainHUD.hitTimer = 0;
         }
     }
 }
