@@ -142,6 +142,16 @@ namespace tanks3d.Weapons
                                     break;
                                 }
                             }
+
+                            // Check if we're outside the bounds of the terrain. (Note that collision
+                            // detection with the terrain is handled in the HandleCollisionWithTerrain()
+                            // method below).
+                            if (!game.terrain.heightMapInfo.IsOnHeightmap(position))
+                            {
+                                StartExplosion();
+                                break;
+                            }
+
                             break;
 
                         case BulletState.Exploding:
