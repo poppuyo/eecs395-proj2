@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 using tanks3d.ParticleSystems;
 using tanks3d.Physics;
 using tank3d;
@@ -60,6 +63,8 @@ namespace tanks3d.Weapons
         ParticleSystem explosionSmokeParticles;
         ParticleEmitter trailEmitter;
 
+        SoundEffect explosion;
+
         #region Constants
 
         const float trailParticlesPerSecond = 200;
@@ -72,7 +77,7 @@ namespace tanks3d.Weapons
         #endregion
 
         public Bullet(Game1 g, ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles,
-            ParticleSystem projectileTrailParticles, Vector3 origin, Vector3 initialVelocity)
+            ParticleSystem projectileTrailParticles, Vector3 origin, Vector3 initialVelocity, SoundEffect Explosion)
             : base(g)
         {
             game = g;
@@ -92,6 +97,13 @@ namespace tanks3d.Weapons
             // Use the particle emitter helper to output our trail particles.
             trailEmitter = new ParticleEmitter(projectileTrailParticles,
                                                trailParticlesPerSecond, position);
+
+            explosion = Explosion;
+        }
+
+        public void LoadContent(ContentManager content)
+        {
+            explosion = content.Load<SoundEffect>("Audio\\Barrel Exploding");
         }
 
         public override void Update(GameTime gameTime)
@@ -200,6 +212,8 @@ namespace tanks3d.Weapons
                     explosionAge = 0.0f;
 
                     Vector3 explosionVelocity = new Vector3(velocity.X, 0.0f, velocity.Z);
+
+                    explosion.Play();
 
                     for (int i = 0; i < numExplosionParticles; i++)
                         explosionParticles.AddParticle(position, explosionVelocity);
