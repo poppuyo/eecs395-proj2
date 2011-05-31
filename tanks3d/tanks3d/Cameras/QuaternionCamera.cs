@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using tanks3d.Weapons;
 
 namespace tanks3d.Cameras
 {
@@ -1083,7 +1084,7 @@ namespace tanks3d.Cameras
         private KeyboardState currentKeyboardState;
         private Dictionary<Actions, Keys> actionKeys;
 
-        private Game1 g;
+        protected Game1 g;
 
         #region Public Methods
 
@@ -1915,11 +1916,30 @@ namespace tanks3d.Cameras
                     break;
 
                 case QuaternionCamera.Behavior.FollowActiveBullet:
-                    Vector3 bpos = g.bulletManager.ActiveBullet.position;
-                    Vector3 bvel = g.bulletManager.ActiveBullet.velocity;
+                    
+                    // Check if the bullet doesn't exist anymore.
+                    if (FollowBullet == null || FollowBullet.bulletState == BulletState.Dead)
+                    {
+                        CurrentBehavior = QuaternionCamera.Behavior.FollowT;
+                        break;
+                    }
 
-                    Vector3 smoothFollow = bpos - Vector3.Normalize(bvel) * 75;
-                    camera.LookAt(smoothFollow, bpos, Vector3.Up);
+                    Vector3 bpos = FollowBullet.position;
+                    Vector3 bvel = FollowBullet.velocity;
+
+                    switch (FollowBullet.bulletState)
+                    {
+                        case BulletState.Unexploded:
+                            Vector3 smoothFollow = bpos - Vector3.Normalize(bvel)*75;
+                            camera.LookAt(smoothFollow, bpos, Vector3.Up);
+                            break;
+                        case BulletState.Exploding:
+                            camera.LookAt(FollowBullet.ExplosionLocation);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     break;
 
                 case QuaternionCamera.Behavior.FollowT:
@@ -2177,6 +2197,12 @@ namespace tanks3d.Cameras
         {
             get { return camera.ZAxis; }
         }
+
+        /// <summary>
+        /// If the camera is in Bullet View mode (FollowActiveBullet), then this
+        /// refers to the bullet being followed.
+        /// </summary>
+        public Bullet FollowBullet { get; set; }
 
         #endregion
     }
