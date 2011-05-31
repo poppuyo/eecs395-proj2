@@ -34,8 +34,9 @@ namespace tanks3d
 
         public Terrain.Terrain terrain;
 
-        public Cameras.QuaternionCameraComponent worldCamera;
-        public Cameras.QuaternionCamera.Behavior previousBehavior;
+        public QuaternionCameraComponent worldCamera;
+        public QuaternionCamera.Behavior previousBehavior;
+        public PhysicsCamera bulletViewCamera;
 
         public PhysicsEngine physicsEngine;
         public TestPhysicsObject testPhysicsObject;
@@ -120,6 +121,8 @@ namespace tanks3d
             worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
+
+            bulletViewCamera = new PhysicsCamera(this);
 
             wireframeRasterizerState = new RasterizerState();
             wireframeRasterizerState.FillMode = FillMode.WireFrame;
@@ -370,8 +373,14 @@ namespace tanks3d
                             previousBehavior = this.worldCamera.CurrentBehavior;
 
                             // Switch to bullet view
-                            worldCamera.FollowBullet = bullet;
-                            worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;
+                            //
+                            //worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;
+                            bulletViewCamera.FollowBullet = bullet;
+                            Components.Add(bulletViewCamera);
+                            bulletViewCamera.Position = bullet.position;
+                            bulletViewCamera.Velocity = bullet.velocity;
+                            physicsEngine.AddPhysicsObject(bulletViewCamera);
+                            worldCamera = bulletViewCamera;
                         }
                     }
 
