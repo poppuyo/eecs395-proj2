@@ -21,6 +21,11 @@ namespace tanks3d.Weapons
         /// In the process of exploding (likely generating fire particles).
         /// </summary>
         Exploding,
+
+        /// <summary>
+        /// The explosion animation has finished.
+        /// </summary>
+        Dead
     }
 
     public class Bullet : DrawableGameComponent, IPhysicsObject
@@ -33,6 +38,7 @@ namespace tanks3d.Weapons
 
         private float explosionAge;
         private float explosionLifetime;  // How long the explosion state lasts.
+        private Vector3 explosionLocation;
 
         /// <summary>
         /// Age since the bullet has exploded. This field is only valid when the bullet
@@ -46,13 +52,28 @@ namespace tanks3d.Weapons
                 {
                     return explosionAge;
                 }
-                else
-                {
-                    throw new InvalidOperationException("The ExplosionAge field is only valid when the bullet state is BulletState.Exploding.");
-                }
+
+                throw new InvalidOperationException("The ExplosionAge field is only valid when the bullet state is BulletState.Exploding.");
             }
         }
-        
+
+        /// <summary>
+        /// Returns the location where the bullet exploded. This field is only valid when
+        /// the bullet state is BulletState.Exploding.
+        /// </summary>
+        public Vector3 ExplosionLocation
+        {
+            get
+            {
+                if (bulletState == BulletState.Exploding)
+                {
+                    return explosionLocation;
+                }
+
+                throw new InvalidOperationException("The ExplosionLocation field is only valid when the bullet state is BulletState.Exploding.");
+            }
+        }
+
 
         public BulletState bulletState;
 
@@ -127,14 +148,18 @@ namespace tanks3d.Weapons
                             if (this == game.bulletManager.ActiveBullet)
                             {
                                 //game.worldCamera.CurrentBehavior = game.previousBehavior;
-                                game.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+                                
                             }
                             explosionAge += elapsedTime;
                             if (explosionAge >= explosionLifetime)
                             {
                                 game.bulletManager.RemoveBullet(this);
+                                bulletState = BulletState.Dead;
                             }
 
+                            break;
+
+                        case BulletState.Dead:
                             break;
 
                         default:
@@ -163,6 +188,8 @@ namespace tanks3d.Weapons
                             break;
                         case BulletState.Exploding:
                             break;
+                        case BulletState.Dead:
+                            break;
                         default:
                             break;
                     }
@@ -185,6 +212,8 @@ namespace tanks3d.Weapons
                     break;
                 case BulletState.Exploding:
                     break;
+                case BulletState.Dead:
+                    break;
                 default:
                     break;
             }
@@ -198,6 +227,7 @@ namespace tanks3d.Weapons
 
                     bulletState = BulletState.Exploding;
                     explosionAge = 0.0f;
+                    explosionLocation = this.position;
 
                     Vector3 explosionVelocity = new Vector3(velocity.X, 0.0f, velocity.Z);
 
@@ -209,6 +239,8 @@ namespace tanks3d.Weapons
 
                     break;
                 case BulletState.Exploding:
+                    break;
+                case BulletState.Dead:
                     break;
                 default:
                     break;

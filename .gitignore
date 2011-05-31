@@ -4,3 +4,5 @@ tanks3d/*/obj/
 *.psess
 *.vsp
 *.suo
+*[Rr]e[Ss]harper.user
+_ReSharper.*/

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using tanks3d.Cameras;
 using tanks3d.Physics;
 using tanks3d.Weapons;
 using tanks3d.ParticleSystems;
@@ -365,9 +366,12 @@ namespace tanks3d
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.C))
                         {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
+                            Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
                             previousBehavior = this.worldCamera.CurrentBehavior;
-                            this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
+
+                            // Switch to bullet view
+                            worldCamera.FollowBullet = bullet;
+                            worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;
                         }
                     }
 
