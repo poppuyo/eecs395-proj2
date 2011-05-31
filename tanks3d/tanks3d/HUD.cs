@@ -83,14 +83,17 @@ namespace tanks3d
                 case GameState.Play:
                     string text;
 
-                    hudString = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
+                    /*hudString = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
                     text = "Camera Position: (" + hudString + ")\n";
                     spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
                         
                     Vector3 LookAtDirection = game.worldCamera.ViewDirection;
                     hudString = String.Format("{0:F2},{1:F2},{2:F2}", LookAtDirection.X, LookAtDirection.Y, LookAtDirection.Z);
                     text = "LookAt Direction: (" + hudString + ")\n";
-                    spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
+                    spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);*/
+
+                    hudString = "Current Player: " + "Player " + (game.currentPlayer + 1);
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(5, 5), Color.YellowGreen);
 
                     spriteBatch.Draw(heart, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 5), Color.White);
                     spriteBatch.Draw(healthBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 10, game.currentTank.health * 2, 12), Color.White);
