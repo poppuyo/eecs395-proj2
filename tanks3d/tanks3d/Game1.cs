@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using tanks3d.Cameras;
 using tanks3d.Physics;
 using tanks3d.Weapons;
 using tanks3d.ParticleSystems;
@@ -120,7 +121,7 @@ namespace tanks3d
             worldCamera.Position = new Vector3(0, -370, 160);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
-            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
+            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
@@ -330,9 +331,16 @@ namespace tanks3d
                 case GameState.Play:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
-                        if(currentKeyboardState.IsKeyUp(Keys.P))
+                        if (currentKeyboardState.IsKeyUp(Keys.P))
                             gameState = GameState.Pause;
                     }
+
+                    if (previousKeyboardState.IsKeyDown(Keys.H))
+                    {
+                        if (currentKeyboardState.IsKeyDown(Keys.H))
+                            gameState = GameState.Menu;
+                    }
+
                     // Changes Camera View
                     if (previousKeyboardState.IsKeyDown(Keys.Space))
                     {
@@ -370,9 +378,12 @@ namespace tanks3d
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.C))
                         {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
+                            Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
                             previousBehavior = this.worldCamera.CurrentBehavior;
-                            this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
+
+                            // Switch to bullet view
+                            worldCamera.FollowBullet = bullet;
+                            worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;
                         }
                     }
 

@@ -80,7 +80,7 @@ namespace tanks3d
                     hudString += "F (fire)\n";
                     hudString += "C (bullet view)\n";
                     hudString += "P (pause)\n";
-                    spriteBatch.DrawString(hudFont, hudString, new Vector2(75, 125), Color.LimeGreen);
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 50), Color.DarkBlue);
                     break;
                 case GameState.Play:
                     string text;
@@ -98,7 +98,7 @@ namespace tanks3d
                      
 
                     hudString = "Current Player: " + "Player " + (game.currentPlayer + 1);
-                    spriteBatch.DrawString(hudFont, hudString, new Vector2(5, 5), Color.YellowGreen);
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(5, 5), Color.DarkBlue);
 
                     spriteBatch.Draw(heart, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 5), Color.White);
                     spriteBatch.Draw(healthBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 10, game.currentTank.health * 2, 12), Color.White);
@@ -110,6 +110,9 @@ namespace tanks3d
                     //spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
                     spriteBatch.Draw(movement, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 57), Color.White);
                     spriteBatch.Draw(movementBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 60, smallMoves, 12), Color.White);
+
+                    hudString = "Press 'H' to access the help menu";
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(5, game.GraphicsDevice.Viewport.Height - 30), Color.DarkBlue);
 
 
                     if (hitTimer < 101)
@@ -123,7 +126,7 @@ namespace tanks3d
                 case GameState.Pause:
                     hudString = "Press 'P' to unpause, or 'Escape' to quit.\n";
                     spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
-                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkRed);
+                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
                     break;
                 }
 
