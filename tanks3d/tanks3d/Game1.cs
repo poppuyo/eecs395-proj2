@@ -397,8 +397,8 @@ namespace tanks3d
 
                     if (previousKeyboardState.IsKeyDown(Keys.H))
                     {
-                        if (currentKeyboardState.IsKeyDown(Keys.H))
-                            gameState = GameState.Menu;
+                        if (currentKeyboardState.IsKeyUp(Keys.H))
+                            gameState = GameState.Pause;
                     }
 
                     // Fires bullets
@@ -446,6 +446,29 @@ namespace tanks3d
                             else
                             {
                                 currentTank.currentPlayerState = PlayerState.Move;
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
+                            }
+                        }
+                    }
+
+                    // CannonView
+                    if (previousKeyboardState.IsKeyDown(Keys.C))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.C))
+                        {
+                            if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.CannonView)
+                            {
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.CannonView;
+
+                                if (currentTank.currentPlayerState == PlayerState.Move)
+                                {
+                                    currentTank.currentPlayerState = PlayerState.Aim;
+                                    currentTank.ChangeToAim();
+                                }
+                            }
+                            else
+                            {
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
                             }
                         }
                     }
@@ -461,6 +484,11 @@ namespace tanks3d
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.P))
+                            gameState = GameState.Play;
+                    }
+                    if (previousKeyboardState.IsKeyDown(Keys.H))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.H))
                             gameState = GameState.Play;
                     }
                     break;
