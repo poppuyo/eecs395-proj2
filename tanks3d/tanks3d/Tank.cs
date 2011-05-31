@@ -10,6 +10,7 @@
 #region Using Statements
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
@@ -135,7 +136,6 @@ namespace tank3d
 
         #endregion
 
-
         #region Fields
 
         private Game1 game;
@@ -170,8 +170,10 @@ namespace tank3d
         Matrix turretTransform;
         Matrix canonTransform;
 
-        #endregion
+        SoundEffect moving;
+        SoundEffectInstance movingInstance;
 
+        #endregion
 
         #region Initialization
 
@@ -192,6 +194,10 @@ namespace tank3d
         {
             model = content.Load<Model>("Models//tank");
 
+            moving = content.Load<SoundEffect>("Audio\\Humvee");
+            movingInstance = moving.CreateInstance();
+            movingInstance.IsLooped = true;
+           
             // As discussed in the Simple Animation Sample, we'll look up the bones
             // that control the wheels.
             leftBackWheelBone = model.Bones["l_back_wheel_geo"];
@@ -213,6 +219,7 @@ namespace tank3d
         }
 
         #endregion
+
 
         #region Handle input and draw
 
@@ -273,6 +280,7 @@ namespace tank3d
                 movement.Z = 1;
                 game.currentTank.moves++;
             }
+
             if (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
                 movement.Z = -1;

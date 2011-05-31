@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using tanks3d.ParticleSystems;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace tanks3d.Weapons
 {
@@ -20,6 +24,8 @@ namespace tanks3d.Weapons
         ParticleSystem explosionParticles;
         ParticleSystem explosionSmokeParticles;
         ParticleSystem projectileTrailParticles;
+
+        SoundEffect explosionSFX;
 
         public Bullet ActiveBullet;
 
@@ -44,6 +50,8 @@ namespace tanks3d.Weapons
             game.Components.Add(explosionParticles);
             game.Components.Add(explosionSmokeParticles);
             game.Components.Add(projectileTrailParticles);
+
+            explosionSFX = game.Content.Load<SoundEffect>("Audio\\Barrel Exploding");
         }
 
         /*
@@ -60,7 +68,8 @@ namespace tanks3d.Weapons
                                            explosionSmokeParticles,
                                            projectileTrailParticles,
                                            origin,
-                                           initialVelocity);
+                                           initialVelocity,
+                                           explosionSFX);
             bullets.Add(bullet);
             game.Components.Add(bullet);
 

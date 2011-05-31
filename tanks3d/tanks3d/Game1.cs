@@ -32,6 +32,8 @@ namespace tanks3d
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        SoundEffect firing;
+
         public Terrain.Terrain terrain;
 
         public Cameras.QuaternionCameraComponent worldCamera;
@@ -192,6 +194,8 @@ namespace tanks3d
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
             //MediaPlayer.Play(mySong);
+
+            firing = Content.Load<SoundEffect>("Audio\\Tank Firing");
         }
 
         /// <summary>
@@ -426,6 +430,7 @@ namespace tanks3d
 
                         if (currentKeyboardState.IsKeyUp(Keys.F))
                         {
+                            firing.Play();
                             weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
                             switchCurrentTank();
@@ -527,10 +532,12 @@ namespace tanks3d
                 currentPlayer = 0;
                 currentTank = tanks[currentPlayer];
             }
-            if (!currentTank.IsAlive)
+
+            if (!currentTank.IsAlive && numPlayersAlive > 0)
             {
                 switchCurrentTank();
             }
+
             currentTank.moves = 0;
         }
 

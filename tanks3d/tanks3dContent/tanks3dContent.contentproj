@@ -127,13 +127,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\SHOTGUN_CART_FBX.fbx">
-      <Name>SHOTGUN_CART_FBX</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\golemtank.FBX">
       <Name>golemtank</Name>
       <Importer>FbxImporter</Importer>
@@ -280,6 +273,23 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_ColorKeyColor>255, 255, 255, 255</ProcessorParameters_ColorKeyColor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\Barrel Exploding.wav">
+      <Name>Barrel Exploding</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\Humvee.wav">
+      <Name>Humvee</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\Tank Firing.wav">
+      <Name>Tank Firing</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
