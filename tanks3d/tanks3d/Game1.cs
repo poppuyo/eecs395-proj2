@@ -354,27 +354,19 @@ namespace tanks3d
                     }
 
                     // Fires bullets
-                    if (previousKeyboardState.IsKeyDown(Keys.F))
+                    if (previousKeyboardState.IsKeyDown(Keys.Space))
                     {
                         if (VelocityCount < VelocityCountMax)
                         {
                             VelocityCount += 1;
                         }
 
-                        if (currentKeyboardState.IsKeyUp(Keys.F))
+                        if (currentKeyboardState.IsKeyUp(Keys.Space))
                         {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
+                            Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
                             switchCurrentTank();
                             //Shake();
-                        }
-                    }
-                    if (previousKeyboardState.IsKeyDown(Keys.C))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.C))
-                        {
-                            Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
-                            previousBehavior = this.worldCamera.CurrentBehavior;
 
                             // Switch to bullet view
                             worldCamera.FollowBullet = bullet;
