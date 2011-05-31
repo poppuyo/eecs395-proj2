@@ -70,8 +70,9 @@ namespace tanks3d
                 case GameState.Menu:
                     string hudString;
                     hudString = "Welcome to Tanks 3D!\n";
-                    hudString += "By: Sergey, John, Jason, Josiah\n";
-                    hudString += "For Ian's EECS395 Class!\n\n";
+                    hudString += "By: Sergey, John, Jason, Josiah\n\n";
+
+                    hudString += "Enter the number of players (2-9) to start!\n\n";
 
                     hudString += "Controls:\n";
                     hudString += "--== Keys/Buttons ==--\n";

@@ -186,9 +186,6 @@ namespace tanks3d
                 tanks[i].FixGravity(terrain.heightMapInfo);
             }
 
-            tanks[0].position = Vector3.Zero;
-                
-
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
