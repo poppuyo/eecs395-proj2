@@ -74,19 +74,13 @@ namespace tanks3d
                     hudString = "Welcome to Tanks 3D!\n";
                     hudString += "By: Sergey, John, Jason, Josiah\n\n";
 
-                    hudString += "Controls:\n";
-                    hudString += "--== Keys/Buttons ==--\n";
-                    hudString += "Mouse (aim the turret when in aiming mode)\n";
-                    hudString += "Mouse scroll (zoom the camera in and out)\n";
-                    hudString += "WASD (movement)\n";
-
-                    hudString += "T (aim)\n";
-                    hudString += "C (turret view)\n";
-                    hudString += "Spacebar (fire)\n";
-                    hudString += "P (pause)\n\n";
-                    hudString += "To Begin: Press 2~0, for the number of players (0 = 10)";
-
                     spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 5), Color.DarkBlue);
+
+                    ShowControls();
+
+                    hudString = "To Begin: Press 2~0, for the number of players (0 = 10)";
+
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 400f), Color.DarkBlue);
                     break;
                 case GameState.Play:
                     hudString = "Current Player: " + "Player " + (game.currentPlayer + 1);
@@ -122,27 +116,8 @@ namespace tanks3d
                     hudString = "Press 'P' to unpause, or 'Escape' to quit.\n";
                     spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4), 5f), Color.DarkBlue);
 
-                    hudString = "-=Keys=-\n";
-                    hudString += "WASD\n";
-                    hudString += "T\n";
-                    hudString += "Space\n";
-                    hudString += "P\n";
+                    ShowControls();
 
-                    hudString += "\n";
-                    hudString += "MouseWheel";
-
-                    //spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),(game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
-                    spriteBatch.DrawString(pauseFont, hudString, new Vector2(25f, 45f), Color.DarkBlue);
-
-                    hudString = "-=Action=-\n";
-                    hudString += "(movement)\n";
-                    hudString += "(aim)\n";
-                    hudString += "(fire)\n";
-                    hudString += "(unpause)\n";
-
-                    hudString += "\n";
-                    hudString += "(zoom, where applicable)";
-                    spriteBatch.DrawString(pauseFont, hudString, new Vector2(200f, 45f), Color.DarkBlue);
                     break;
                 case GameState.End:
                     for (int i = 0; i < game.numPlayers; i++)
@@ -159,6 +134,52 @@ namespace tanks3d
 
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void ShowControls()
+        {
+            string hudString;
+            hudString = "-=Keys=-\n";
+            hudString += "WASD\n";
+            hudString += "T\n";
+            hudString += "C\n";
+            hudString += "Space\n";
+            hudString += "P\n";
+
+            hudString += "\n";
+            hudString += "MouseWheel";
+
+            //spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),(game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
+            spriteBatch.DrawString(pauseFont, hudString, new Vector2(25f, 100f), Color.DarkBlue);
+
+            hudString = "-=Action=-\n";
+            hudString += "(movement)\n";
+            hudString += "(aim)\n";
+            hudString += "(turret view)\n";
+            hudString += "(press and hold to fire)\n";
+            hudString += "(unpause)\n";
+
+            hudString += "\n";
+            hudString += "(zoom, where applicable)";
+            spriteBatch.DrawString(pauseFont, hudString, new Vector2(200f, 100f), Color.DarkBlue);
+        }
+
+        private static string GetControlsString()
+        {
+            string hudString = "";
+
+            hudString += "Controls:\n";
+            hudString += "--== Keys/Buttons ==--\n";
+            hudString += "Mouse (aim the turret when in aiming mode)\n";
+            hudString += "Mouse scroll (zoom the camera in and out)\n";
+            hudString += "WASD (movement)\n";
+
+            hudString += "T (aim)\n";
+            hudString += "C (turret view)\n";
+            hudString += "Spacebar (fire)\n";
+            hudString += "P (pause)\n\n";
+
+            return hudString;
         }
 
         /// <summary>
