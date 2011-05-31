@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using tank3d;
 using tanks3d.Weapons;
 
 namespace tanks3d.Cameras
@@ -222,7 +223,8 @@ namespace tanks3d.Cameras
             FollowB,
             FollowT,
             LookAtT,
-            FollowActiveBullet
+            FollowActiveBullet,
+            CannonView
         };
 
         public const float DEFAULT_FOVX = 90.0f;
@@ -1951,6 +1953,13 @@ namespace tanks3d.Cameras
                     break;
 
                 case QuaternionCamera.Behavior.LookAtT:
+                    break;
+
+                case QuaternionCamera.Behavior.CannonView:
+                    Tank tank = g.currentTank;
+                    Vector3 eye = tank.TurretEndPosition - 0.05f * Tank.TurretLength*tank.GetTurretDirection();
+                    Vector3 target = tank.TurretEndPosition;
+                    camera.LookAt(eye, target, Vector3.Up);
                     break;
 
                 default:
