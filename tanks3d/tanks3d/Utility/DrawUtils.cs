@@ -311,6 +311,10 @@ namespace tanks3d
         {
             //spriteBatch.Begin();
 
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
+
             while (primitives.Count > 0)
             {
                 primitives[0].Draw();

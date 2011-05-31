@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Forms;
 
 namespace tanks3d
 {
@@ -12,6 +13,7 @@ namespace tanks3d
         {
 #if INSIDE_WINFORM
             WinFormContainer form = new WinFormContainer();
+            Application.EnableVisualStyles();
             form.Show();
             Game1 game = new Game1(form);
             form.game = game;

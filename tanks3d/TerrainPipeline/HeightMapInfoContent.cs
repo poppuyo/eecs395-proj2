@@ -38,6 +38,18 @@ namespace TerrainPipeline
         float[,] height;
 
         /// <summary>
+        /// This property is a 2D array of Vector3s, and tells us the normal that each
+        /// position in the heightmap is.
+        /// </summary>
+        public Vector3[,] Normals
+        {
+            get { return normals; }
+            set { normals = value; }
+        }
+        private Vector3[,] normals;
+
+
+        /// <summary>
         /// TerrainScale is the distance between each entry in the Height property.
         /// For example, if TerrainScale is 30, Height[0,0] and Height[1,0] are 30
         /// units apart.
@@ -53,21 +65,49 @@ namespace TerrainPipeline
         /// bitmap. Each pixel in the bitmap corresponds to one entry in the height
         /// array.
         /// </summary>
-        public HeightMapInfoContent(PixelBitmapContent<float> bitmap,
-            float terrainScale, float terrainBumpiness)
+        public HeightMapInfoContent(MeshContent terrainMesh, float terrainScale,
+            int terrainWidth, int terrainLength)
         {
+            // validate the parameters
+            if (terrainMesh == null)
+            {
+                throw new ArgumentNullException("terrainMesh");
+            }
+            if (terrainWidth <= 0)
+            {
+                throw new ArgumentOutOfRangeException("terrainWidth");
+            }
+            if (terrainLength <= 0)
+            {
+                throw new ArgumentOutOfRangeException("terrainLength");
+            }
+
             this.terrainScale = terrainScale;
 
-            height = new float[bitmap.Width, bitmap.Height];
-            for (int y = 0; y < bitmap.Height; y++)
+            // create new arrays of the requested size.
+            height = new float[terrainWidth, terrainLength];
+            normals = new Vector3[terrainWidth, terrainLength];
+
+            // to fill those arrays, we'll look at the position and normal data
+            // contained in the terrainMesh.
+            GeometryContent geometry = terrainMesh.Geometry[0];
+            // we'll go through each vertex....
+            for (int i = 0; i < geometry.Vertices.VertexCount; i++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    // the pixels will vary from 0 (black) to 1 (white).
-                    // by subtracting 1, our heights vary from -1 to 0, which we then
-                    // multiply by the "bumpiness" to get our final height.
-                    height[x, y] = (bitmap.GetPixel(x, y) - 1) * terrainBumpiness;
-                }
+                // ... and look up its position and normal.
+                Vector3 position = geometry.Vertices.Positions[i];
+                Vector3 normal = (Vector3)geometry.Vertices.Channels
+                    [VertexChannelNames.Normal()][i];
+
+                // from the position's X and Z value, we can tell what X and Y
+                // coordinate of the arrays to put the height and normal into.
+                int arrayX = (int)
+                    ((position.X / terrainScale) + (terrainWidth - 1) / 2.0f);
+                int arrayY = (int)
+                    ((position.Z / terrainScale) + (terrainLength - 1) / 2.0f);
+
+                height[arrayX, arrayY] = position.Y;
+                normals[arrayX, arrayY] = normal;
             }
         }
     }
@@ -91,6 +131,10 @@ namespace TerrainPipeline
             {
                 output.Write(height);
             }
+            foreach (Vector3 normal in value.Normals)
+            {
+                output.Write(normal);
+            }
         }
 
         /// <summary>
@@ -99,7 +143,7 @@ namespace TerrainPipeline
         /// </summary>
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
-            return "tanks3d.HeightMapInfo, " +
+            return "tanks3d.Terrain.HeightMapInfo, " +
                 "tanks3d, Version=1.0.0.0, Culture=neutral";
         }
 
@@ -110,7 +154,7 @@ namespace TerrainPipeline
         /// </summary>
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "tanks3d.HeightMapInfoReader, " +
+            return "tanks3d.Terrain.HeightMapInfoReader, " +
                 "tanks3d, Version=1.0.0.0, Culture=neutral";
         }
     }

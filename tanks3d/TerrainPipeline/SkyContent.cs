@@ -22,7 +22,7 @@ namespace TerrainPipeline
     /// the SkyProcessor, then written out to a compiled XNB file.
     /// At runtime, the data is loaded into the runtime Sky class.
     /// </summary>
-    [ContentSerializerRuntimeType("tanks3d.Sky, tanks3d")]
+    [ContentSerializerRuntimeType("tanks3d.Terrain.Sky, tanks3d")]
     public class SkyContent
     {
         public ModelContent Model;
