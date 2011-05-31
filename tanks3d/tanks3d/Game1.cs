@@ -400,8 +400,8 @@ namespace tanks3d
 
                     if (previousKeyboardState.IsKeyDown(Keys.H))
                     {
-                        if (currentKeyboardState.IsKeyDown(Keys.H))
-                            gameState = GameState.Menu;
+                        if (currentKeyboardState.IsKeyUp(Keys.H))
+                            gameState = GameState.Pause;
                     }
 
                     // Fires bullets
@@ -464,6 +464,11 @@ namespace tanks3d
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.P))
+                            gameState = GameState.Play;
+                    }
+                    if (previousKeyboardState.IsKeyDown(Keys.H))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.H))
                             gameState = GameState.Play;
                     }
                     break;
