@@ -69,7 +69,7 @@ namespace tanks3d
 
         public KeyboardState previousKeyboardState;
 
-        public int numPlayers = 4, currentPlayer = 0, moves = 0;
+        public int numPlayers = 4, currentPlayer = 0;
 
         private int timeOut = 0;
 
@@ -451,7 +451,7 @@ namespace tanks3d
                 currentPlayer = 0;
                 currentTank = tanks[currentPlayer];
             }
-            moves = 0;
+            currentTank.moves = 0;
         }
     }
 }

@@ -85,7 +85,7 @@ namespace tanks3d
                 case GameState.Play:
                     string text;
 
-                    hudString = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
+                    /*hudString = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
                     text = "Camera Position: (" + hudString + ")\n";
                     spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
                         
@@ -94,17 +94,20 @@ namespace tanks3d
                     text = "LookAt Direction: (" + hudString + ")\n";
                     spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
 
+                    hudString = "Current Player: " + "Player " + (game.currentPlayer + 1);
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(5, 5), Color.YellowGreen);
+
                     spriteBatch.Draw(heart, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 5), Color.White);
                     spriteBatch.Draw(healthBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 10, game.currentTank.health * 2, 12), Color.White);
                     spriteBatch.Draw(power, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 30), Color.White);
                     spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 35, game.currentTank.power * 2, 12), Color.White);
-                    
+
                     int smallMoves = (game.currentTank.moveLimit - game.moves) / 100;
                     //text = "Moves remaining: " + smallMoves;
                     //spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
                     spriteBatch.Draw(movement, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 57), Color.White);
                     spriteBatch.Draw(movementBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 60, (game.currentTank.moveLimit - game.moves) * 2, 12), Color.White);
-                    
+
 
                     if (hitTimer < 101)
                     {

@@ -44,7 +44,8 @@ namespace tank3d
 
         const float TankSize = 75f;
 
-        public int moveLimit = 1099;
+        public int moveLimit = 500;
+        public int moves = 0;
 
         #endregion
 
@@ -243,19 +244,17 @@ namespace tank3d
             if (currentKeyboardState.IsKeyDown(Keys.A) || currentGamePadState.DPad.Left == ButtonState.Pressed)
             {
                 turnAmount += 1;
-                game.moves++;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.D) || currentGamePadState.DPad.Right == ButtonState.Pressed)
             {
                 turnAmount -= 1;
-                game.moves++;
             }
 
             // clamp the turn amount between -1 and 1, and then use the finished
             // value to turn the tank.
             turnAmount = MathHelper.Clamp(turnAmount, -1, 1);
-            if (game.moves < moveLimit)
+            if (game.currentTank.moves < moveLimit)
                 facingDirection += turnAmount * TankTurnSpeed;
 
 
@@ -268,12 +267,12 @@ namespace tank3d
             if (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed)
             {
                 movement.Z = 1;
-                game.moves++;
+                game.currentTank.moves++;
             }
             if (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
                 movement.Z = -1;
-                game.moves++;
+                game.currentTank.moves++;
             }
 
             // Next, we'll create a rotation matrix from the direction the tank is 
@@ -282,7 +281,7 @@ namespace tank3d
             Vector3 velocity = Vector3.Transform(movement, orientation);
             velocity *= TankVelocity;
 
-            if (game.moves > moveLimit)
+            if (game.currentTank.moves > moveLimit)
                 velocity = Vector3.Zero;
 
             // Now we know how much the user wants to move. We'll construct a temporary
