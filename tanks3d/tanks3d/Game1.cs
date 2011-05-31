@@ -118,7 +118,7 @@ namespace tanks3d
             worldCamera.Position = new Vector3(0, -370, 160);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
-            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.Spectator;
+            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
@@ -326,9 +326,16 @@ namespace tanks3d
                 case GameState.Play:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
-                        if(currentKeyboardState.IsKeyUp(Keys.P))
+                        if (currentKeyboardState.IsKeyUp(Keys.P))
                             gameState = GameState.Pause;
                     }
+
+                    if (previousKeyboardState.IsKeyDown(Keys.H))
+                    {
+                        if (currentKeyboardState.IsKeyDown(Keys.H))
+                            gameState = GameState.Menu;
+                    }
+
                     // Changes Camera View
                     if (previousKeyboardState.IsKeyDown(Keys.Space))
                     {
