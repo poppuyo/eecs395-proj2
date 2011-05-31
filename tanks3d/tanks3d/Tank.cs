@@ -21,7 +21,7 @@ using tanks3d.Terrain;
 
 namespace tank3d
 {
-    public class Tank
+    public class Tank : DrawableGameComponent
     {
         #region Constants
 
@@ -177,7 +177,10 @@ namespace tank3d
 
         #region Initialization
 
+
+
         public Tank(Game1 game, Vector3 pos)
+            : base(game)
         {
             position = pos;
             this.game = game;
