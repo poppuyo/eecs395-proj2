@@ -100,7 +100,7 @@ namespace tanks3d
                     spriteBatch.Draw(power, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 30), Color.White);
                     spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 35, game.currentTank.power * 2, 12), Color.White);
                     
-                    int smallMoves = (game.currentTank.moveLimit - game.moves) / 100;
+                    int smallMoves = ((game.currentTank.moveLimit - game.currentTank.moves) + 99) / 100;
                     text = "Moves remaining: " + smallMoves;
                     spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
 
