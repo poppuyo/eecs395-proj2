@@ -120,6 +120,11 @@ namespace tanks3d
                         (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
                     break;
                 case GameState.End:
+                    for (int i = 0; i < game.numPlayers; i++)
+                    {
+                        if (game.tanks[i].IsAlive)
+                            game.currentPlayer = i;
+                    }
                     hudString = "Player " + (game.currentPlayer + 1) + " has won the game!\n";
                     hudString += "Press 'Escape' to quit the game.\n";
                     spriteBatch.DrawString(hudFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),

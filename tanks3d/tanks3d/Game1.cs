@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using tanks3d.Cameras;
 using tanks3d.Physics;
 using tanks3d.Weapons;
 using tanks3d.ParticleSystems;
@@ -30,6 +31,8 @@ namespace tanks3d
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        SoundEffect firing;
 
         public Terrain.Terrain terrain;
 
@@ -70,7 +73,7 @@ namespace tanks3d
         public KeyboardState previousKeyboardState;
 
         public int numPlayersAlive;
-        public int numPlayers = 4, currentPlayer = 0;
+        public int numPlayers = 10, currentPlayer = 0;
         
         private int timeOut = 0;
 
@@ -191,6 +194,8 @@ namespace tanks3d
             
             Song mySong = Content.Load<Song>("Audio\\Bulls");
             //MediaPlayer.Play(mySong);
+
+            firing = Content.Load<SoundEffect>("Audio\\Tank Firing");
         }
 
         /// <summary>
@@ -326,13 +331,72 @@ namespace tanks3d
             switch (gameState)
             {
                 case GameState.Menu:
-                    if (previousKeyboardState.IsKeyDown(Keys.H))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.H))
-                            gameState = GameState.Play;
-                    }
-                    break;
 
+                    Keys[] pressed_Key = Keyboard.GetState().GetPressedKeys();
+
+                    for(int i = 0; i < pressed_Key.Length; i++)
+                    {
+                        switch (pressed_Key[i])
+                        {
+                            case Keys.D2:
+                                numPlayers = 2;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D3:
+                                numPlayers = 3;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D4:
+                                numPlayers = 4;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D5:
+                                numPlayers = 5;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D6:
+                                numPlayers = 6;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D7:
+                                numPlayers = 7;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D8:
+                                numPlayers = 8;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D9:
+                                numPlayers = 9;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.D0:
+                                numPlayers = 10;
+                                gameState = GameState.Play;
+                            break;
+
+                            default:
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < numPlayers; i++)
+                    {
+                        if (gameState == GameState.Play) 
+                        Components.Remove(tanks[9-i]);
+                    }
+
+                    numPlayersAlive = numPlayers;
+
+                    break;
                 case GameState.Play:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
@@ -346,45 +410,25 @@ namespace tanks3d
                             gameState = GameState.Menu;
                     }
 
-                    // Changes Camera View
-                    if (previousKeyboardState.IsKeyDown(Keys.Space))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.Space))
-                        {
-                            if (worldCamera.CurrentBehavior == Cameras.QuaternionCamera.Behavior.FirstPerson)
-                            {
-                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
-                            }
-                            else
-                            {
-                                worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FirstPerson;
-                            }
-                        }
-                    }
-
                     // Fires bullets
-                    if (previousKeyboardState.IsKeyDown(Keys.F))
+                    if (previousKeyboardState.IsKeyDown(Keys.Space))
                     {
                         if (VelocityCount < VelocityCountMax)
                         {
                             VelocityCount += 1;
                         }
 
-                        if (currentKeyboardState.IsKeyUp(Keys.F))
+                        if (currentKeyboardState.IsKeyUp(Keys.Space))
                         {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
+                            firing.Play();
+                            Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
                             switchCurrentTank();
                             //Shake();
-                        }
-                    }
-                    if (previousKeyboardState.IsKeyDown(Keys.C))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.C))
-                        {
-                            weaponManager.Weapons[WeaponTypes.Weapon1].Fire(200.0f);
-                            previousBehavior = this.worldCamera.CurrentBehavior;
-                            this.worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowActiveBullet;
+
+                            // Switch to bullet view
+                            worldCamera.FollowBullet = bullet;
+                            worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;
                         }
                     }
 
@@ -470,10 +514,12 @@ namespace tanks3d
                 currentPlayer = 0;
                 currentTank = tanks[currentPlayer];
             }
-            if (!currentTank.IsAlive)
+
+            if (!currentTank.IsAlive && numPlayersAlive > 0)
             {
                 switchCurrentTank();
             }
+
             currentTank.moves = 0;
         }
     }

@@ -10,6 +10,7 @@
 #region Using Statements
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
@@ -20,7 +21,7 @@ using tanks3d.Terrain;
 
 namespace tank3d
 {
-    public class Tank
+    public class Tank : DrawableGameComponent
     {
         #region Constants
 
@@ -44,7 +45,7 @@ namespace tank3d
 
         const float TankSize = 75f;
 
-        public int moveLimit = 5000;
+        public int moveLimit = 500;
         public int moves = 0;
         public int thisTankNumber;
 
@@ -119,10 +120,18 @@ namespace tank3d
                 Matrix m0 = Matrix.CreateTranslation(position);
                 Matrix m2 = Matrix.CreateScale(TankSize);
 
-                bBoxMinPoint = new Vector3(-0.5f, -0.5f, -0.5f);
-                bBoxMinPoint = Vector3.Transform(bBoxMinPoint, m2 * m0);
-                bBoxMaxPoint = new Vector3(0.5f, 0.5f, 0.5f);
-                bBoxMaxPoint = Vector3.Transform(bBoxMaxPoint, m2 * m0);
+                if (IsAlive)
+                {
+                    bBoxMinPoint = new Vector3(-0.5f, -0.5f, -0.5f);
+                    bBoxMinPoint = Vector3.Transform(bBoxMinPoint, m2 * m0);
+                    bBoxMaxPoint = new Vector3(0.5f, 0.5f, 0.5f);
+                    bBoxMaxPoint = Vector3.Transform(bBoxMaxPoint, m2 * m0);
+                }
+                else
+                {
+                    bBoxMinPoint = new Vector3(-1000f, -1000f, -1000f);
+                    bBoxMaxPoint = new Vector3(-1000f, -1000f, -1000f);
+                }
 
                 return new BoundingBox(bBoxMinPoint, bBoxMaxPoint);
             }
@@ -135,7 +144,6 @@ namespace tank3d
         /// </summary>
 
         #endregion
-
 
         #region Fields
 
@@ -171,12 +179,15 @@ namespace tank3d
         Matrix turretTransform;
         Matrix canonTransform;
 
-        #endregion
+        SoundEffect moving;
+        SoundEffectInstance movingInstance;
 
+        #endregion
 
         #region Initialization
 
         public Tank(Game1 game, Vector3 pos, int num)
+            : base(game)
         {
             position = pos;
             this.game = game;
@@ -192,6 +203,10 @@ namespace tank3d
         {
             model = content.Load<Model>("Models//tank");
 
+            moving = content.Load<SoundEffect>("Audio\\Humvee");
+            movingInstance = moving.CreateInstance();
+            movingInstance.IsLooped = true;
+           
             // As discussed in the Simple Animation Sample, we'll look up the bones
             // that control the wheels.
             leftBackWheelBone = model.Bones["l_back_wheel_geo"];
@@ -213,6 +228,7 @@ namespace tank3d
         }
 
         #endregion
+
 
         #region Handle input and draw
 
@@ -270,12 +286,13 @@ namespace tank3d
 
             if (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed)
             {
-                movement.Z = 5;
+                movement.Z = 1;
                 game.currentTank.moves++;
             }
+
             if (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed)
             {
-                movement.Z = -5;
+                movement.Z = -1;
                 game.currentTank.moves++;
             }
 
@@ -435,7 +452,8 @@ namespace tank3d
             game.mainHUD.lastPlayerEliminated = thisTankNumber;
             game.numPlayersAlive -= 1;
             game.mainHUD.playerTimer = 0;
-            
+            Game.Components.Remove(this);
+
             if (game.numPlayersAlive == 1)
                 game.gameState = GameState.End;
         }
