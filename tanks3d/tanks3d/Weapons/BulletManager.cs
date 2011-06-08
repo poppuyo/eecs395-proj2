@@ -21,9 +21,9 @@ namespace tanks3d.Weapons
         /// </summary>
         List<Bullet> bullets = new List<Bullet>();
 
-        ParticleSystem explosionParticles;
-        ParticleSystem explosionSmokeParticles;
-        ParticleSystem projectileTrailParticles;
+        public ParticleSystem explosionParticles;
+        public ParticleSystem explosionSmokeParticles;
+        public ParticleSystem projectileTrailParticles;
 
         SoundEffect explosionSFX;
 

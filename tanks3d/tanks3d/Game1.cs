@@ -233,6 +233,11 @@ namespace tanks3d
                     HandleInput(gameTime);
                     currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
 
+                    foreach (Tank tank in tanks)
+                    {
+                        tank.GenerateSmokeAndFire(elapsedSeconds);
+                    }
+
                     if (enteringBulletView == true)
                     {
                         bulletViewTimer -= elapsedSeconds;
