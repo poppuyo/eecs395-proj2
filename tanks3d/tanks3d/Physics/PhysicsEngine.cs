@@ -86,7 +86,9 @@ namespace tanks3d.Physics
 
                         State finalState = integrator.integrate(initialState, t, elapsedSeconds, gravity);
 
-                        physicsObject.UpdatePosition(finalState.Position);
+                        Vector3 finalPosition = physicsObject.DoBoundsCheck() ? BoundsCheck(finalState.Position) : finalState.Position;
+
+                        physicsObject.UpdatePosition(finalPosition);
                         physicsObject.UpdateVelocity(finalState.Velocity);
 
                         DoCollisionDetectionWithTerrain(physicsObject);
@@ -95,6 +97,33 @@ namespace tanks3d.Physics
                     base.Update(gameTime);
                     break;
             }
+        }
+
+        private Vector3 BoundsCheck(Vector3 position)
+        {
+            Vector3 boundedPosition = position;
+
+            if (position.X <= game.terrain.heightMapInfo.MinX)
+            {
+                boundedPosition.X = game.terrain.heightMapInfo.MinX + 0.1f;
+            }
+
+            if (position.Z <= game.terrain.heightMapInfo.MinZ)
+            {
+                boundedPosition.Z = game.terrain.heightMapInfo.MinZ + 0.1f;
+            }
+
+            if (position.X >= game.terrain.heightMapInfo.MaxX)
+            {
+                boundedPosition.X = game.terrain.heightMapInfo.MaxX - 0.1f;
+            }
+
+            if (position.Z >= game.terrain.heightMapInfo.MaxZ)
+            {
+                boundedPosition.Z = game.terrain.heightMapInfo.MaxZ - 0.1f;
+            }
+
+            return boundedPosition;
         }
 
         private void DoCollisionDetectionWithTerrain(IPhysicsObject physicsObject)

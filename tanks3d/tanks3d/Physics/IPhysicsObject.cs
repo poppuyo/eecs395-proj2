@@ -25,5 +25,11 @@ namespace tanks3d.Physics
         /// The physics engine will call this method when the object collides with the terrain.
         /// </summary>
         void HandleCollisionWithTerrain();
+
+        /// <summary>
+        /// Make this return true if the physics engine ought to do bounds checking on this object (e.g.,
+        /// don't let it go outside the height map).
+        /// </summary>
+        bool DoBoundsCheck();
     }
 }

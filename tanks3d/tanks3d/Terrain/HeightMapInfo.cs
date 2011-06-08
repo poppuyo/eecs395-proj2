@@ -79,6 +79,11 @@ namespace tanks3d.Terrain
             heightmapPosition.Z = -(heights.GetLength(1) - 1) / 2 * terrainScale;
         }
 
+        public float MinX { get { return heightmapPosition.X;  } }
+        public float MinZ { get { return heightmapPosition.Z; } }
+        public float MaxX { get { return heightmapPosition.X + heightmapWidth; } }
+        public float MaxZ { get { return heightmapPosition.Z + heightmapHeight; } }
+
 
         // This function takes in a position, and tells whether or not the position is 
         // on the heightmap.

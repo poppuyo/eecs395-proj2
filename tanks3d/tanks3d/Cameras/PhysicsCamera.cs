@@ -45,6 +45,11 @@ namespace tanks3d.Cameras
             // ignore
         }
 
+        public bool DoBoundsCheck()
+        {
+            return true;
+        }
+
         public Tank deadTank;
         public bool shake = false;
 

@@ -591,5 +591,10 @@ namespace tank3d
         {
             return;
         }
+
+        public bool DoBoundsCheck()
+        {
+            return true;
+        }
     }
 }

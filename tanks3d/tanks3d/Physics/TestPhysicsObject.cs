@@ -61,5 +61,10 @@ namespace tanks3d.Physics
         {
             return;
         }
+
+        public bool DoBoundsCheck()
+        {
+            return false;
+        }
     }
 }

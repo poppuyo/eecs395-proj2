@@ -300,5 +300,10 @@ namespace tanks3d.Weapons
         {
             return new BoundingBox(position - new Vector3(-5, -5, -5), position + new Vector3(5, 5, 5));
         }
+
+        public bool DoBoundsCheck()
+        {
+            return false;    // We handle it ourselves.
+        }
     }
 }
