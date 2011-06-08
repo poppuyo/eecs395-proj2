@@ -499,14 +499,12 @@ namespace tank3d
             game.terrain.heightMapInfo.GetHeightAndNormal(position, out height, out normal);
             velocity = 20.0f*normal;
             playerColor = new Vector3(-2, -2, -2);
-
-            game.physicsEngine.AddPhysicsObject(this);
+            game.Shake();
         }
 
         public void CompleteDeath()
         {
             game.bulletViewCamera.deadTank = null;
-            game.physicsEngine.RemovePhysicsObject(this);
             Game.Components.Remove(this);
             game.ExitBulletView();
 

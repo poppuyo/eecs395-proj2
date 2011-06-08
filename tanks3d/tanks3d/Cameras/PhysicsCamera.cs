@@ -46,6 +46,7 @@ namespace tanks3d.Cameras
         }
 
         public Tank deadTank;
+        public bool shake = false;
 
         public override void Update(GameTime gameTime)
         {
@@ -73,6 +74,7 @@ namespace tanks3d.Cameras
                     if (deadTank != null)
                     {
                         LookAt(PositionAboveTerrain, deadTank.position, Vector3.Up);
+                        if (shake) { this.Rotate(g.RandomFloat(), g.RandomFloat(), g.RandomFloat()); }
                     }
                     else
                     {

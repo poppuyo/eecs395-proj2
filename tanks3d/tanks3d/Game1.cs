@@ -581,12 +581,12 @@ namespace tanks3d
 
         public static readonly Random random = new Random();
 
-        private void Shake()
+        public void Shake()
         {
-            worldCamera.Rotate(RandomFloat(), RandomFloat(), RandomFloat());
+            bulletViewCamera.shake = true;
         }
 
-        private float RandomFloat()
+        public float RandomFloat()
         {
             return (float)random.NextDouble() * 2f - 1f;
         }
