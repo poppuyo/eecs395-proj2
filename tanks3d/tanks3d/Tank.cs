@@ -27,7 +27,6 @@ namespace tank3d
     {
         #region Constants
 
-
         // This constant controls how quickly the tank can move forward and backward
         const float TankVelocity = 1.5f;
 
@@ -312,7 +311,7 @@ namespace tank3d
                 }
                 else
                 {
-                    movement.Z = 5;
+                    movement.Z = 1;
                     game.currentTank.moves++;
                 }
             }
@@ -325,7 +324,7 @@ namespace tank3d
                 }
                 else
                 {
-                    movement.Z = -5;
+                    movement.Z = -1;
                     game.currentTank.moves++;
                 }
             }
