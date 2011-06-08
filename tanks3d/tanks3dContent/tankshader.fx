@@ -32,6 +32,7 @@ struct VS_OUTPUT
 {
     float4 Position : POSITION0;
     float2 TexCoord : TEXCOORD0;
+	float LightingFactor : TEXCOORD1;
     float3 Fresnel : COLOR0;
     float3 Lighting : COLOR1;
 };
@@ -48,6 +49,9 @@ VS_OUTPUT VertexShaderFunction(VS_INPUT input)
     output.Position = mul(mul(worldPosition, View), Projection);
 
     output.TexCoord = input.TexCoord;
+
+	float3 nNormal = normalize(mul(normalize(input.Normal), World));
+	output.LightingFactor = dot(nNormal, -LightDirection);
     
     // Compute a reflection vector for the environment map.
     float3 eyePosition = mul(-View._m30_m31_m32, transpose(View));
@@ -71,6 +75,7 @@ VS_OUTPUT VertexShaderFunction(VS_INPUT input)
 struct PS_INPUT
 {
     float2 TexCoord : TEXCOORD0;
+	float LightingFactor : TEXCOORD1;
     float3 Fresnel : COLOR0;
     float3 Lighting : COLOR1;
 };
@@ -101,6 +106,7 @@ float4 PixelShaderFunction(PS_INPUT input) : COLOR0
 
     // Apply lighting.
     color *= input.Lighting;
+	color *= saturate(input.LightingFactor) + AmbientColor;
     
     return float4(color, 1);
 }
