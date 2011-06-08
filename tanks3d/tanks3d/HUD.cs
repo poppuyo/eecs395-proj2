@@ -76,7 +76,7 @@ namespace tanks3d
                 case GameState.Menu:
                     
                     spriteBatch.Draw(tankBackground, new Rectangle(0, 0, game.GraphicsDevice.Viewport.Width, game.GraphicsDevice.Viewport.Height), Color.White);
-                    hudString = "\n\nWelcome to Tansk 3D!\n";
+                    hudString = "\n\nWelcome to Tanks 3D!\n";
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 106, 0), Color.DarkGreen);
                     hudString = "\n\n\nBy: Sergey, John, Jason, and Josiah";
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 184, 0), Color.DarkGreen);
