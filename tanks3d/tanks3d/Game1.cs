@@ -445,6 +445,7 @@ namespace tanks3d
                             {
                                 currentTank.currentPlayerState = PlayerState.Aim;
                                 currentTank.ChangeToAim();
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
                             }
                             else
                             {

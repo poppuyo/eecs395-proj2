@@ -224,7 +224,8 @@ namespace tanks3d.Cameras
             FollowT,
             LookAtT,
             FollowActiveBullet,
-            CannonView
+            CannonView,
+            AimMode
         };
 
         public const float DEFAULT_FOVX = 90.0f;
@@ -246,7 +247,7 @@ namespace tanks3d.Cameras
 
         private float fovx;
         private float aspectRatio;
-        private float znear;
+        public float znear;
         private float zfar;
         private float accumPitchDegrees;
         private float orbitMinZoom;
@@ -1085,6 +1086,7 @@ namespace tanks3d.Cameras
         private MouseState previousMouseState;
         private KeyboardState currentKeyboardState;
         private Dictionary<Actions, Keys> actionKeys;
+        private float minDistanceAboveTerrain;
 
         protected Game1 g;
 
@@ -1163,6 +1165,8 @@ namespace tanks3d.Cameras
             Game.Deactivated += HandleGameDeactivatedEvent;
 
             UpdateOrder = 1;
+
+            minDistanceAboveTerrain = 50.0f;
         }
 
         /// <summary>
@@ -1306,6 +1310,14 @@ namespace tanks3d.Cameras
         public void Zoom(float zoom, float minZoom, float maxZoom)
         {
             camera.Zoom(zoom, minZoom, maxZoom);
+        }
+
+        /// <summary>
+        /// Prevents the camera from going below the terrain by adjusting its position.
+        /// </summary>
+        public void StayAboveTerrain()
+        {
+            Position = g.terrain.AdjustForTerrainHeight(Position, minDistanceAboveTerrain);
         }
 
         #endregion
@@ -1947,8 +1959,19 @@ namespace tanks3d.Cameras
                 case QuaternionCamera.Behavior.FollowT:
                     Vector3 tpos = g.currentTank.Position;
 
-                    camera.LookAt(tpos + Vector3.Up*zFactor + new Vector3(500f,0,500f), tpos, Vector3.Up);
-                    //this.CurrentBehavior = QuaternionCamera.Behavior.Orbit;
+                    int clampedZFactor = Math.Max(zFactor, -100);
+
+                    Vector3 facingDirection = Vector3.Transform(Vector3.UnitZ, g.currentTank.orientation);
+                    float facingDistance = 200 + clampedZFactor;
+                    Vector3 offset = Vector3.Up * clampedZFactor;
+                    Vector3 eye1 = tpos - facingDistance * facingDirection + offset;
+                    eye1 = g.terrain.AdjustForTerrainHeight(eye1, minDistanceAboveTerrain);
+
+                    Vector3 horizon = new Vector3(facingDirection.X, 0.5f * facingDirection.Y, facingDirection.Z);
+
+                    camera.LookAt(eye1, tpos + 500.0f * horizon, Vector3.Up);
+
+                    StayAboveTerrain();
 
                     break;
 
@@ -1960,6 +1983,20 @@ namespace tanks3d.Cameras
                     Vector3 eye = tank.TurretEndPosition - 0.05f * Tank.TurretLength*tank.GetTurretDirection();
                     Vector3 target = tank.TurretEndPosition;
                     camera.LookAt(eye, target, Vector3.Up);
+                    break;
+
+                case QuaternionCamera.Behavior.AimMode:
+                    Vector3 eyePos = g.currentTank.TurretEndPosition - 2 * Tank.TurretLength * g.currentTank.GetTurretDirection() + Vector3.Up * 100.0f;
+                    Vector3 targetPos = g.currentTank.TurretEndPosition + Vector3.Up * 50.0f;
+
+                    Vector3 sideVector = Vector3.Cross(Vector3.Up, g.currentTank.GetTurretDirection());
+                    Vector3 rotatedUp = Vector3.Cross(g.currentTank.GetTurretDirection(), sideVector);
+
+                    eyePos += 10.0f*rotatedUp;
+                    targetPos += 10.0f*rotatedUp;
+
+                    camera.LookAt(eyePos, targetPos, rotatedUp);
+                    StayAboveTerrain();
                     break;
 
                 default:
@@ -2212,6 +2249,14 @@ namespace tanks3d.Cameras
         /// refers to the bullet being followed.
         /// </summary>
         public Bullet FollowBullet { get; set; }
+
+        /// <summary>
+        /// Returns the distance to the near clipping plane.
+        /// </summary>
+        public float NearClipDistance
+        {
+            get { return camera.znear; }
+        }
 
         #endregion
     }
