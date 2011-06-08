@@ -395,6 +395,10 @@ namespace tanks3d
 
                     break;
                 case GameState.Play:
+                    if (currentKeyboardState.IsKeyDown(Keys.Tab))
+                        mainHUD.showScoreBoard = true;
+                    if (currentKeyboardState.IsKeyUp(Keys.Tab))
+                        mainHUD.showScoreBoard = false;
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.P))

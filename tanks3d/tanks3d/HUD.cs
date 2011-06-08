@@ -26,6 +26,8 @@ namespace tanks3d
 
         public int hitTimer = 101, playerTimer = 101, lastPlayerEliminated;
 
+        public bool showScoreBoard = false;
+
         protected Game1 game;
 
         public HUD(Game g)
@@ -131,6 +133,17 @@ namespace tanks3d
                         (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
                     break;
                 }
+
+            if (showScoreBoard)
+            {
+                hudString = "";
+                for (int i = 0; i < game.numPlayers; i++)
+                {
+                    hudString += "Player " + (i + 1) + " : " + game.tanks[i].health + "/100 \n";
+                }
+                spriteBatch.DrawString(hudFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
+                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2 - (game.numPlayers * game.GraphicsDevice.Viewport.Height * .025f) )), Color.DarkBlue);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
