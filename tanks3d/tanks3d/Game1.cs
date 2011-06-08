@@ -189,7 +189,7 @@ namespace tanks3d
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
-            Song mySong = Content.Load<Song>("Audio\\Bulls");
+            //Song mySong = Content.Load<Song>("Audio\\Bulls");
             //MediaPlayer.Play(mySong);
 
             firing = Content.Load<SoundEffect>("Audio\\Tank Firing");

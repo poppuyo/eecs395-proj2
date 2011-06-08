@@ -281,20 +281,20 @@ namespace tank3d
             if (game.currentTank.moves < moveLimit)
                 facingDirection += turnAmount * TankTurnSpeed;
 
-
+            bool canMove = TankCollision();
             // Next, we want to move the tank forward or back. to do this, 
             // we'll create a Vector3 and modify use the user's input to modify the Z
             // component, which corresponds to the forward direction.
             Vector3 movement = Vector3.Zero;
             movement.Z = -currentGamePadState.ThumbSticks.Left.Y;
 
-            if (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed)
+            if (!canMove && (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed))
             {
                 movement.Z = 1;
                 game.currentTank.moves++;
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed)
+            if (!canMove && (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed))
             {
                 movement.Z = -1;
                 game.currentTank.moves++;
@@ -460,6 +460,23 @@ namespace tank3d
 
             if (game.numPlayersAlive == 1)
                 game.gameState = GameState.End;
+        }
+
+        private bool TankCollision()
+        {
+            Vector3[] testLowerBounds = this.boundingBox.GetCorners();
+            /*for (int i = 0; i < testLowerBounds; i++)
+                testLowerBounds[i].*/
+
+
+            foreach (Tank tank in game.tanks)
+            {
+                if (tank.boundingBox.Intersects(this.boundingBox) && tank != this)
+                    return true;
+                else
+                    return false;
+            }
+            return false;
         }
     }
 }
