@@ -560,6 +560,7 @@ namespace tanks3d
         {
             worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
             enteringBulletView = false;
+            this.IsMouseVisible = false;
             bulletViewCamera.FollowBullet = followBullet;
             Components.Add(bulletViewCamera);
             bulletViewCamera.Position = followBulletStartPos;
@@ -574,7 +575,7 @@ namespace tanks3d
             Components.Remove(bulletViewCamera);
             physicsEngine.RemovePhysicsObject(bulletViewCamera);
             enteringBulletView = false;
-            switchCurrentTank();
+            this.IsMouseVisible = true;
             canControlTank = true;
         }
 

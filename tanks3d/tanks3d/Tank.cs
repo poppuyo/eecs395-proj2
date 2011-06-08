@@ -312,7 +312,7 @@ namespace tank3d
                 }
                 else
                 {
-                    movement.Z = 1;
+                    movement.Z = 5;
                     game.currentTank.moves++;
                 }
             }
@@ -325,7 +325,7 @@ namespace tank3d
                 }
                 else
                 {
-                    movement.Z = -1;
+                    movement.Z = -5;
                     game.currentTank.moves++;
                 }
             }
@@ -486,6 +486,7 @@ namespace tank3d
         private void Dies()
         {
             IsAlive = false;
+            health = 0;
             game.mainHUD.lastPlayerEliminated = thisTankNumber;
             game.numPlayersAlive -= 1;
             game.mainHUD.playerTimer = 0;
