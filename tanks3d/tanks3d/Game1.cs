@@ -133,7 +133,6 @@ namespace tanks3d
             originalWorldCamera = worldCamera;
             bulletViewCamera = new PhysicsCamera(this);
             bulletViewCamera.Perspective(fov, 16.0f / 9.0f, 0.5f, 20000.0f);
-            bulletViewCamera.ClickAndDragMouseRotation = true;
 
             wireframeRasterizerState = new RasterizerState();
             wireframeRasterizerState.FillMode = FillMode.WireFrame;
@@ -182,9 +181,6 @@ namespace tanks3d
 
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
-
-            Mouse.SetPosition(this.GraphicsDevice.Viewport.X + this.GraphicsDevice.Viewport.Width,
-                this.GraphicsDevice.Viewport.Y + this.GraphicsDevice.Viewport.Height);
 
             base.Initialize();
         }
@@ -421,7 +417,6 @@ namespace tanks3d
                     {
                         if (gameState == GameState.Play)
                         {
-                            Components.Remove(tanks[9 - i].tankIndicator);
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
                             tanks[i].IsAlive = true;
@@ -546,6 +541,7 @@ namespace tanks3d
 
         public void EnterBulletView()
         {
+            worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
             enteringBulletView = false;
             bulletViewCamera.FollowBullet = followBullet;
             Components.Add(bulletViewCamera);
@@ -579,20 +575,13 @@ namespace tanks3d
         {
             float randomX, randomZ;
             randomX = (float)random.NextDouble() - 1/2f;
-            randomX *= terrain.heightMapInfo.terrainWidth;
-            if (randomX >= (terrain.heightMapInfo.terrainWidth / 2))
-                randomX -= 100;
-            if (randomX <= 0)
-                randomX += 100;
+            randomX *= (terrain.heightMapInfo.terrainWidth - 100);
 
             randomZ = (float)random.NextDouble() - 1/2f;
-            randomZ *= terrain.heightMapInfo.terrainHeight;
-            if (randomZ >= (terrain.heightMapInfo.terrainHeight / 2))
-                randomZ -= 100;
-            if (randomZ <= 0)
-                randomZ += 100;
-            
+            randomZ *= (terrain.heightMapInfo.terrainHeight - 100);
+
             return new Vector3(randomX, 0f, randomZ);
+
         }
 
         public void switchCurrentTank()
