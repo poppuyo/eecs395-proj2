@@ -66,7 +66,7 @@ namespace tank3d
         /// The direction that the tank is facing, in radians. This value will be used
         /// to position and and aim the camera.
         /// </summary>
-        private float FacingDirection
+        public float FacingDirection
         {
             get { return facingDirection; }
         }
@@ -74,6 +74,7 @@ namespace tank3d
 
         // Handles 
         private Vector3 OriginalMousePos { get; set; }
+        private Vector3 TurretDiff { get; set; }
         private Vector3 TurretDirection { get; set; }
 
         public Vector3 GetTurretDirection()
@@ -154,7 +155,7 @@ namespace tank3d
 
         // How is the tank oriented? We'll calculate this based on the user's input and
         // the heightmap's normals, and then use it when drawing.
-        Matrix orientation = Matrix.Identity;
+        public Matrix orientation = Matrix.Identity;
 
         // We'll use this value when making the wheels roll. It's calculated based on 
         // the distance moved.
@@ -248,8 +249,11 @@ namespace tank3d
             //Recalculates turretDirection based on current mouse position
             if (currentPlayerState == PlayerState.Aim)
             {
-                TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
-                TurretDirection = new Vector3(TurretDirection.X, -TurretDirection.Y, TurretDirection.Z);
+                TurretDiff = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
+                TurretDiff = new Vector3(TurretDiff.X, -TurretDiff.Y, TurretDiff.Z);
+
+                TurretDirection += TurretDiff;
+                OriginalMousePos = new Vector3(currentMouseState.X, currentMouseState.Y, 0);
 
                 if (TurretDirection.X > TurretRightBound) TurretDirection = new Vector3(TurretRightBound, TurretDirection.Y, TurretDirection.Z);
                 else if (TurretDirection.X < TurretLeftBound) TurretDirection = new Vector3(TurretLeftBound, TurretDirection.Y, TurretDirection.Z);

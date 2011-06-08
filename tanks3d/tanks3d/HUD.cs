@@ -23,9 +23,11 @@ namespace tanks3d
         SpriteBatch spriteBatch;
 
         Texture2D healthBar, heart, powerBar, power, movementBar,
-            movement, hudTop, hudBottomRight, tankBackground;
+            movement, hudBottomRight, tankBackground;
 
         public int hitTimer = 101, playerTimer = 101, lastPlayerEliminated;
+
+        public bool showScoreBoard = false;
 
         protected Game1 game;
 
@@ -47,7 +49,6 @@ namespace tanks3d
             power = Game.Content.Load<Texture2D>("power");
             movementBar = Game.Content.Load<Texture2D>("movement bar");
             movement = Game.Content.Load<Texture2D>("movement");
-            hudTop = Game.Content.Load<Texture2D>("hudTop");
             hudBottomRight = Game.Content.Load<Texture2D>("HUDBottomRight");
             tankBackground = Game.Content.Load<Texture2D>("Images\\TankBackground");
 
@@ -180,8 +181,65 @@ namespace tanks3d
                     break;
                 }
 
+            if (showScoreBoard)
+            {
+                hudString = "";
+                for (int i = 0; i < game.numPlayers; i++)
+                {
+                    hudString += "Player " + (i + 1) + " : " + game.tanks[i].health + "/100 \n";
+                }
+                spriteBatch.DrawString(hudFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
+                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2 - (game.numPlayers * game.GraphicsDevice.Viewport.Height * .025f) )), Color.DarkBlue);
+            }
+
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void ShowControls()
+        {
+            string hudString;
+            hudString = "-=Keys=-\n";
+            hudString += "WASD\n";
+            hudString += "T\n";
+            hudString += "C\n";
+            hudString += "Space\n";
+            hudString += "P\n";
+
+            hudString += "\n";
+            hudString += "MouseWheel";
+
+            //spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),(game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
+            spriteBatch.DrawString(pauseFont, hudString, new Vector2(25f, 100f), Color.DarkBlue);
+
+            hudString = "-=Action=-\n";
+            hudString += "(movement)\n";
+            hudString += "(aim)\n";
+            hudString += "(turret view)\n";
+            hudString += "(press and hold to fire)\n";
+            hudString += "(unpause)\n";
+
+            hudString += "\n";
+            hudString += "(zoom, where applicable)";
+            spriteBatch.DrawString(pauseFont, hudString, new Vector2(200f, 100f), Color.DarkBlue);
+        }
+
+        private static string GetControlsString()
+        {
+            string hudString = "";
+
+            hudString += "Controls:\n";
+            hudString += "--== Keys/Buttons ==--\n";
+            hudString += "Mouse (aim the turret when in aiming mode)\n";
+            hudString += "Mouse scroll (zoom the camera in and out)\n";
+            hudString += "WASD (movement)\n";
+
+            hudString += "T (aim)\n";
+            hudString += "C (turret view)\n";
+            hudString += "Spacebar (fire)\n";
+            hudString += "P (pause)\n\n";
+
+            return hudString;
         }
 
         /// <summary>

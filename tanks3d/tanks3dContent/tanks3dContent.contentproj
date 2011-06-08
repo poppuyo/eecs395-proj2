@@ -293,13 +293,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HUDTop.png">
-      <Name>HUDTop</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Images\TankBackground.png">
       <Name>TankBackground</Name>
       <Importer>TextureImporter</Importer>

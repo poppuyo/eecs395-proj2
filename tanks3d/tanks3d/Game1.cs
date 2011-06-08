@@ -78,8 +78,8 @@ namespace tanks3d
         private int timeOut = 0;
 
         float VelocityCount = 0;
-        float VelocityCountMax = 150f;
-        float VelocityMult = 10.0f;
+        float VelocityCountMax = 125f;
+        float VelocityMult = 5.0f;
 
         public GameState gameState;
 
@@ -163,8 +163,8 @@ namespace tanks3d
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
 
-            Reticle reticle = new Reticle(this);
-            Components.Add(reticle);
+            //Reticle reticle = new Reticle(this);
+            //Components.Add(reticle);
 
             testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
             Components.Add(testPhysicsObject);
@@ -395,6 +395,10 @@ namespace tanks3d
 
                     break;
                 case GameState.Play:
+                    if (currentKeyboardState.IsKeyDown(Keys.Tab))
+                        mainHUD.showScoreBoard = true;
+                    if (currentKeyboardState.IsKeyUp(Keys.Tab))
+                        mainHUD.showScoreBoard = false;
                     if (previousKeyboardState.IsKeyDown(Keys.P))
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.P))
@@ -408,11 +412,11 @@ namespace tanks3d
                     }
 
                     // Fires bullets
-                    if (previousKeyboardState.IsKeyDown(Keys.Space))
+                    if (previousKeyboardState.IsKeyDown(Keys.Space) && (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.FollowActiveBullet))
                     {
                         if (VelocityCount < VelocityCountMax)
                         {
-                            VelocityCount += 1;
+                            VelocityCount += .5f;
                         }
 
                         if (currentKeyboardState.IsKeyUp(Keys.Space))
@@ -420,8 +424,10 @@ namespace tanks3d
                             firing.Play();
                             Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
-                            switchCurrentTank();
+                            //switchCurrentTank();
                             //Shake();
+
+                            currentTank.currentPlayerState = PlayerState.Move;
 
                             // Switch to bullet view
                             worldCamera.FollowBullet = bullet;
@@ -448,6 +454,7 @@ namespace tanks3d
                             {
                                 currentTank.currentPlayerState = PlayerState.Aim;
                                 currentTank.ChangeToAim();
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
                             }
                             else
                             {
@@ -474,16 +481,28 @@ namespace tanks3d
                             }
                             else
                             {
+                                currentTank.currentPlayerState = PlayerState.Move;
                                 worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
                             }
                         }
                     }
 
-                    currentTank.HandleInput(currentGamePadState,
-                                      currentKeyboardState,
-                                      currentMouseState,
-                                      terrain.heightMapInfo,
-                                      gameTime);
+                    if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.FollowActiveBullet)
+                    {
+                        if(previousKeyboardState.IsKeyDown(Keys.Enter))
+                        {
+                            if(currentKeyboardState.IsKeyUp(Keys.Enter))
+                            {
+                                switchCurrentTank();
+                            }
+                        }
+
+                        currentTank.HandleInput(currentGamePadState,
+                                          currentKeyboardState,
+                                          currentMouseState,
+                                          terrain.heightMapInfo,
+                                          gameTime);
+                    }
                     break;
 
                 case GameState.Pause:
