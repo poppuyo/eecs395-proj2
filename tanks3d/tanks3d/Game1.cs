@@ -412,7 +412,7 @@ namespace tanks3d
                     }
 
                     // Fires bullets
-                    if (previousKeyboardState.IsKeyDown(Keys.Space))
+                    if (previousKeyboardState.IsKeyDown(Keys.Space) && (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.FollowActiveBullet))
                     {
                         if (VelocityCount < VelocityCountMax)
                         {
