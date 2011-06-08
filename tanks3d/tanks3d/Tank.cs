@@ -311,7 +311,7 @@ namespace tank3d
                 }
                 else
                 {
-                    movement.Z = 5;
+                    movement.Z = 1;
                     game.currentTank.moves++;
                 }
             }
@@ -324,7 +324,7 @@ namespace tank3d
                 }
                 else
                 {
-                    movement.Z = -5;
+                    movement.Z = -1;
                     game.currentTank.moves++;
                 }
             }

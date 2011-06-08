@@ -42,7 +42,6 @@ namespace tanks3d
         public PhysicsCamera bulletViewCamera;
 
         public PhysicsEngine physicsEngine;
-        public TestPhysicsObject testPhysicsObject;
 
         public WeaponManager weaponManager;
         public BulletManager bulletManager;
@@ -76,8 +75,6 @@ namespace tanks3d
 
         public int numPlayersAlive;
         public int numPlayers = 10, currentPlayer = 0;
-        
-        private int timeOut = 0;
 
         float VelocityCount = 0;
         float VelocityCountMax = 125f;
@@ -202,9 +199,7 @@ namespace tanks3d
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
-            //Song mySong = Content.Load<Song>("Audio\\Bulls");
-            //MediaPlayer.Play(mySong);
+
 
             firing = Content.Load<SoundEffect>("Audio\\Tank Firing");
 
@@ -488,16 +483,6 @@ namespace tanks3d
                                 followBulletStartVelocity = bullet.velocity;
                             }
                         }
-
-                        // Shakes screen
-                        //if (currentKeyboardState.IsKeyDown(Keys.G))
-                        //    timeOut = 45;
-
-                        //if (timeOut != 0)
-                        //{
-                        //    Shake();
-                        //    timeOut--;
-                        //}
 
                         // CannonView
                         if (previousKeyboardState.IsKeyDown(Keys.C))
