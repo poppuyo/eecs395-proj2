@@ -63,6 +63,11 @@ namespace tanks3d.Physics
             physicsObjects.Add(obj);
         }
 
+        public void RemovePhysicsObject(IPhysicsObject obj)
+        {
+            physicsObjects.Remove(obj);
+        }
+
         public override void Update(GameTime gameTime)
         {
             switch (game.gameState)

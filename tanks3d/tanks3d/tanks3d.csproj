@@ -129,6 +129,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cameras\PhysicsCamera.cs" />
     <Compile Include="Cameras\QuaternionCamera.cs" />
     <Compile Include="Indicator.cs" />
     <Compile Include="Physics\EulerIntegrator.cs" />

@@ -89,8 +89,8 @@ namespace tanks3d.Weapons
         #region Constants
 
         const float trailParticlesPerSecond = 200;
-        const int numExplosionParticles = 30;
-        const int numExplosionSmokeParticles = 50;
+        const int numExplosionParticles = 90;
+        const int numExplosionSmokeParticles = 150;
         const float projectileLifespan = 1.5f;
         const float sidewaysVelocityRange = 60;
         const float verticalVelocityRange = 40;
