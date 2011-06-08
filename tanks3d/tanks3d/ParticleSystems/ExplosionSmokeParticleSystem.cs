@@ -30,7 +30,7 @@ namespace tanks3d.ParticleSystems
         {
             settings.TextureName = "ParticleSystems/smoke";
 
-            settings.MaxParticles = 200;
+            settings.MaxParticles = 4000;
 
             settings.Duration = TimeSpan.FromSeconds(4);
 

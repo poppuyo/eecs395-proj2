@@ -508,5 +508,31 @@ namespace tank3d
             }
             return false;
         }
+
+        public float smokeAndFireGeneratorTimer = 0.5f;
+        public float smokeAndFireGeneratorFrequency = 0.5f;
+        public float baseSmokeParticles = 0.1f;
+        public float baseFireParticles = 0.2f;
+
+        public void GenerateSmokeAndFire(float elapsedSeconds)
+        {
+            smokeAndFireGeneratorTimer -= elapsedSeconds;
+            if (smokeAndFireGeneratorTimer <= 0.0f)
+            {
+                Vector3 basePositionOffset = Vector3.Transform(new Vector3(0.0f, 20.0f, 0.0f), orientation);
+
+                Vector3 v = new Vector3(0.0f, 5.0f, 0.0f);
+                int numSmokeParticles = (int)((100 - health) * baseSmokeParticles);
+                int numFireParticles = (int)((100 - health) * baseSmokeParticles);
+
+                for (int i = 0; i < numSmokeParticles; i++)
+                    game.bulletManager.explosionSmokeParticles.AddParticle(position + basePositionOffset, v);
+
+                for (int i = 0; i < numFireParticles; i++)
+                    game.bulletManager.explosionParticles.AddParticle(position + basePositionOffset, v);
+
+                smokeAndFireGeneratorTimer = smokeAndFireGeneratorFrequency;
+            }
+        }
     }
 }
