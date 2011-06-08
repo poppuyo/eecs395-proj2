@@ -261,6 +261,8 @@ namespace tanks3d.Weapons
                     for (int i = 0; i < numExplosionSmokeParticles; i++)
                         explosionSmokeParticles.AddParticle(position, explosionVelocity);
 
+                    game.switchCurrentTank();
+
                     break;
                 case BulletState.Exploding:
                     break;

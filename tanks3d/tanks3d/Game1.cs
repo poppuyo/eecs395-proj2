@@ -150,7 +150,7 @@ namespace tanks3d
             {
                 players[i] = new Player(this);
                 //tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
-                tanks[i] = new Tank(this, Vector3.Zero);
+                tanks[i] = new Tank(this, Vector3.Zero, i);
                 //tanks[i] = new Tank(this, RandomLocation());
             }
 
@@ -163,8 +163,8 @@ namespace tanks3d
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
 
-            Reticle reticle = new Reticle(this);
-            Components.Add(reticle);
+            //Reticle reticle = new Reticle(this);
+            //Components.Add(reticle);
 
             testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
             Components.Add(testPhysicsObject);
@@ -185,9 +185,6 @@ namespace tanks3d
                 tanks[i].position = RandomLocation();
                 tanks[i].FixGravity(terrain.heightMapInfo);
             }
-
-            tanks[0].position = Vector3.Zero;
-                
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -213,11 +210,14 @@ namespace tanks3d
 
                 case GameState.Play:
                     HandleInput(gameTime);
-                    CheckForWinner();
                     currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
                     break;
 
                 case GameState.Pause:
+                    HandleInput(gameTime);
+                    break;
+
+                case GameState.End:
                     HandleInput(gameTime);
                     break;
             }
@@ -248,6 +248,10 @@ namespace tanks3d
                     break;
 
                 case GameState.Pause:
+                    GraphicsDevice.Clear(Color.Black);
+                    break;
+
+                case GameState.End:
                     GraphicsDevice.Clear(Color.Black);
                     break;
             }
@@ -324,10 +328,7 @@ namespace tanks3d
             switch (gameState)
             {
                 case GameState.Menu:
-                    /*
-                    if (currentKeyboardState.IsKeyDown(Keys.B))
-                        gameState = GameState.Play;
-                     */
+
                     Keys[] pressed_Key = Keyboard.GetState().GetPressedKeys();
 
                     for(int i = 0; i < pressed_Key.Length; i++)
@@ -390,6 +391,8 @@ namespace tanks3d
                         Components.Remove(tanks[9-i]);
                     }
 
+                    numPlayersAlive = numPlayers;
+
                     break;
                 case GameState.Play:
                     if (previousKeyboardState.IsKeyDown(Keys.P))
@@ -400,8 +403,8 @@ namespace tanks3d
 
                     if (previousKeyboardState.IsKeyDown(Keys.H))
                     {
-                        if (currentKeyboardState.IsKeyDown(Keys.H))
-                            gameState = GameState.Menu;
+                        if (currentKeyboardState.IsKeyUp(Keys.H))
+                            gameState = GameState.Pause;
                     }
 
                     // Fires bullets
@@ -417,7 +420,7 @@ namespace tanks3d
                             firing.Play();
                             Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
                             VelocityCount = 0;
-                            switchCurrentTank();
+                            //switchCurrentTank();
                             //Shake();
 
                             // Switch to bullet view
@@ -490,6 +493,12 @@ namespace tanks3d
                         if (currentKeyboardState.IsKeyUp(Keys.P))
                             gameState = GameState.Play;
                     }
+
+                    if (previousKeyboardState.IsKeyDown(Keys.H))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.H))
+                            gameState = GameState.Play;
+                    }
                     break;
             }
             previousKeyboardState = currentKeyboardState;
@@ -520,7 +529,7 @@ namespace tanks3d
 
         }
 
-        private void switchCurrentTank()
+        public void switchCurrentTank()
         {
             if (currentPlayer < numPlayers - 1)
             {
@@ -539,23 +548,6 @@ namespace tanks3d
             }
 
             currentTank.moves = 0;
-        }
-
-        private void CheckForWinner()
-        {
-            if (numPlayersAlive == 1)
-            {
-                int winningPlayer = 1;
-                for (int i = 0; i < numPlayers; i++)
-                {
-                    if (tanks[i].IsAlive)
-                    {
-                        winningPlayer = i + 1;
-                    }
-                }
-
-                Console.Write("Player " + winningPlayer + " Wins The Game!!!\n");
-            }
         }
     }
 }

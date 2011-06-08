@@ -24,7 +24,7 @@ namespace tanks3d
 
         Texture2D healthBar, heart, powerBar, power, movementBar, movement;
 
-        public int hitTimer = 1001;
+        public int hitTimer = 101, playerTimer = 101, lastPlayerEliminated;
 
         protected Game1 game;
 
@@ -63,40 +63,26 @@ namespace tanks3d
 
         public override void Draw(GameTime gameTime)
         {
+            string hudString;
+
             spriteBatch.Begin();
 
             switch (game.gameState)
             {
                 case GameState.Menu:
-                    string hudString;
+                    
                     hudString = "Welcome to Tanks 3D!\n";
-                    hudString += "By: Sergey, John, Jason, Josiah\n";
-                    hudString += "For Ian's EECS395 Class!\n\n";
+                    hudString += "By: Sergey, John, Jason, Josiah\n\n";
 
-                    hudString += "Controls:\n";
-                    hudString += "--== Keys/Buttons ==--\n";
-                    hudString += "WASD (movement)\n";
-                    hudString += "T (aim)\n";
-                    hudString += "F (fire)\n";
-                    hudString += "C (bullet view)\n";
-                    hudString += "P (pause)\n";
-                    spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 50), Color.DarkBlue);
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 5), Color.DarkBlue);
+
+                    ShowControls();
+
+                    hudString = "To Begin: Press 2~0, for the number of players (0 = 10)";
+
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2(25, 400f), Color.DarkBlue);
                     break;
                 case GameState.Play:
-                    string text;
-
-                    /*
-                    hudString = String.Format("{0:F2},{1:F2},{2:F2}", game.worldCamera.Position.X, game.worldCamera.Position.Y, game.worldCamera.Position.Z);
-                    text = "Camera Position: (" + hudString + ")\n";
-                    spriteBatch.DrawString(hudFont, text, new Vector2(0, 20), Color.Black);
-                        
-                    Vector3 LookAtDirection = game.worldCamera.ViewDirection;
-                    hudString = String.Format("{0:F2},{1:F2},{2:F2}", LookAtDirection.X, LookAtDirection.Y, LookAtDirection.Z);
-                    text = "LookAt Direction: (" + hudString + ")\n";
-                    spriteBatch.DrawString(hudFont, text, new Vector2(0, 40), Color.Black);
-                    */ 
-                     
-
                     hudString = "Current Player: " + "Player " + (game.currentPlayer + 1);
                     spriteBatch.DrawString(hudFont, hudString, new Vector2(5, 5), Color.DarkBlue);
 
@@ -106,14 +92,17 @@ namespace tanks3d
                     spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 35, game.currentTank.power * 2, 12), Color.White);
 
                     int smallMoves = (int)((double)(game.currentTank.moveLimit - game.currentTank.moves) / 2.5);
-                    //text = "Moves remaining: " + smallMoves;
-                    //spriteBatch.DrawString(hudFont, text, new Vector2(game.GraphicsDevice.Viewport.Width - 240, 55), Color.White);
                     spriteBatch.Draw(movement, new Vector2(game.GraphicsDevice.Viewport.Width - 245, 57), Color.White);
                     spriteBatch.Draw(movementBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 210, 60, smallMoves, 12), Color.White);
 
                     hudString = "Press 'H' to access the help menu";
                     spriteBatch.DrawString(hudFont, hudString, new Vector2(5, game.GraphicsDevice.Viewport.Height - 30), Color.DarkBlue);
 
+                    if (playerTimer < 101)
+                    {
+                        DrawPlayerDeath(lastPlayerEliminated);
+                        playerTimer++;
+                    }
 
                     if (hitTimer < 101)
                     {
@@ -125,13 +114,72 @@ namespace tanks3d
                     break;
                 case GameState.Pause:
                     hudString = "Press 'P' to unpause, or 'Escape' to quit.\n";
-                    spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
+                    spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4), 5f), Color.DarkBlue);
+
+                    ShowControls();
+
+                    break;
+                case GameState.End:
+                    for (int i = 0; i < game.numPlayers; i++)
+                    {
+                        if (game.tanks[i].IsAlive)
+                            game.currentPlayer = i;
+                    }
+                    hudString = "Player " + (game.currentPlayer + 1) + " has won the game!\n";
+                    hudString += "Press 'Escape' to quit the game.\n";
+                    spriteBatch.DrawString(hudFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
                         (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
                     break;
                 }
 
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void ShowControls()
+        {
+            string hudString;
+            hudString = "-=Keys=-\n";
+            hudString += "WASD\n";
+            hudString += "T\n";
+            hudString += "C\n";
+            hudString += "Space\n";
+            hudString += "P\n";
+
+            hudString += "\n";
+            hudString += "MouseWheel";
+
+            //spriteBatch.DrawString(pauseFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),(game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
+            spriteBatch.DrawString(pauseFont, hudString, new Vector2(25f, 100f), Color.DarkBlue);
+
+            hudString = "-=Action=-\n";
+            hudString += "(movement)\n";
+            hudString += "(aim)\n";
+            hudString += "(turret view)\n";
+            hudString += "(press and hold to fire)\n";
+            hudString += "(unpause)\n";
+
+            hudString += "\n";
+            hudString += "(zoom, where applicable)";
+            spriteBatch.DrawString(pauseFont, hudString, new Vector2(200f, 100f), Color.DarkBlue);
+        }
+
+        private static string GetControlsString()
+        {
+            string hudString = "";
+
+            hudString += "Controls:\n";
+            hudString += "--== Keys/Buttons ==--\n";
+            hudString += "Mouse (aim the turret when in aiming mode)\n";
+            hudString += "Mouse scroll (zoom the camera in and out)\n";
+            hudString += "WASD (movement)\n";
+
+            hudString += "T (aim)\n";
+            hudString += "C (turret view)\n";
+            hudString += "Spacebar (fire)\n";
+            hudString += "P (pause)\n\n";
+
+            return hudString;
         }
 
         /// <summary>
@@ -151,6 +199,14 @@ namespace tanks3d
             hitString = "HIT!";
             spriteBatch.DrawString(hitFont, hitString, new Vector2((game.GraphicsDevice.Viewport.Width / 2),
                         (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.YellowGreen);
+        }
+
+        public void DrawPlayerDeath(int num)
+        {
+            string deathString;
+            deathString = "Player " + (num + 1) + " has been eliminated.";
+            spriteBatch.DrawString(hitFont, deathString, new Vector2((game.GraphicsDevice.Viewport.Width / 2),
+                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2) - 25), Color.DarkBlue);
         }
     }
 }

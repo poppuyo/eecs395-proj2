@@ -47,6 +47,7 @@ namespace tank3d
 
         public int moveLimit = 500;
         public int moves = 0;
+        public int thisTankNumber;
 
         #endregion
 
@@ -119,10 +120,18 @@ namespace tank3d
                 Matrix m0 = Matrix.CreateTranslation(position);
                 Matrix m2 = Matrix.CreateScale(TankSize);
 
-                bBoxMinPoint = new Vector3(-0.5f, -0.5f, -0.5f);
-                bBoxMinPoint = Vector3.Transform(bBoxMinPoint, m2 * m0);
-                bBoxMaxPoint = new Vector3(0.5f, 0.5f, 0.5f);
-                bBoxMaxPoint = Vector3.Transform(bBoxMaxPoint, m2 * m0);
+                if (IsAlive)
+                {
+                    bBoxMinPoint = new Vector3(-0.5f, -0.5f, -0.5f);
+                    bBoxMinPoint = Vector3.Transform(bBoxMinPoint, m2 * m0);
+                    bBoxMaxPoint = new Vector3(0.5f, 0.5f, 0.5f);
+                    bBoxMaxPoint = Vector3.Transform(bBoxMaxPoint, m2 * m0);
+                }
+                else
+                {
+                    bBoxMinPoint = new Vector3(-1000f, -1000f, -1000f);
+                    bBoxMaxPoint = new Vector3(-1000f, -1000f, -1000f);
+                }
 
                 return new BoundingBox(bBoxMinPoint, bBoxMaxPoint);
             }
@@ -177,13 +186,13 @@ namespace tank3d
 
         #region Initialization
 
-
-
-        public Tank(Game1 game, Vector3 pos)
+        public Tank(Game1 game, Vector3 pos, int num)
             : base(game)
         {
             position = pos;
             this.game = game;
+            thisTankNumber = num;
+
         }
 
         /// <summary>
@@ -254,12 +263,12 @@ namespace tank3d
             float turnAmount = -currentGamePadState.ThumbSticks.Left.X;
             if (currentKeyboardState.IsKeyDown(Keys.A) || currentGamePadState.DPad.Left == ButtonState.Pressed)
             {
-                turnAmount += 1;
+                turnAmount += 5;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.D) || currentGamePadState.DPad.Right == ButtonState.Pressed)
             {
-                turnAmount -= 1;
+                turnAmount -= 5;
             }
 
             // clamp the turn amount between -1 and 1, and then use the finished
@@ -440,7 +449,13 @@ namespace tank3d
         private void Dies()
         {
             IsAlive = false;
+            game.mainHUD.lastPlayerEliminated = thisTankNumber;
             game.numPlayersAlive -= 1;
+            game.mainHUD.playerTimer = 0;
+            Game.Components.Remove(this);
+
+            if (game.numPlayersAlive == 1)
+                game.gameState = GameState.End;
         }
     }
 }
