@@ -69,6 +69,10 @@ namespace tanks3d
 
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
+
+                    effect.AmbientLightColor = owner.playerColor;
+                    effect.DiffuseColor = owner.playerColor;
+                    effect.SpecularColor = owner.playerColor;
                 }
                 mesh.Draw();
             }
