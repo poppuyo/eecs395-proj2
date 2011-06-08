@@ -217,7 +217,7 @@ namespace tank3d
             tankIndicator.LoadContentDamnit();
             game.Components.Add(tankIndicator);
 
-            moving = content.Load<SoundEffect>("Audio\\Humvee");
+            moving = content.Load<SoundEffect>("Audio\\Tank");
             movingInstance = moving.CreateInstance();
             movingInstance.IsLooped = true;
            
@@ -360,6 +360,9 @@ namespace tank3d
                 position = newPosition;
 
             }
+
+            movingInstance.Volume = 0.20f;
+            movingInstance.Play();
         }
 
 

@@ -83,6 +83,9 @@ namespace tanks3d
 
         public GameState gameState;
 
+        SoundEffect music;
+        SoundEffectInstance musicInstance;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -161,9 +164,7 @@ namespace tanks3d
             for (int i = 0; i < numPlayers; i++)
             {
                 players[i] = new Player(this);
-                //tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
                 tanks[i] = new Tank(this, Vector3.Zero, i, playerColors.ElementAt(i));
-                //tanks[i] = new Tank(this, RandomLocation());
             }
 
             numPlayersAlive = numPlayers;
@@ -174,13 +175,6 @@ namespace tanks3d
 
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
-
-            //Reticle reticle = new Reticle(this);
-            //Components.Add(reticle);
-
-            testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
-            Components.Add(testPhysicsObject);
-            physicsEngine.AddPhysicsObject(testPhysicsObject);
 
             base.Initialize();
         }
@@ -205,6 +199,10 @@ namespace tanks3d
             //MediaPlayer.Play(mySong);
 
             firing = Content.Load<SoundEffect>("Audio\\Tank Firing");
+
+            music = Content.Load<SoundEffect>("Audio\\Music");
+            musicInstance = music.CreateInstance();
+            musicInstance.IsLooped = true;
         }
 
         /// <summary>
@@ -214,6 +212,8 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            musicInstance.Play();
+
             switch (gameState)
             {
                 case GameState.Menu:
@@ -553,10 +553,10 @@ namespace tanks3d
         {
             float randomX, randomZ;
             randomX = (float)random.NextDouble() - 1/2f;
-            randomX *= terrain.heightMapInfo.terrainWidth;
+            randomX *= (terrain.heightMapInfo.terrainWidth - 100);
 
             randomZ = (float)random.NextDouble() - 1/2f;
-            randomZ *= terrain.heightMapInfo.terrainHeight;
+            randomZ *= (terrain.heightMapInfo.terrainHeight - 100);
 
             return new Vector3(randomX, 0f, randomZ);
 
