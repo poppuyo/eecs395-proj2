@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Input;
 using tanks3d;
 using tanks3d.Weapons;
 using tanks3d.Terrain;
+using tanks3d.Utility;
 #endregion
 
 namespace tank3d
@@ -294,23 +295,38 @@ namespace tank3d
             if (game.currentTank.moves < moveLimit)
                 facingDirection += turnAmount * TankTurnSpeed;
 
-            bool canMove = TankCollision();
+            bool canMove = !TankCollision();
             // Next, we want to move the tank forward or back. to do this, 
             // we'll create a Vector3 and modify use the user's input to modify the Z
             // component, which corresponds to the forward direction.
             Vector3 movement = Vector3.Zero;
             movement.Z = -currentGamePadState.ThumbSticks.Left.Y;
 
-            if (!canMove && (currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed))
+
+            if ((currentKeyboardState.IsKeyDown(Keys.W) || currentGamePadState.DPad.Up == ButtonState.Pressed))
             {
-                movement.Z = 1;
-                game.currentTank.moves++;
+                if (!canMove)
+                {
+                    movement.Z = -4;
+                }
+                else
+                {
+                    movement.Z = 1;
+                    game.currentTank.moves++;
+                }
             }
 
-            if (!canMove && (currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed))
+            if ((currentKeyboardState.IsKeyDown(Keys.S) || currentGamePadState.DPad.Down == ButtonState.Pressed))
             {
-                movement.Z = -1;
-                game.currentTank.moves++;
+                if (!canMove)
+                {
+                    movement.Z = 4;
+                }
+                else
+                {
+                    movement.Z = -1;
+                    game.currentTank.moves++;
+                }
             }
 
             // Next, we'll create a rotation matrix from the direction the tank is 
@@ -438,6 +454,8 @@ namespace tank3d
 
                 mesh.Draw();
             }
+
+            //BoundingBoxRenderer.Render(game, boundingBox, game.GraphicsDevice, viewMatrix, projectionMatrix, Color.Red);
         }
 
         #endregion
@@ -484,8 +502,6 @@ namespace tank3d
             {
                 if (tank.boundingBox.Intersects(this.boundingBox) && tank != this)
                     return true;
-                else
-                    return false;
             }
             return false;
         }
