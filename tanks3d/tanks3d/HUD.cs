@@ -95,7 +95,7 @@ namespace tanks3d
                     hudString = "\n\n\n\n\n\n-=Action=-\n";
                     hudString += "(movement)\n";
                     hudString += "(fire)\n";
-                    hudString += "(unpause)\n";
+                    hudString += "(pause)\n";
 
                     hudString += "\n(aim turret)\n";
 

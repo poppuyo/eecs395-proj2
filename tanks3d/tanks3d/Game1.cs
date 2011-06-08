@@ -83,6 +83,8 @@ namespace tanks3d
         float VelocityCountMax = 125f;
         float VelocityMult = 5.0f;
 
+        bool canControlTank = true;
+
         public GameState gameState;
 
         SoundEffect music;
@@ -436,84 +438,83 @@ namespace tanks3d
                         if (currentKeyboardState.IsKeyUp(Keys.P))
                             gameState = GameState.Pause;
                     }
-
                     if (previousKeyboardState.IsKeyDown(Keys.H))
                     {
                         if (currentKeyboardState.IsKeyUp(Keys.H))
                             gameState = GameState.Pause;
                     }
 
-                    // Fires bullets
-                    if (previousKeyboardState.IsKeyDown(Keys.Space) && (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.FollowActiveBullet))
+                    if (canControlTank)
                     {
-                        if (VelocityCount < VelocityCountMax)
+                        // Fires bullets
+                        if (previousKeyboardState.IsKeyDown(Keys.Space))
                         {
-                            VelocityCount += .5f;
-                        }
-
-                        if (currentKeyboardState.IsKeyUp(Keys.Space))
-                        {
-                            firing.Play();
-                            Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
-                            VelocityCount = 0;
-                            //switchCurrentTank();
-                            //Shake();
-
-                            currentTank.currentPlayerState = PlayerState.Aim;
-
-                            // Switch to bullet view after a small delay
-                            //
-                            enteringBulletView = true;
-                            followBullet = bullet;
-                            bulletViewTimer = 0.2f;
-                            followBulletStartPos = bullet.position;
-                            followBulletStartVelocity = bullet.velocity;
-                        }
-                    }
-
-                    // Shakes screen
-                    if (currentKeyboardState.IsKeyDown(Keys.G))
-                        timeOut = 45;
-
-                    if (timeOut != 0)
-                    {
-                        Shake();
-                        timeOut--;
-                    }
-
-                    // CannonView
-                    if (previousKeyboardState.IsKeyDown(Keys.C))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.C))
-                        {
-                            if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.CannonView)
+                            if (VelocityCount < VelocityCountMax)
                             {
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.CannonView;
+                                VelocityCount += .5f;
                             }
-                            else
+
+                            if (currentKeyboardState.IsKeyUp(Keys.Space))
                             {
+                                firing.Play();
+                                Bullet bullet = weaponManager.Weapons[WeaponTypes.Weapon1].Fire(VelocityCount * VelocityMult);
+                                VelocityCount = 0;
+                                //switchCurrentTank();
+
                                 currentTank.currentPlayerState = PlayerState.Aim;
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
+                                canControlTank = false;
+                                // Switch to bullet view after a small delay
+                                //
+                                enteringBulletView = true;
+                                followBullet = bullet;
+                                bulletViewTimer = 0.2f;
+                                followBulletStartPos = bullet.position;
+                                followBulletStartVelocity = bullet.velocity;
                             }
                         }
-                    }
 
-                    if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.FollowActiveBullet)
-                    {
-                        if(previousKeyboardState.IsKeyDown(Keys.Enter))
+                        // Shakes screen
+                        //if (currentKeyboardState.IsKeyDown(Keys.G))
+                        //    timeOut = 45;
+
+                        //if (timeOut != 0)
+                        //{
+                        //    Shake();
+                        //    timeOut--;
+                        //}
+
+                        // CannonView
+                        if (previousKeyboardState.IsKeyDown(Keys.C))
                         {
-                            if(currentKeyboardState.IsKeyUp(Keys.Enter))
+                            if (currentKeyboardState.IsKeyUp(Keys.C))
+                            {
+                                if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.CannonView)
+                                {
+                                    worldCamera.CurrentBehavior = QuaternionCamera.Behavior.CannonView;
+                                }
+                                else
+                                {
+                                    currentTank.currentPlayerState = PlayerState.Aim;
+                                    worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
+                                }
+                            }
+                        }
+
+                        if (previousKeyboardState.IsKeyDown(Keys.Enter))
+                        {
+                            if (currentKeyboardState.IsKeyUp(Keys.Enter))
                             {
                                 switchCurrentTank();
                             }
                         }
 
                         currentTank.HandleInput(currentGamePadState,
-                                          currentKeyboardState,
-                                          currentMouseState,
-                                          terrain.heightMapInfo,
-                                          gameTime);
+                                            currentKeyboardState,
+                                            currentMouseState,
+                                            terrain.heightMapInfo,
+                                            gameTime);
                     }
+
                     break;
 
                 case GameState.Pause:
@@ -557,6 +558,8 @@ namespace tanks3d
             Components.Remove(bulletViewCamera);
             physicsEngine.RemovePhysicsObject(bulletViewCamera);
             enteringBulletView = false;
+            switchCurrentTank();
+            canControlTank = true;
         }
 
         public static readonly Random random = new Random();
