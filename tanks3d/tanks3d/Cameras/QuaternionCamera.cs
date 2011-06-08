@@ -1934,7 +1934,7 @@ namespace tanks3d.Cameras
                     // Check if the bullet doesn't exist anymore.
                     if (FollowBullet == null || FollowBullet.bulletState == BulletState.Dead)
                     {
-                        CurrentBehavior = QuaternionCamera.Behavior.FollowT;
+                        CurrentBehavior = QuaternionCamera.Behavior.AimMode;
                         break;
                     }
 

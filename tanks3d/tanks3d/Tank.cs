@@ -109,7 +109,7 @@ namespace tank3d
 
         public int angle = 0 ;
 
-        public PlayerState currentPlayerState = PlayerState.Move;
+        public PlayerState currentPlayerState = PlayerState.Aim;
 
         public int health = 100, power = 0;
 
@@ -198,7 +198,7 @@ namespace tank3d
             this.game = game;
             thisTankNumber = num;
             this.playerColor = playerColor;
-
+            ChangeToAim();
         }
 
         private Effect experimentalEffect;

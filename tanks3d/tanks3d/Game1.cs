@@ -121,7 +121,7 @@ namespace tanks3d
             worldCamera.Position = new Vector3(0, -370, 160);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
-            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.AimMode;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
@@ -442,7 +442,7 @@ namespace tanks3d
                             //switchCurrentTank();
                             //Shake();
 
-                            currentTank.currentPlayerState = PlayerState.Move;
+                            currentTank.currentPlayerState = PlayerState.Aim;
 
                             // Switch to bullet view
                             worldCamera.FollowBullet = bullet;
@@ -460,25 +460,6 @@ namespace tanks3d
                         timeOut--;
                     }
 
-                    // Changes Gamestate from Move to Aim
-                    if (previousKeyboardState.IsKeyDown(Keys.T))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.T))
-                        {
-                            if (currentTank.currentPlayerState == PlayerState.Move)
-                            {
-                                currentTank.currentPlayerState = PlayerState.Aim;
-                                currentTank.ChangeToAim();
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
-                            }
-                            else
-                            {
-                                currentTank.currentPlayerState = PlayerState.Move;
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
-                            }
-                        }
-                    }
-
                     // CannonView
                     if (previousKeyboardState.IsKeyDown(Keys.C))
                     {
@@ -487,17 +468,11 @@ namespace tanks3d
                             if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.CannonView)
                             {
                                 worldCamera.CurrentBehavior = QuaternionCamera.Behavior.CannonView;
-
-                                if (currentTank.currentPlayerState == PlayerState.Move)
-                                {
-                                    currentTank.currentPlayerState = PlayerState.Aim;
-                                    currentTank.ChangeToAim();
-                                }
                             }
                             else
                             {
-                                currentTank.currentPlayerState = PlayerState.Move;
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
+                                currentTank.currentPlayerState = PlayerState.Aim;
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
                             }
                         }
                     }
