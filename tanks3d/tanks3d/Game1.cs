@@ -133,6 +133,7 @@ namespace tanks3d
             originalWorldCamera = worldCamera;
             bulletViewCamera = new PhysicsCamera(this);
             bulletViewCamera.Perspective(fov, 16.0f / 9.0f, 0.5f, 20000.0f);
+            bulletViewCamera.ClickAndDragMouseRotation = true;
 
             wireframeRasterizerState = new RasterizerState();
             wireframeRasterizerState.FillMode = FillMode.WireFrame;
