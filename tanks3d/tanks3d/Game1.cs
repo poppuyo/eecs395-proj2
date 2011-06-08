@@ -182,6 +182,9 @@ namespace tanks3d
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
 
+            Mouse.SetPosition(this.GraphicsDevice.Viewport.X + this.GraphicsDevice.Viewport.Width,
+                this.GraphicsDevice.Viewport.Y + this.GraphicsDevice.Viewport.Height);
+
             base.Initialize();
         }
 
@@ -417,6 +420,8 @@ namespace tanks3d
                     {
                         if (gameState == GameState.Play)
                         {
+                            Components.Remove(tanks[9 - i].tankIndicator);
+                            tanks[9 - i].tankIndicator.Active = false;
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
                         }
