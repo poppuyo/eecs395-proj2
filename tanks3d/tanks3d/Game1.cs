@@ -78,8 +78,8 @@ namespace tanks3d
         private int timeOut = 0;
 
         float VelocityCount = 0;
-        float VelocityCountMax = 150f;
-        float VelocityMult = 10.0f;
+        float VelocityCountMax = 125f;
+        float VelocityMult = 5.0f;
 
         public GameState gameState;
 
@@ -416,7 +416,7 @@ namespace tanks3d
                     {
                         if (VelocityCount < VelocityCountMax)
                         {
-                            VelocityCount += 1;
+                            VelocityCount += .5f;
                         }
 
                         if (currentKeyboardState.IsKeyUp(Keys.Space))
