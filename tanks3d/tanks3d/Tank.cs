@@ -503,9 +503,13 @@ namespace tank3d
 
         public void CompleteDeath()
         {
-            game.bulletViewCamera.deadTank = null;
-            Game.Components.Remove(this);
             game.ExitBulletView();
+            game.bulletViewCamera.deadTank = null;
+            game.bulletViewCamera.active = false;
+            Game.Components.Remove(this);
+            Game.Components.Remove(game.bulletViewCamera);
+
+            currentPlayerState = PlayerState.Dead;
 
             if (game.numPlayersAlive == 1)
                 game.gameState = GameState.End;
