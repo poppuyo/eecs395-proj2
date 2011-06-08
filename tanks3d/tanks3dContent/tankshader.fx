@@ -14,6 +14,8 @@ float3 LightDirection;
 float3 LightColor;
 float3 AmbientColor;
 
+float3 TintColor;
+
 texture Texture;
 texture EnvironmentMap;
 
@@ -106,6 +108,14 @@ float4 PixelShaderFunction(PS_INPUT input) : COLOR0
 
     // Apply lighting.
     color *= input.Lighting;
+
+	// Apply tint
+	float s = (color.r + color.g + color.b) / 3.0;
+	color = color + s * saturate(TintColor);
+	//float temp = color.b;
+	//color.b = color.g;
+	//color.g = temp;
+
 	color *= saturate(input.LightingFactor) + AmbientColor;
     
     return float4(color, 1);

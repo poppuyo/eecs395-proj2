@@ -62,6 +62,8 @@ namespace tank3d
         }
         public Vector3 position;
 
+        public Vector3 playerColor;
+
         /// <summary>
         /// The direction that the tank is facing, in radians. This value will be used
         /// to position and and aim the camera.
@@ -187,12 +189,13 @@ namespace tank3d
 
         #region Initialization
 
-        public Tank(Game1 game, Vector3 pos, int num)
+        public Tank(Game1 game, Vector3 pos, int num, Vector3 playerColor)
             : base(game)
         {
             position = pos;
             this.game = game;
             thisTankNumber = num;
+            this.playerColor = playerColor;
 
         }
 
@@ -424,6 +427,7 @@ namespace tank3d
                     effect.Parameters["LightDirection"].SetValue(new Vector3(-0.45f, -0.25f, -1.0f));
                     effect.Parameters["LightColor"].SetValue(new Vector3(0.6f, 0.4f, 0.2f) * 0.5f);
                     effect.Parameters["AmbientColor"].SetValue(new Vector3(1.0f, 1.0f, 1.0f) * 0.5f);
+                    effect.Parameters["TintColor"].SetValue(playerColor);
                 }
 
                 mesh.Draw();
