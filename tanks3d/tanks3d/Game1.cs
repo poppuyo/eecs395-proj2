@@ -479,11 +479,22 @@ namespace tanks3d
                         }
                     }
 
-                    currentTank.HandleInput(currentGamePadState,
-                                      currentKeyboardState,
-                                      currentMouseState,
-                                      terrain.heightMapInfo,
-                                      gameTime);
+                    if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.FollowActiveBullet)
+                    {
+                        if(previousKeyboardState.IsKeyDown(Keys.Enter))
+                        {
+                            if(currentKeyboardState.IsKeyUp(Keys.Enter))
+                            {
+                                switchCurrentTank();
+                            }
+                        }
+
+                        currentTank.HandleInput(currentGamePadState,
+                                          currentKeyboardState,
+                                          currentMouseState,
+                                          terrain.heightMapInfo,
+                                          gameTime);
+                    }
                     break;
 
                 case GameState.Pause:
