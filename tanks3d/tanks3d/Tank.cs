@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using tanks3d;
+using tanks3d.Physics;
 using tanks3d.Weapons;
 using tanks3d.Terrain;
 using tanks3d.Utility;
@@ -22,7 +23,7 @@ using tanks3d.Utility;
 
 namespace tank3d
 {
-    public class Tank : DrawableGameComponent
+    public class Tank : DrawableGameComponent, IPhysicsObject
     {
         #region Constants
 
@@ -488,7 +489,25 @@ namespace tank3d
             game.mainHUD.lastPlayerEliminated = thisTankNumber;
             game.numPlayersAlive -= 1;
             game.mainHUD.playerTimer = 0;
+
+            currentPlayerState = PlayerState.Dying;
+            deathTimer = 6.0f;
+            game.bulletViewCamera.deadTank = this;
+            float height;
+            Vector3 normal;
+            game.terrain.heightMapInfo.GetHeightAndNormal(position, out height, out normal);
+            velocity = 20.0f*normal;
+            playerColor = new Vector3(-2, -2, -2);
+
+            game.physicsEngine.AddPhysicsObject(this);
+        }
+
+        public void CompleteDeath()
+        {
+            game.bulletViewCamera.deadTank = null;
+            game.physicsEngine.RemovePhysicsObject(this);
             Game.Components.Remove(this);
+            game.ExitBulletView();
 
             if (game.numPlayersAlive == 1)
                 game.gameState = GameState.End;
@@ -514,6 +533,8 @@ namespace tank3d
         public float baseSmokeParticles = 0.3f;
         public float baseFireParticles = 0.02f;
 
+        public float deathTimer;
+
         public void GenerateSmokeAndFire(float elapsedSeconds)
         {
             smokeAndFireGeneratorTimer -= elapsedSeconds;
@@ -533,6 +554,41 @@ namespace tank3d
 
                 smokeAndFireGeneratorTimer = smokeAndFireGeneratorFrequency;
             }
+        }
+
+        public Vector3 GetPosition()
+        {
+            return Position;
+        }
+
+        public void UpdatePosition(Vector3 newPosition)
+        {
+            position = newPosition;
+        }
+
+        // lame hack
+        public Vector3 velocity = new Vector3(0, 0, 0);
+
+        public Vector3 GetVelocity()
+        {
+            return velocity;
+        }
+
+        public void UpdateVelocity(Vector3 newVelocity)
+        {
+            // lame hack
+            velocity = newVelocity;
+            position += 0.01f*velocity;
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return boundingBox;
+        }
+
+        public void HandleCollisionWithTerrain()
+        {
+            return;
         }
     }
 }

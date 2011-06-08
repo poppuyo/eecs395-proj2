@@ -10,7 +10,8 @@ namespace tanks3d
         Start,
         Aim,
         Fired,
-        Transition
+        Transition,
+        Dying
     }
 
     public class Player

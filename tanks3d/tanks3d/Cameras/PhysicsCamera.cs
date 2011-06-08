@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using tank3d;
 using tanks3d.Physics;
 using tanks3d.Weapons;
 
@@ -44,6 +45,8 @@ namespace tanks3d.Cameras
             // ignore
         }
 
+        public Tank deadTank;
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -63,10 +66,18 @@ namespace tanks3d.Cameras
                     LookAt(PositionAboveTerrain, FollowBullet.position, Vector3.Up);
                     break;
                 case BulletState.Exploding:
-                    LookAt(PositionAboveTerrain, FollowBullet.ExplosionLocation, Vector3.Up);
+                    Vector3 target = (deadTank != null) ? deadTank.position : FollowBullet.ExplosionLocation;
+                    LookAt(PositionAboveTerrain, target, Vector3.Up);
                     break;
                 case BulletState.Dead:
-                    g.ExitBulletView();
+                    if (deadTank != null)
+                    {
+                        LookAt(PositionAboveTerrain, deadTank.position, Vector3.Up);
+                    }
+                    else
+                    {
+                        g.ExitBulletView();
+                    }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

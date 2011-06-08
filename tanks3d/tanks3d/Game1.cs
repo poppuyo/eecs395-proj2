@@ -235,6 +235,17 @@ namespace tanks3d
 
                     foreach (Tank tank in tanks)
                     {
+                        if (tank.currentPlayerState == PlayerState.Dying)
+                        {
+                            tank.position = terrain.AdjustForTerrainHeight(tank.position);
+
+                            tank.deathTimer -= elapsedSeconds;
+                            if (tank.deathTimer <= 0)
+                            {
+                                tank.CompleteDeath();
+                            }
+                        }
+
                         tank.GenerateSmokeAndFire(elapsedSeconds);
                     }
 
