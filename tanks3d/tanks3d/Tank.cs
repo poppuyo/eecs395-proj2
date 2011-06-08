@@ -195,6 +195,8 @@ namespace tank3d
             thisTankNumber = num;
         }
 
+        private Effect experimentalEffect;
+
         /// <summary>
         /// Called when the Game is loading its content. Pass in a ContentManager so the
         /// tank can load its model.
@@ -202,6 +204,8 @@ namespace tank3d
         public void LoadContent(ContentManager content)
         {
             model = content.Load<Model>("Models//tank");
+
+            experimentalEffect = content.Load<Effect>("effects");
 
             moving = content.Load<SoundEffect>("Audio\\Humvee");
             movingInstance = moving.CreateInstance();
@@ -409,21 +413,18 @@ namespace tank3d
 
             foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                foreach (Effect effect in mesh.Effects)
                 {
-                    effect.World = boneTransforms[mesh.ParentBone.Index] * worldMatrix;
-                    effect.View = viewMatrix;
-                    effect.Projection = projectionMatrix;
+                    Matrix world = boneTransforms[mesh.ParentBone.Index] * worldMatrix;
 
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-
-                    // Set the fog to match the black background color
-                    effect.FogEnabled = true;
-                    effect.FogColor = Vector3.Zero;
-                    effect.FogStart = 1000;
-                    effect.FogEnd = 3200;
+                    effect.Parameters["World"].SetValue(world);
+                    effect.Parameters["View"].SetValue(game.worldCamera.ViewMatrix);
+                    effect.Parameters["Projection"].SetValue(game.worldCamera.ProjectionMatrix);
+                    effect.Parameters["LightDirection"].SetValue(new Vector3(-0.45f, -0.25f, -1.0f));
+                    effect.Parameters["LightColor"].SetValue(new Vector3(0.6f, 0.4f, 0.2f) * 0.5f);
+                    effect.Parameters["AmbientColor"].SetValue(new Vector3(1.0f, 1.0f, 1.0f) * 0.5f);
                 }
+
                 mesh.Draw();
             }
         }
