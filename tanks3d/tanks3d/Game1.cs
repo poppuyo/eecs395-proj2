@@ -424,6 +424,7 @@ namespace tanks3d
                             tanks[9 - i].tankIndicator.Active = false;
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
+                            tanks[i].IsAlive = true;
                         }
                     }
 
