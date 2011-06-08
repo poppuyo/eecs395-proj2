@@ -511,8 +511,8 @@ namespace tank3d
 
         public float smokeAndFireGeneratorTimer = 0.5f;
         public float smokeAndFireGeneratorFrequency = 0.5f;
-        public float baseSmokeParticles = 0.1f;
-        public float baseFireParticles = 0.2f;
+        public float baseSmokeParticles = 0.3f;
+        public float baseFireParticles = 0.02f;
 
         public void GenerateSmokeAndFire(float elapsedSeconds)
         {
@@ -523,7 +523,7 @@ namespace tank3d
 
                 Vector3 v = new Vector3(0.0f, 5.0f, 0.0f);
                 int numSmokeParticles = (int)((100 - health) * baseSmokeParticles);
-                int numFireParticles = (int)((100 - health) * baseSmokeParticles);
+                int numFireParticles = (int)((100 - health) * baseFireParticles);
 
                 for (int i = 0; i < numSmokeParticles; i++)
                     game.bulletManager.explosionSmokeParticles.AddParticle(position + basePositionOffset, v);
