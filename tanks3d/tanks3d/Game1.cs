@@ -481,6 +481,7 @@ namespace tanks3d
                             }
                             else
                             {
+                                currentTank.currentPlayerState = PlayerState.Move;
                                 worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
                             }
                         }
