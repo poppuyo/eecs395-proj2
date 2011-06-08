@@ -141,7 +141,7 @@ namespace tank3d
             }
         }
 
-        public bool IsAlive = true;
+        public bool IsAlive = false;
 
         /// <summary>
         /// Length of the turret's barrel.

@@ -403,6 +403,7 @@ namespace tanks3d
                         {
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
+                            tanks[i].IsAlive = true;
                         }
                     }
 
