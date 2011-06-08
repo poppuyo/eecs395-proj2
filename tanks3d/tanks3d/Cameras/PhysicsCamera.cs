@@ -48,15 +48,8 @@ namespace tanks3d.Cameras
         public Tank deadTank;
         public bool shake = false;
 
-        public bool active = true;
-
         public override void Update(GameTime gameTime)
         {
-            if (!active)
-            {
-                return;
-            }
-
             base.Update(gameTime);
 
             // Check if the bullet doesn't exist anymore.
@@ -86,7 +79,6 @@ namespace tanks3d.Cameras
                     else
                     {
                         g.ExitBulletView();
-                        active = false;
                     }
                     break;
                 default:

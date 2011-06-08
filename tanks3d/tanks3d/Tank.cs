@@ -505,7 +505,6 @@ namespace tank3d
         {
             game.ExitBulletView();
             game.bulletViewCamera.deadTank = null;
-            game.bulletViewCamera.active = false;
             Game.Components.Remove(this);
             Game.Components.Remove(game.bulletViewCamera);
 
