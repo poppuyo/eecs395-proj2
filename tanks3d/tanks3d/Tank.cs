@@ -485,6 +485,7 @@ namespace tank3d
         private void Dies()
         {
             IsAlive = false;
+            health = 0;
             game.mainHUD.lastPlayerEliminated = thisTankNumber;
             game.numPlayersAlive -= 1;
             game.mainHUD.playerTimer = 0;
