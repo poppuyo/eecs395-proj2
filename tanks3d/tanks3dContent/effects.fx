@@ -250,3 +250,44 @@ technique PointSprites
 		PixelShader  = compile ps_2_0 PointSpritePS();
 	}
 }
+
+
+
+
+//------- Technique: Experimental --------
+
+VertexToPixel ExperimentalVS( float4 inPos : POSITION0, float3 inNormal: NORMAL0, float2 inTexCoords: TEXCOORD0)
+{	
+	VertexToPixel Output = (VertexToPixel)0;
+	float4x4 preViewProjection = mul (xView, xProjection);
+	float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
+    
+	Output.Position = mul(inPos, preWorldViewProjection);	
+	Output.TextureCoords = inTexCoords;
+	
+	float3 Normal = normalize(mul(normalize(inNormal), xWorld));	
+	Output.LightingFactor = 1;
+	if (xEnableLighting)
+		Output.LightingFactor = dot(Normal, -xLightDirection);
+    
+	return Output;    
+}
+
+PixelToFrame ExperimentalPS(VertexToPixel PSIn) 
+{
+	PixelToFrame Output = (PixelToFrame)0;		
+	
+	Output.Color = tex2D(TextureSampler, PSIn.TextureCoords);
+	Output.Color.rgb *= saturate(PSIn.LightingFactor) + xAmbient;
+
+	return Output;
+}
+
+technique Experimental
+{
+	pass Pass0
+	{   
+		VertexShader = compile vs_2_0 ExperimentalVS();
+		PixelShader  = compile ps_2_0 ExperimentalPS();
+	}
+}

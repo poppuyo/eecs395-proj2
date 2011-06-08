@@ -131,6 +131,18 @@ namespace tanks3d
             solidRasterizerState = new RasterizerState();
             solidRasterizerState.FillMode = FillMode.Solid;
 
+            playerColors = new List<Vector3>();
+            playerColors.Add(new Vector3(1.0f, 0.0f, 0.0f));
+            playerColors.Add(new Vector3(0.0f, 1.0f, 0.0f));
+            playerColors.Add(new Vector3(0.0f, 0.0f, 1.0f));
+            playerColors.Add(new Vector3(1.0f, 1.0f, 0.0f));
+            playerColors.Add(new Vector3(0.0f, 1.0f, 1.0f));
+            playerColors.Add(new Vector3(1.0f, 0.0f, 1.0f));
+            playerColors.Add(new Vector3(1.0f, 1.0f, 1.0f));
+            playerColors.Add(new Vector3(1.0f, 0.5f, 0.5f));
+            playerColors.Add(new Vector3(0.5f, 1.0f, 0.5f));
+            playerColors.Add(new Vector3(0.5f, 0.5f, 1.0f));
+
             terrain = new Terrain.Terrain(this);
             Components.Add(terrain);
 
@@ -150,7 +162,7 @@ namespace tanks3d
             {
                 players[i] = new Player(this);
                 //tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
-                tanks[i] = new Tank(this, Vector3.Zero, i);
+                tanks[i] = new Tank(this, Vector3.Zero, i, playerColors.ElementAt(i));
                 //tanks[i] = new Tank(this, RandomLocation());
             }
 
@@ -387,8 +399,11 @@ namespace tanks3d
 
                     for (int i = 0; i < numPlayers; i++)
                     {
-                        if (gameState == GameState.Play) 
-                        Components.Remove(tanks[9-i]);
+                        if (gameState == GameState.Play)
+                        {
+                            Components.Remove(tanks[9 - i]);
+                            tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
+                        }
                     }
 
                     numPlayersAlive = numPlayers;
@@ -567,5 +582,7 @@ namespace tanks3d
 
             currentTank.moves = 0;
         }
+
+        public List<Vector3> playerColors;
     }
 }
