@@ -83,13 +83,10 @@ namespace tanks3d
                     
                     hudString = "\n\n\n\n\n\n-=Controls=-\n";
                     hudString += "WASD\n";
-                    hudString += "T\n";
                     hudString += "Space\n";
                     hudString += "P (or H)\n";
 
-                    hudString += "\n";
-                    hudString += "Mouse\n";
-                    hudString += "Mouse Wheel";
+                    hudString += "\nMouse\n";
                     hudString += "\n\n\nSelect a number of players on the keyboard to begin\n";
                     hudString += "the game. Games can have between two (2) and ten (0)\nplayers.";
 
@@ -97,13 +94,10 @@ namespace tanks3d
 
                     hudString = "\n\n\n\n\n\n-=Action=-\n";
                     hudString += "(movement)\n";
-                    hudString += "(toggle aiming mode / free look)\n";
                     hudString += "(fire)\n";
-                    hudString += "(unpause)\n";
+                    hudString += "(pause)\n";
 
-                    hudString += "\n";
-                    hudString += "(aim turret, when applicable)\n";
-                    hudString += "(zoom, when applicable)\n";
+                    hudString += "\n(aim turret)\n";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) + 0, 0), Color.DarkGreen);
                     break;
@@ -146,27 +140,21 @@ namespace tanks3d
                     hudString = "\n\nPress 'P' or 'H' to unpause, or 'Escape' to quit.\n";
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 300, 0), Color.DarkGreen);
                     
-                    hudString = "\n\n\n\n\n\n-=Keys=-\n";
+                    hudString = "\n\n\n\n\n\n-=Controls=-\n";
                     hudString += "WASD\n";
-                    hudString += "T\n";
                     hudString += "Space\n";
                     hudString += "P\n";
 
-                    hudString += "\n";
-                    hudString += "Mouse\n";
-                    hudString += "Mouse Wheel";
+                    hudString += "\nMouse\n";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 300, 0), Color.DarkGreen);
 
                     hudString = "\n\n\n\n\n\n-=Action=-\n";
                     hudString += "(movement)\n";
-                    hudString += "(enter aiming mode)\n";
                     hudString += "(fire)\n";
                     hudString += "(unpause)\n";
 
-                    hudString += "\n";
-                    hudString += "(aim turret, when applicable)\n";
-                    hudString += "(zoom, when applicable)";
+                    hudString += "\n(aim turret)";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) + 0, 0), Color.DarkGreen);         
                     break;
@@ -178,8 +166,9 @@ namespace tanks3d
                     }
                     hudString = "Player " + (game.currentPlayer + 1) + " has won the game!\n";
                     hudString += "Press 'Escape' to quit the game.\n";
-                    spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
-                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
+                    spriteBatch.Draw(hudSmallBox, new Rectangle(game.GraphicsDevice.Viewport.Width / 2 - 200, game.GraphicsDevice.Viewport.Height / 2 - 30, 400, 60), Color.White);
+                    spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - 192),
+                        game.GraphicsDevice.Viewport.Height / 2 - 22), new Color(255, 243, 141));
                     break;
                 }
 
@@ -269,8 +258,9 @@ namespace tanks3d
         {
             string deathString;
             deathString = "Player " + (num + 1) + " has been eliminated.";
-            spriteBatch.DrawString(GUIFont, deathString, new Vector2((game.GraphicsDevice.Viewport.Width / 2),
-                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2) - 25), Color.DarkBlue);
+            spriteBatch.Draw(hudSmallBox, new Rectangle(game.GraphicsDevice.Viewport.Width / 2 - 165, game.GraphicsDevice.Viewport.Height / 2 - 15, 330, 30), Color.White);
+            spriteBatch.DrawString(GUIFont, deathString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - 160),
+                        game.GraphicsDevice.Viewport.Height / 2 - 10), new Color(255, 243, 141));
         }
     }
 }
