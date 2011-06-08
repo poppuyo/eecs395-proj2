@@ -8,7 +8,6 @@ namespace tanks3d
     public enum PlayerState
     {
         Start,
-        Move,
         Aim,
         Fired,
         Transition

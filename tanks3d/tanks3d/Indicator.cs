@@ -19,7 +19,6 @@ namespace tanks3d
         public float t = 0.0f;
         public float angle = 0.0f;
         public float timeVaryingHeightOffset = 0.0f;
-        public Vector3 offset = new Vector3(0, 150, 0);
 
         public Indicator(Game1 g, Tank owner)
             : base(g)
@@ -51,30 +50,45 @@ namespace tanks3d
 
         public override void Draw(GameTime gameTime)
         {
-            Matrix worldMatrix = Matrix.CreateScale(0.25f)
-                * Matrix.CreateRotationX((float)Math.PI)
-                * Matrix.CreateRotationY(angle)
-                * Matrix.CreateTranslation(owner.Position + offset + timeVaryingHeightOffset * Vector3.Up);
-
-            Matrix[] boneTransforms = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(boneTransforms);
-
-            foreach (ModelMesh mesh in model.Meshes)
+            switch (game.gameState)
             {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.World = boneTransforms[mesh.ParentBone.Index] * worldMatrix;
-                    effect.View = game.worldCamera.ViewMatrix;
-                    effect.Projection = game.worldCamera.ProjectionMatrix;
+                case GameState.Menu:
+                    break;
+                case GameState.Play:
+                    Vector3 skyPos = new Vector3(owner.Position.X, 500.0f, owner.Position.Z);
 
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
+                    Matrix worldMatrix = Matrix.CreateScale(0.25f)
+                        * Matrix.CreateRotationX((float)Math.PI)
+                        * Matrix.CreateRotationY(angle)
+                        * Matrix.CreateTranslation(skyPos + timeVaryingHeightOffset * Vector3.Up);
 
-                    effect.AmbientLightColor = owner.playerColor;
-                    effect.DiffuseColor = owner.playerColor;
-                    effect.SpecularColor = owner.playerColor;
-                }
-                mesh.Draw();
+                    Matrix[] boneTransforms = new Matrix[model.Bones.Count];
+                    model.CopyAbsoluteBoneTransformsTo(boneTransforms);
+
+                    foreach (ModelMesh mesh in model.Meshes)
+                    {
+                        foreach (BasicEffect effect in mesh.Effects)
+                        {
+                            effect.World = boneTransforms[mesh.ParentBone.Index] * worldMatrix;
+                            effect.View = game.worldCamera.ViewMatrix;
+                            effect.Projection = game.worldCamera.ProjectionMatrix;
+
+                            effect.EnableDefaultLighting();
+                            effect.PreferPerPixelLighting = true;
+
+                            effect.AmbientLightColor = owner.playerColor;
+                            effect.DiffuseColor = owner.playerColor;
+                            effect.SpecularColor = owner.playerColor;
+                        }
+                        mesh.Draw();
+                    }
+                    break;
+                case GameState.Pause:
+                    break;
+                case GameState.End:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

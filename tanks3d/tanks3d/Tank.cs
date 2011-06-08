@@ -110,7 +110,7 @@ namespace tank3d
 
         public int angle = 0 ;
 
-        public PlayerState currentPlayerState = PlayerState.Move;
+        public PlayerState currentPlayerState = PlayerState.Aim;
 
         public int health = 100, power = 0;
 
@@ -199,7 +199,7 @@ namespace tank3d
             this.game = game;
             thisTankNumber = num;
             this.playerColor = playerColor;
-
+            ChangeToAim();
         }
 
         private Effect experimentalEffect;
@@ -218,7 +218,7 @@ namespace tank3d
             tankIndicator.LoadContentDamnit();
             game.Components.Add(tankIndicator);
 
-            moving = content.Load<SoundEffect>("Audio\\Humvee");
+            moving = content.Load<SoundEffect>("Audio\\Tank");
             movingInstance = moving.CreateInstance();
             movingInstance.IsLooped = true;
            
@@ -376,6 +376,9 @@ namespace tank3d
                 position = newPosition;
 
             }
+
+            movingInstance.Volume = 0.20f;
+            movingInstance.Play();
         }
 
 

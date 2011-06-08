@@ -83,6 +83,9 @@ namespace tanks3d
 
         public GameState gameState;
 
+        SoundEffect music;
+        SoundEffectInstance musicInstance;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -121,7 +124,7 @@ namespace tanks3d
             worldCamera.Position = new Vector3(0, -370, 160);
             worldCamera.LookAt(new Vector3(0.0f, 0.0f, 0.0f));
             worldCamera.ClickAndDragMouseRotation = true;
-            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.FollowT;
+            worldCamera.CurrentBehavior = Cameras.QuaternionCamera.Behavior.AimMode;
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
@@ -161,9 +164,7 @@ namespace tanks3d
             for (int i = 0; i < numPlayers; i++)
             {
                 players[i] = new Player(this);
-                //tanks[i] = new Tank(this, new Vector3(RandomFloat() * 100, RandomFloat() * 100, RandomFloat() * 100));
                 tanks[i] = new Tank(this, Vector3.Zero, i, playerColors.ElementAt(i));
-                //tanks[i] = new Tank(this, RandomLocation());
             }
 
             numPlayersAlive = numPlayers;
@@ -174,13 +175,6 @@ namespace tanks3d
 
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
-
-            //Reticle reticle = new Reticle(this);
-            //Components.Add(reticle);
-
-            testPhysicsObject = new TestPhysicsObject(this, new Vector3(54, 0, 64), new Vector3(0, 0, 0));
-            Components.Add(testPhysicsObject);
-            physicsEngine.AddPhysicsObject(testPhysicsObject);
 
             base.Initialize();
         }
@@ -205,6 +199,10 @@ namespace tanks3d
             //MediaPlayer.Play(mySong);
 
             firing = Content.Load<SoundEffect>("Audio\\Tank Firing");
+
+            music = Content.Load<SoundEffect>("Audio\\Music");
+            musicInstance = music.CreateInstance();
+            musicInstance.IsLooped = true;
         }
 
         /// <summary>
@@ -214,6 +212,8 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            musicInstance.Play();
+
             switch (gameState)
             {
                 case GameState.Menu:
@@ -442,7 +442,7 @@ namespace tanks3d
                             //switchCurrentTank();
                             //Shake();
 
-                            currentTank.currentPlayerState = PlayerState.Move;
+                            currentTank.currentPlayerState = PlayerState.Aim;
 
                             // Switch to bullet view
                             worldCamera.FollowBullet = bullet;
@@ -460,25 +460,6 @@ namespace tanks3d
                         timeOut--;
                     }
 
-                    // Changes Gamestate from Move to Aim
-                    if (previousKeyboardState.IsKeyDown(Keys.T))
-                    {
-                        if (currentKeyboardState.IsKeyUp(Keys.T))
-                        {
-                            if (currentTank.currentPlayerState == PlayerState.Move)
-                            {
-                                currentTank.currentPlayerState = PlayerState.Aim;
-                                currentTank.ChangeToAim();
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
-                            }
-                            else
-                            {
-                                currentTank.currentPlayerState = PlayerState.Move;
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
-                            }
-                        }
-                    }
-
                     // CannonView
                     if (previousKeyboardState.IsKeyDown(Keys.C))
                     {
@@ -487,17 +468,11 @@ namespace tanks3d
                             if (worldCamera.CurrentBehavior != QuaternionCamera.Behavior.CannonView)
                             {
                                 worldCamera.CurrentBehavior = QuaternionCamera.Behavior.CannonView;
-
-                                if (currentTank.currentPlayerState == PlayerState.Move)
-                                {
-                                    currentTank.currentPlayerState = PlayerState.Aim;
-                                    currentTank.ChangeToAim();
-                                }
                             }
                             else
                             {
-                                currentTank.currentPlayerState = PlayerState.Move;
-                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowT;
+                                currentTank.currentPlayerState = PlayerState.Aim;
+                                worldCamera.CurrentBehavior = QuaternionCamera.Behavior.AimMode;
                             }
                         }
                     }
@@ -553,10 +528,10 @@ namespace tanks3d
         {
             float randomX, randomZ;
             randomX = (float)random.NextDouble() - 1/2f;
-            randomX *= terrain.heightMapInfo.terrainWidth;
+            randomX *= (terrain.heightMapInfo.terrainWidth - 100);
 
             randomZ = (float)random.NextDouble() - 1/2f;
-            randomZ *= terrain.heightMapInfo.terrainHeight;
+            randomZ *= (terrain.heightMapInfo.terrainHeight - 100);
 
             return new Vector3(randomX, 0f, randomZ);
 
