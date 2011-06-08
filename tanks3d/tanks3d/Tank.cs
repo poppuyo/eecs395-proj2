@@ -438,7 +438,7 @@ namespace tank3d
         /// </summary>
         public void GetHit(Bullet bullet)
         {
-            health -= 15;
+            health -= 40;
             game.mainHUD.hitTimer = 0;
             if (health <= 0)
             {
