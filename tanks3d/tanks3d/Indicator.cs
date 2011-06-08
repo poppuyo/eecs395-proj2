@@ -48,8 +48,6 @@ namespace tanks3d
             timeVaryingHeightOffset = 10.0f * sint * sint;
         }
 
-        public bool Active = true;
-
         public override void Draw(GameTime gameTime)
         {
             if (!owner.IsAlive)

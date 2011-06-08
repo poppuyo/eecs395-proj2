@@ -421,7 +421,6 @@ namespace tanks3d
                         if (gameState == GameState.Play)
                         {
                             Components.Remove(tanks[9 - i].tankIndicator);
-                            tanks[9 - i].tankIndicator.Active = false;
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
                             tanks[i].IsAlive = true;
