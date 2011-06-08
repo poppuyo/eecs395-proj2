@@ -565,7 +565,6 @@ namespace tanks3d
             physicsEngine.RemovePhysicsObject(bulletViewCamera);
             enteringBulletView = false;
             this.IsMouseVisible = true;
-            switchCurrentTank();
             canControlTank = true;
         }
 

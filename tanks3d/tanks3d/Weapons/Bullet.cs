@@ -177,6 +177,7 @@ namespace tanks3d.Weapons
                             {
                                 game.bulletManager.RemoveBullet(this);
                                 bulletState = BulletState.Dead;
+                                // Switch tanks
                                 game.switchCurrentTank();
                             }
 
