@@ -83,13 +83,10 @@ namespace tanks3d
                     
                     hudString = "\n\n\n\n\n\n-=Controls=-\n";
                     hudString += "WASD\n";
-                    hudString += "T\n";
                     hudString += "Space\n";
                     hudString += "P (or H)\n";
 
-                    hudString += "\n";
-                    hudString += "Mouse\n";
-                    hudString += "Mouse Wheel";
+                    hudString += "\nMouse\n";
                     hudString += "\n\n\nSelect a number of players on the keyboard to begin\n";
                     hudString += "the game. Games can have between two (2) and ten (0)\nplayers.";
 
@@ -97,13 +94,10 @@ namespace tanks3d
 
                     hudString = "\n\n\n\n\n\n-=Action=-\n";
                     hudString += "(movement)\n";
-                    hudString += "(toggle aiming mode / free look)\n";
                     hudString += "(fire)\n";
                     hudString += "(unpause)\n";
 
-                    hudString += "\n";
-                    hudString += "(aim turret, when applicable)\n";
-                    hudString += "(zoom, when applicable)\n";
+                    hudString += "\n(aim turret)\n";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) + 0, 0), Color.DarkGreen);
                     break;
@@ -146,27 +140,21 @@ namespace tanks3d
                     hudString = "\n\nPress 'P' or 'H' to unpause, or 'Escape' to quit.\n";
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 300, 0), Color.DarkGreen);
                     
-                    hudString = "\n\n\n\n\n\n-=Keys=-\n";
+                    hudString = "\n\n\n\n\n\n-=Controls=-\n";
                     hudString += "WASD\n";
-                    hudString += "T\n";
                     hudString += "Space\n";
                     hudString += "P\n";
 
-                    hudString += "\n";
-                    hudString += "Mouse\n";
-                    hudString += "Mouse Wheel";
+                    hudString += "\nMouse\n";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 300, 0), Color.DarkGreen);
 
                     hudString = "\n\n\n\n\n\n-=Action=-\n";
                     hudString += "(movement)\n";
-                    hudString += "(enter aiming mode)\n";
                     hudString += "(fire)\n";
                     hudString += "(unpause)\n";
 
-                    hudString += "\n";
-                    hudString += "(aim turret, when applicable)\n";
-                    hudString += "(zoom, when applicable)";
+                    hudString += "\n(aim turret)";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) + 0, 0), Color.DarkGreen);         
                     break;
