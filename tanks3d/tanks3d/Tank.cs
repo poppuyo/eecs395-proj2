@@ -193,7 +193,6 @@ namespace tank3d
             position = pos;
             this.game = game;
             thisTankNumber = num;
-
         }
 
         /// <summary>

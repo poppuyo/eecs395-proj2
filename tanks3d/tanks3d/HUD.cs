@@ -115,7 +115,7 @@ namespace tanks3d
                     spriteBatch.Draw(power, new Vector2(game.GraphicsDevice.Viewport.Width - 237, 30), Color.White);
                     spriteBatch.Draw(powerBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 205, 35, game.currentTank.power * 2, 12), Color.White);
 
-                    int smallMoves = (int)((double)(game.currentTank.moveLimit - game.currentTank.moves) / 2.5);
+                    int smallMoves = (int)((double)(game.currentTank.moveLimit - game.currentTank.moves) / game.currentTank.moveLimit * 200);
                     spriteBatch.Draw(movement, new Vector2(game.GraphicsDevice.Viewport.Width - 237, 57), Color.White);
                     spriteBatch.Draw(movementBar, new Rectangle(game.GraphicsDevice.Viewport.Width - 205, 60, smallMoves, 12), Color.White);
 
