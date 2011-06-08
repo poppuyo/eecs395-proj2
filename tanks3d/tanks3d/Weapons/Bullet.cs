@@ -206,7 +206,7 @@ namespace tanks3d.Weapons
                     switch (bulletState)
                     {
                         case BulletState.Unexploded:
-                            game.drawUtils.DrawSphere(position, 5.0f, Color.Green);
+                            game.drawUtils.DrawSphere(position, 5.0f, Color.Black);
               		        tanks3d.Utility.BoundingBoxRenderer.Render(game, this.GetBoundingBox(), game.GraphicsDevice, game.worldCamera.ViewMatrix, game.worldCamera.ProjectionMatrix, Color.Violet);
                             break;
                         case BulletState.Exploding:
