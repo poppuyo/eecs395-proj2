@@ -110,12 +110,10 @@ float4 PixelShaderFunction(PS_INPUT input) : COLOR0
     color *= input.Lighting;
 
 	// Apply tint
-	float s = (color.r + color.g + color.b) / 3.0;
-	color = color + s * saturate(TintColor);
-	//float temp = color.b;
-	//color.b = color.g;
-	//color.g = temp;
-
+	float s = color.r + color.g + color.b;
+	s /= 3;
+	color += s * TintColor;
+	
 	color *= saturate(input.LightingFactor) + AmbientColor;
     
     return float4(color, 1);
