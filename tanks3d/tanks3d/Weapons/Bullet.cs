@@ -252,7 +252,7 @@ namespace tanks3d.Weapons
                     explosionAge = 0.0f;
                     explosionLocation = this.position;
 
-                    Vector3 explosionVelocity = new Vector3(velocity.X, 0.0f, velocity.Z);
+                    Vector3 explosionVelocity = 0.25f * new Vector3(velocity.X, 5.0f, velocity.Z);
 
                     explosion.Play();
 
