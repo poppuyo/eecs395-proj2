@@ -36,8 +36,10 @@ namespace tanks3d
 
         public Terrain.Terrain terrain;
 
-        public Cameras.QuaternionCameraComponent worldCamera;
-        public Cameras.QuaternionCamera.Behavior previousBehavior;
+        public QuaternionCameraComponent worldCamera;
+        public QuaternionCameraComponent originalWorldCamera;
+        public QuaternionCamera.Behavior previousBehavior;
+        public PhysicsCamera bulletViewCamera;
 
         public PhysicsEngine physicsEngine;
         public TestPhysicsObject testPhysicsObject;
@@ -128,6 +130,11 @@ namespace tanks3d
             worldCamera.MovementSpeed = 100.0f;
             Components.Add(worldCamera);
 
+            originalWorldCamera = worldCamera;
+            bulletViewCamera = new PhysicsCamera(this);
+            bulletViewCamera.Perspective(fov, 16.0f / 9.0f, 0.5f, 20000.0f);
+            bulletViewCamera.ClickAndDragMouseRotation = true;
+
             wireframeRasterizerState = new RasterizerState();
             wireframeRasterizerState.FillMode = FillMode.WireFrame;
 
@@ -176,6 +183,9 @@ namespace tanks3d
             bulletManager = new BulletManager(this);
             Components.Add(bulletManager);
 
+            Mouse.SetPosition(this.GraphicsDevice.Viewport.X + this.GraphicsDevice.Viewport.Width,
+                this.GraphicsDevice.Viewport.Y + this.GraphicsDevice.Viewport.Height);
+
             base.Initialize();
         }
 
@@ -212,6 +222,7 @@ namespace tanks3d
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             musicInstance.Play();
 
             switch (gameState)
@@ -223,6 +234,15 @@ namespace tanks3d
                 case GameState.Play:
                     HandleInput(gameTime);
                     currentTank.power = (int)((VelocityCount / VelocityCountMax) * 100);
+
+                    if (enteringBulletView == true)
+                    {
+                        bulletViewTimer -= elapsedSeconds;
+                        if (bulletViewTimer <= 0)
+                        {
+                            EnterBulletView();
+                        }
+                    }
                     break;
 
                 case GameState.Pause:
@@ -401,8 +421,10 @@ namespace tanks3d
                     {
                         if (gameState == GameState.Play)
                         {
+                            Components.Remove(tanks[9 - i].tankIndicator);
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
+                            tanks[i].IsAlive = true;
                         }
                     }
 
@@ -444,9 +466,13 @@ namespace tanks3d
 
                             currentTank.currentPlayerState = PlayerState.Aim;
 
-                            // Switch to bullet view
-                            worldCamera.FollowBullet = bullet;
-                            worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;
+                            // Switch to bullet view after a small delay
+                            //
+                            enteringBulletView = true;
+                            followBullet = bullet;
+                            bulletViewTimer = 0.2f;
+                            followBulletStartPos = bullet.position;
+                            followBulletStartVelocity = bullet.velocity;
                         }
                     }
 
@@ -510,6 +536,31 @@ namespace tanks3d
                     break;
             }
             previousKeyboardState = currentKeyboardState;
+        }
+
+        private bool enteringBulletView = false;
+        private Bullet followBullet = null;
+        private float bulletViewTimer;
+        private Vector3 followBulletStartPos;
+        private Vector3 followBulletStartVelocity;
+
+        public void EnterBulletView()
+        {
+            enteringBulletView = false;
+            bulletViewCamera.FollowBullet = followBullet;
+            Components.Add(bulletViewCamera);
+            bulletViewCamera.Position = followBulletStartPos;
+            bulletViewCamera.Velocity = followBulletStartVelocity;
+            physicsEngine.AddPhysicsObject(bulletViewCamera);
+            worldCamera = bulletViewCamera;
+        }
+
+        public void ExitBulletView()
+        {
+            worldCamera = originalWorldCamera;
+            Components.Remove(bulletViewCamera);
+            physicsEngine.RemovePhysicsObject(bulletViewCamera);
+            enteringBulletView = false;
         }
 
         public static readonly Random random = new Random();

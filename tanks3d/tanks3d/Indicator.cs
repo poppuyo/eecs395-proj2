@@ -50,6 +50,11 @@ namespace tanks3d
 
         public override void Draw(GameTime gameTime)
         {
+            if (!owner.IsAlive)
+            {
+                return;
+            }
+
             switch (game.gameState)
             {
                 case GameState.Menu:
