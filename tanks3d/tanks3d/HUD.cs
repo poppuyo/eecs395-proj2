@@ -25,7 +25,7 @@ namespace tanks3d
         Texture2D healthBar, heart, powerBar, power, movementBar,
             movement, hudSmallBox, hudLargeBox, tankBackground;
 
-        public int hitTimer = 171, playerTimer = 101, lastPlayerEliminated;
+        public int hitTimer = 201, playerTimer = 201, lastPlayerEliminated;
 
         public bool showScoreBoard = false;
 
@@ -85,6 +85,8 @@ namespace tanks3d
                     hudString += "WASD\n";
                     hudString += "Space\n";
                     hudString += "P (or H)\n";
+                    hudString += "Tab\n";
+                    hudString += "Enter";
 
                     hudString += "\nMouse\n";
                     hudString += "\n\n\nSelect a number of players on the keyboard to begin\n";
@@ -96,6 +98,8 @@ namespace tanks3d
                     hudString += "(movement)\n";
                     hudString += "(fire)\n";
                     hudString += "(pause)\n";
+                    hudString += "Display scores\n";
+                    hudString += "Switch player (without firing)";
 
                     hudString += "\n(aim turret)\n";
 
@@ -121,16 +125,16 @@ namespace tanks3d
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2(13, (Game.GraphicsDevice.Viewport.Height - 
                         25)), new Color(255, 243, 141));
 
-                    if (playerTimer < 101)
-                    {
-                        DrawPlayerDeath(lastPlayerEliminated);
-                        playerTimer++;
-                    }
-
-                    if (hitTimer < 171)
+                    if (hitTimer < 201)
                     {
                         DrawHit();
                         hitTimer++;
+                    }
+
+                    if (playerTimer < 201)
+                    {
+                        DrawPlayerDeath(lastPlayerEliminated);
+                        playerTimer++;
                     }
 
                     game.DoSpriteBatchFix();
@@ -144,6 +148,8 @@ namespace tanks3d
                     hudString += "WASD\n";
                     hudString += "Space\n";
                     hudString += "P\n";
+                    hudString += "Tab\n";
+                    hudString += "Enter";
 
                     hudString += "\nMouse\n";
 
@@ -153,6 +159,8 @@ namespace tanks3d
                     hudString += "(movement)\n";
                     hudString += "(fire)\n";
                     hudString += "(unpause)\n";
+                    hudString += "Display scores\n";
+                    hudString += "Switch player (without firing)";
 
                     hudString += "\n(aim turret)";
 
@@ -166,8 +174,8 @@ namespace tanks3d
                     }
                     hudString = "Player " + (game.currentPlayer + 1) + " has won the game!\n";
                     hudString += "Press 'Escape' to quit the game.\n";
-                    spriteBatch.Draw(hudSmallBox, new Rectangle(game.GraphicsDevice.Viewport.Width / 2 - 200, game.GraphicsDevice.Viewport.Height / 2 - 30, 400, 60), Color.White);
-                    spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - 192),
+                    spriteBatch.Draw(hudSmallBox, new Rectangle(game.GraphicsDevice.Viewport.Width / 2 - 175, game.GraphicsDevice.Viewport.Height / 2 - 30, 350, 60), Color.White);
+                    spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - 167),
                         game.GraphicsDevice.Viewport.Height / 2 - 22), new Color(255, 243, 141));
                     break;
                 }
