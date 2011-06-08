@@ -27,7 +27,6 @@ namespace tank3d
     {
         #region Constants
 
-
         // This constant controls how quickly the tank can move forward and backward
         const float TankVelocity = 1.5f;
 
