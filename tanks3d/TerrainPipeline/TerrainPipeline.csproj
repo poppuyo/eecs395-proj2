@@ -53,6 +53,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkyContent.cs" />
     <Compile Include="SkyProcessor.cs" />
+    <Compile Include="TankModelMaterialProcessor.cs" />
+    <Compile Include="TankModelProcessor.cs" />
     <Compile Include="TerrainProcessor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
