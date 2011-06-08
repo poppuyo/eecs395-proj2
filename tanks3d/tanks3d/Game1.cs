@@ -427,6 +427,8 @@ namespace tanks3d
                             //switchCurrentTank();
                             //Shake();
 
+                            currentTank.currentPlayerState = PlayerState.Move;
+
                             // Switch to bullet view
                             worldCamera.FollowBullet = bullet;
                             worldCamera.CurrentBehavior = QuaternionCamera.Behavior.FollowActiveBullet;

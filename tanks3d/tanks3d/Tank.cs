@@ -74,6 +74,7 @@ namespace tank3d
 
         // Handles 
         private Vector3 OriginalMousePos { get; set; }
+        private Vector3 TurretDiff { get; set; }
         private Vector3 TurretDirection { get; set; }
 
         public Vector3 GetTurretDirection()
@@ -248,8 +249,11 @@ namespace tank3d
             //Recalculates turretDirection based on current mouse position
             if (currentPlayerState == PlayerState.Aim)
             {
-                TurretDirection = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
-                TurretDirection = new Vector3(TurretDirection.X, -TurretDirection.Y, TurretDirection.Z);
+                TurretDiff = new Vector3(currentMouseState.X, currentMouseState.Y, 0) - OriginalMousePos;
+                TurretDiff = new Vector3(TurretDiff.X, -TurretDiff.Y, TurretDiff.Z);
+
+                TurretDirection += TurretDiff;
+                OriginalMousePos = new Vector3(currentMouseState.X, currentMouseState.Y, 0);
 
                 if (TurretDirection.X > TurretRightBound) TurretDirection = new Vector3(TurretRightBound, TurretDirection.Y, TurretDirection.Z);
                 else if (TurretDirection.X < TurretLeftBound) TurretDirection = new Vector3(TurretLeftBound, TurretDirection.Y, TurretDirection.Z);
