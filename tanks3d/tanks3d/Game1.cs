@@ -404,8 +404,11 @@ namespace tanks3d
 
                     for (int i = 0; i < numPlayers; i++)
                     {
-                        if (gameState == GameState.Play) 
-                        Components.Remove(tanks[9-i]);
+                        if (gameState == GameState.Play)
+                        {
+                            Components.Remove(tanks[9 - i]);
+                            tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
+                        }
                     }
 
                     numPlayersAlive = numPlayers;
