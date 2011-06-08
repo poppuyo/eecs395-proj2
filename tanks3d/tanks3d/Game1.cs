@@ -65,8 +65,6 @@ namespace tanks3d
         public Tank currentTank;
         public Tank[] tanks;
 
-        public Indicator tankIndicator;
-
         public DrawUtils drawUtils;
 
         public WinFormContainer winFormContainer = null;
@@ -156,9 +154,6 @@ namespace tanks3d
 
             drawUtils = new DrawUtils(this);
             Components.Add(drawUtils);
-
-            tankIndicator = new Indicator(this);
-            Components.Add(tankIndicator);
 
             tanks = new Tank[numPlayers];
             players = new Player[numPlayers];

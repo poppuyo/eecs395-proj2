@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using tank3d;
 
 namespace tanks3d
 {
     public class Indicator : DrawableGameComponent
     {
         private Game1 game;
+
+        public Tank owner;
 
         private Model model;
 
@@ -18,10 +21,16 @@ namespace tanks3d
         public float timeVaryingHeightOffset = 0.0f;
         public Vector3 offset = new Vector3(0, 150, 0);
 
-        public Indicator(Game1 g)
+        public Indicator(Game1 g, Tank owner)
             : base(g)
         {
             game = g;
+            this.owner = owner;
+        }
+
+        public void LoadContentDamnit()
+        {
+            LoadContent();
         }
 
         protected override void LoadContent()
@@ -45,7 +54,7 @@ namespace tanks3d
             Matrix worldMatrix = Matrix.CreateScale(0.25f)
                 * Matrix.CreateRotationX((float)Math.PI)
                 * Matrix.CreateRotationY(angle)
-                * Matrix.CreateTranslation(game.currentTank.Position + offset + timeVaryingHeightOffset * Vector3.Up);
+                * Matrix.CreateTranslation(owner.Position + offset + timeVaryingHeightOffset * Vector3.Up);
 
             Matrix[] boneTransforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(boneTransforms);

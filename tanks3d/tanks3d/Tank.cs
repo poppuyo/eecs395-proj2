@@ -189,6 +189,8 @@ namespace tank3d
 
         #region Initialization
 
+        public Indicator tankIndicator;
+
         public Tank(Game1 game, Vector3 pos, int num, Vector3 playerColor)
             : base(game)
         {
@@ -210,6 +212,10 @@ namespace tank3d
             model = content.Load<Model>("Models//tank");
 
             experimentalEffect = content.Load<Effect>("effects");
+
+            tankIndicator = new Indicator(game, this);
+            tankIndicator.LoadContentDamnit();
+            game.Components.Add(tankIndicator);
 
             moving = content.Load<SoundEffect>("Audio\\Humvee");
             movingInstance = moving.CreateInstance();
