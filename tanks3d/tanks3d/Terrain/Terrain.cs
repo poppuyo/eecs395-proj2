@@ -187,5 +187,27 @@ namespace tanks3d.Terrain
 
             explosionDecalLocations.Add(location);
         }
+
+        /// <summary>
+        /// This function adjusts the given input position so that it is above the terrain (by at
+        /// least the amount specified by the second argument). If the given position is already above
+        /// the terrain, or it is not on the terrain at all, then it is returned unmodified.
+        /// </summary>
+        public Vector3 AdjustForTerrainHeight(Vector3 position, float minDistanceAboveTerrain = 0.0f)
+        {
+            if (heightMapInfo.IsOnHeightmap(position))
+            {
+                float height;
+                Vector3 normal;
+                heightMapInfo.GetHeightAndNormal(position, out height, out normal);
+
+                if (position.Y <= height + minDistanceAboveTerrain)
+                {
+                    return new Vector3(position.X, height + minDistanceAboveTerrain, position.Z);
+                }
+            }
+
+            return position;
+        }
     }
 }

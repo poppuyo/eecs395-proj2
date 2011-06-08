@@ -66,7 +66,7 @@ namespace tank3d
         /// The direction that the tank is facing, in radians. This value will be used
         /// to position and and aim the camera.
         /// </summary>
-        private float FacingDirection
+        public float FacingDirection
         {
             get { return facingDirection; }
         }
@@ -154,7 +154,7 @@ namespace tank3d
 
         // How is the tank oriented? We'll calculate this based on the user's input and
         // the heightmap's normals, and then use it when drawing.
-        Matrix orientation = Matrix.Identity;
+        public Matrix orientation = Matrix.Identity;
 
         // We'll use this value when making the wheels roll. It's calculated based on 
         // the distance moved.
