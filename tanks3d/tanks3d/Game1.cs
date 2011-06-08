@@ -528,13 +528,20 @@ namespace tanks3d
         {
             float randomX, randomZ;
             randomX = (float)random.NextDouble() - 1/2f;
-            randomX *= (terrain.heightMapInfo.terrainWidth - 100);
+            randomX *= terrain.heightMapInfo.terrainWidth;
+            if (randomX >= (terrain.heightMapInfo.terrainWidth / 2))
+                randomX -= 100;
+            if (randomX <= 0)
+                randomX += 100;
 
             randomZ = (float)random.NextDouble() - 1/2f;
-            randomZ *= (terrain.heightMapInfo.terrainHeight - 100);
-
+            randomZ *= terrain.heightMapInfo.terrainHeight;
+            if (randomZ >= (terrain.heightMapInfo.terrainHeight / 2))
+                randomZ -= 100;
+            if (randomZ <= 0)
+                randomZ += 100;
+            
             return new Vector3(randomX, 0f, randomZ);
-
         }
 
         public void switchCurrentTank()

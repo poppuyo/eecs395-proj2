@@ -178,8 +178,9 @@ namespace tanks3d
                     }
                     hudString = "Player " + (game.currentPlayer + 1) + " has won the game!\n";
                     hudString += "Press 'Escape' to quit the game.\n";
-                    spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - game.GraphicsDevice.Viewport.Width / 4),
-                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2)), Color.DarkBlue);
+                    spriteBatch.Draw(hudSmallBox, new Rectangle(game.GraphicsDevice.Viewport.Width / 2 - 200, game.GraphicsDevice.Viewport.Height / 2 - 30, 400, 60), Color.White);
+                    spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - 192),
+                        game.GraphicsDevice.Viewport.Height / 2 - 22), new Color(255, 243, 141));
                     break;
                 }
 
@@ -269,8 +270,9 @@ namespace tanks3d
         {
             string deathString;
             deathString = "Player " + (num + 1) + " has been eliminated.";
-            spriteBatch.DrawString(GUIFont, deathString, new Vector2((game.GraphicsDevice.Viewport.Width / 2),
-                        (game.GraphicsDevice.Viewport.Height - game.GraphicsDevice.Viewport.Height / 2) - 25), Color.DarkBlue);
+            spriteBatch.Draw(hudSmallBox, new Rectangle(game.GraphicsDevice.Viewport.Width / 2 - 165, game.GraphicsDevice.Viewport.Height / 2 - 15, 330, 30), Color.White);
+            spriteBatch.DrawString(GUIFont, deathString, new Vector2((game.GraphicsDevice.Viewport.Width / 2 - 160),
+                        game.GraphicsDevice.Viewport.Height / 2 - 10), new Color(255, 243, 141));
         }
     }
 }
