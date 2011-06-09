@@ -263,9 +263,6 @@ namespace tanks3d.Weapons
                     for (int i = 0; i < numExplosionSmokeParticles; i++)
                         explosionSmokeParticles.AddParticle(position, explosionVelocity);
 
-                    // moved to the post-explosion to prevent people from doing stuff until the explosion is over
-                    // game.switchCurrentTank();
-
                     break;
                 case BulletState.Exploding:
                     break;

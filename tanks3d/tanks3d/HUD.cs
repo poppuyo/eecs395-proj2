@@ -25,7 +25,7 @@ namespace tanks3d
         Texture2D healthBar, heart, powerBar, power, movementBar,
             movement, hudSmallBox, hudLargeBox, tankBackground;
 
-        public int hitTimer = 201, playerTimer = 201, lastPlayerEliminated;
+        public int hitTimer = 181, playerTimer = 241, lastPlayerEliminated;
 
         public bool showScoreBoard = false;
 
@@ -126,13 +126,13 @@ namespace tanks3d
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2(13, (Game.GraphicsDevice.Viewport.Height - 
                         25)), new Color(255, 243, 141));
 
-                    if (hitTimer < 201)
+                    if (hitTimer < 181)
                     {
                         DrawHit();
                         hitTimer++;
                     }
 
-                    if (playerTimer < 201)
+                    if (playerTimer < 241)
                     {
                         DrawPlayerDeath(lastPlayerEliminated);
                         playerTimer++;

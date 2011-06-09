@@ -591,6 +591,14 @@ namespace tanks3d
                             gameState = GameState.Play;
                     }
                     break;
+
+                case GameState.End:
+                    if (previousKeyboardState.IsKeyDown(Keys.P))
+                    {
+                        if (currentKeyboardState.IsKeyUp(Keys.P))
+                            gameState = GameState.Menu;
+                    }
+                    break;
             }
             previousKeyboardState = currentKeyboardState;
         }
