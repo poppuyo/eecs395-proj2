@@ -361,6 +361,8 @@ namespace tanks3d
             GamePadState currentGamePadState = GamePad.GetState(PlayerIndex.One);
             MouseState currentMouseState = Mouse.GetState();
 
+            Boolean suddenDeath = false;
+
             // Allows the game to exit
             if (currentKeyboardState.IsKeyDown(Keys.Escape) ||
                     currentGamePadState.Buttons.Back == ButtonState.Pressed)
@@ -376,14 +378,32 @@ namespace tanks3d
                     {
                         switch (pressed_Key[i])
                         {
+                            case Keys.F2:
+                                suddenDeath = true;
+                                numPlayers = 2;
+                                gameState = GameState.Play;
+                                break;
+                            
                             case Keys.D2:
                                 numPlayers = 2;
                                 gameState = GameState.Play;
                             break;
 
+                            case Keys.F3:
+                            suddenDeath = true;
+                            numPlayers = 3;
+                            gameState = GameState.Play;
+                            break;
+                            
                             case Keys.D3:
                                 numPlayers = 3;
                                 gameState = GameState.Play;
+                            break;
+
+                            case Keys.F4:
+                            suddenDeath = true;
+                            numPlayers = 4;
+                            gameState = GameState.Play;
                             break;
 
                             case Keys.D4:
@@ -391,13 +411,31 @@ namespace tanks3d
                                 gameState = GameState.Play;
                             break;
 
+                            case Keys.F5:
+                            suddenDeath = true;
+                            numPlayers = 5;
+                            gameState = GameState.Play;
+                            break;
+
                             case Keys.D5:
                                 numPlayers = 5;
                                 gameState = GameState.Play;
                             break;
 
+                            case Keys.F6:
+                            suddenDeath = true;
+                            numPlayers = 6;
+                            gameState = GameState.Play;
+                            break;
+                            
                             case Keys.D6:
                                 numPlayers = 6;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.F7:
+                                suddenDeath = true;
+                                numPlayers = 7;
                                 gameState = GameState.Play;
                             break;
 
@@ -406,8 +444,20 @@ namespace tanks3d
                                 gameState = GameState.Play;
                             break;
 
+                            case Keys.F8:
+                                suddenDeath = true;
+                                numPlayers = 8;
+                                gameState = GameState.Play;
+                            break;
+
                             case Keys.D8:
                                 numPlayers = 8;
+                                gameState = GameState.Play;
+                            break;
+
+                            case Keys.F9:
+                                suddenDeath = true;
+                                numPlayers = 9;
                                 gameState = GameState.Play;
                             break;
 
@@ -416,6 +466,12 @@ namespace tanks3d
                                 gameState = GameState.Play;
                             break;
 
+                            case Keys.F10:
+                                suddenDeath = true;
+                                numPlayers = 10;
+                                gameState = GameState.Play;
+                            break;
+                                
                             case Keys.D0:
                                 numPlayers = 10;
                                 gameState = GameState.Play;
@@ -433,6 +489,10 @@ namespace tanks3d
                             Components.Remove(tanks[9 - i]);
                             tanks[i].moveLimit += 500 - (50 * (numPlayers - 2));
                             tanks[i].IsAlive = true;
+                        }
+                        if (suddenDeath)
+                        {
+                            tanks[i].health = 1;
                         }
                     }
 

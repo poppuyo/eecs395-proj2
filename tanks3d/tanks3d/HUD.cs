@@ -91,6 +91,7 @@ namespace tanks3d
                     hudString += "\nMouse\n";
                     hudString += "\n\n\nSelect a number of players on the keyboard to begin\n";
                     hudString += "the game. Games can have between two (2) and ten (0)\nplayers.";
+                    hudString += "\nSUDDEN DEATH MODE: Press F2 to F10 for a faster game!";
 
                     spriteBatch.DrawString(GUIFont, hudString, new Vector2((game.GraphicsDevice.Viewport.Width / 2) - 250, 0), Color.DarkGreen);
 
@@ -185,7 +186,10 @@ namespace tanks3d
                 hudString = "";
                 for (int i = 0; i < game.numPlayers; i++)
                 {
-                    hudString += "Player " + (i + 1) + " : " + game.tanks[i].health + "/100 \n";
+                    if(game.tanks[i].health>0)
+                        hudString += "Player " + (i + 1) + " : " + game.tanks[i].health + "/100 \n";
+                    else
+                        hudString += "Player " + (i + 1) + " : Dead! \n";
                 }
                 spriteBatch.Draw(hudLargeBox, new Rectangle((game.GraphicsDevice.Viewport.Width / 8),
                         (game.GraphicsDevice.Viewport.Height / 4), 200, 235), Color.White);
